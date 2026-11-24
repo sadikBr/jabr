@@ -45,3 +45,9 @@
   subject: physics
   summary: The force of air pushing back on a moving object. It grows with speed and depends on shape, not mass.
   prerequisites: [force, velocity]
+
+- id: projectile-motion
+  title: Projectile motion
+  subject: physics
+  summary: Motion in two dimensions under gravity alone. Sideways the speed stays constant while vertically the object is in free fall, and together they trace a parabola.
+  prerequisites: [velocity, free-fall]

@@ -1,0 +1,41 @@
+---
+id: constant-velocity
+title: A point that moves
+summary: The loop at the heart of every simulation, in its simplest form.
+requires: [velocity]
+check: rocket.constant-velocity
+estimatedMinutes: 10
+---
+
+Every simulation you have ever seen, from a weather forecast to a video game,
+runs on the same loop:
+
+1. Look at how fast things are changing **right now**.
+2. Move everything forward by a tiny slice of time.
+3. Repeat.
+
+You are going to build a rocket simulator on that loop, one piece at a time.
+Start with the simplest thing that moves: a point travelling in a straight
+line at a constant velocity $v$.
+
+In a slice of time $dt$, it covers a distance
+
+$$
+\Delta x = v \, dt
+$$
+
+So if it starts at $x = 0$ and you take one step after another, its positions
+are $0,\; v\,dt,\; 2v\,dt,\; 3v\,dt, \dots$
+
+<Callout kind="insight" title="This is calculus, backwards">
+
+Velocity is the derivative of position: it tells you how fast position is
+changing. The loop does the reverse. It takes the rate of change and rebuilds
+the position from it, one small step at a time.
+
+</Callout>
+
+### Your task
+
+The function `simulate` below already sets up the loop. Complete it so that
+every pass moves `x` forward and records where it is.

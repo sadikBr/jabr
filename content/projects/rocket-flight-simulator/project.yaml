@@ -5,11 +5,13 @@ subjects: [physics, maths, computing]
 kind: capstone
 concepts:
   [
-    eulers-method,
     velocity,
     acceleration,
+    eulers-method,
+    free-fall,
+    projectile-motion,
     newtons-second-law,
-    gravity-and-weight,
     air-drag,
   ]
-status: coming-soon
+milestones:
+  [constant-velocity, gravity, launch-angle, thrust, drag, target-altitude]

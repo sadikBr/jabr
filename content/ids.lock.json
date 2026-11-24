@@ -18,6 +18,7 @@
     "newtons-second-law",
     "power-rule",
     "product-rule",
+    "projectile-motion",
     "riemann-sum",
     "slope-of-a-line",
     "sum-rule",
@@ -50,7 +51,16 @@
     "rocket-flight-simulator",
     "tangent-line-explorer"
   ],
+  "milestones": [
+    "rocket-flight-simulator/constant-velocity",
+    "rocket-flight-simulator/drag",
+    "rocket-flight-simulator/gravity",
+    "rocket-flight-simulator/launch-angle",
+    "rocket-flight-simulator/target-altitude",
+    "rocket-flight-simulator/thrust"
+  ],
   "questions": [
+    "calc.deriv.code-slope",
     "calc.deriv.concept-check-1",
     "calc.deriv.definition-expression",
     "calc.deriv.secant-slope",
@@ -58,6 +68,15 @@
     "calc.deriv.sign",
     "calc.deriv.slope-at-point",
     "calc.deriv.tangent-prediction",
-    "calc.deriv.units"
+    "calc.deriv.units",
+    "fall.moon-drop-time",
+    "fall.sim",
+    "fall.vacuum-race",
+    "rocket.constant-velocity",
+    "rocket.drag",
+    "rocket.gravity",
+    "rocket.launch-angle",
+    "rocket.target-altitude",
+    "rocket.thrust"
   ]
 }

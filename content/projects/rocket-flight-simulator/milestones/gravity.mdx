@@ -1,0 +1,46 @@
+---
+id: gravity
+title: Add gravity
+summary: Let the velocity change too, and meet Euler's method.
+requires: [eulers-method, acceleration, free-fall]
+check: rocket.gravity
+estimatedMinutes: 20
+---
+
+In the last milestone the velocity never changed. Real things speed up and
+slow down. Drop something and watch how it falls:
+
+<Interactive id="drop-test" props={{ place: "earth", air: false }} />
+
+Look at the trail of dots, one every tenth of a second. The gaps get wider
+on the way down: the object covers more distance in each tenth of a second
+than in the one before. It is **accelerating**.
+
+Near the ground, gravity gives everything the same downward acceleration,
+$g = 9.81\ \text{m/s}^2$. So now two things change in every time step:
+
+$$
+y \leftarrow y + v\,dt \qquad\qquad v \leftarrow v - g\,dt
+$$
+
+The height moves by the velocity, and the velocity moves by the acceleration.
+Updating each quantity by (its rate of change) × $dt$ is called **Euler's
+method**.
+
+### How good is it?
+
+For constant gravity there is an exact answer to compare with:
+
+$$
+y(t) = y_0 + v_0\,t - \tfrac{1}{2}\,g\,t^2
+$$
+
+Euler's method does not know this formula. It treats the velocity as constant
+during each step, which is not quite true, so it drifts a little. The smaller
+the step, the smaller the drift.
+
+### Your task
+
+Write the exact formula in `exact_height`, then the three update lines in
+`fall`. The program prints both answers for three step sizes, so you can see
+the error shrink.

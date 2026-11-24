@@ -1,0 +1,62 @@
+---
+id: thrust
+title: Light the engine
+summary: Add thrust, and a rocket that gets lighter as it burns its fuel.
+requires: [newtons-second-law, eulers-method]
+check: rocket.thrust
+estimatedMinutes: 25
+---
+
+A thrown ball only ever slows down on the way up. A rocket carries its own
+push. For this milestone it flies straight up, so you are back to one
+dimension, with two new ideas.
+
+### Thrust
+
+A rocket engine works by throwing mass out of the back, fast. The force it
+gets in return is
+
+$$
+T = \dot{m}\, v_e
+$$
+
+where $\dot{m}$ is how many kilograms of fuel it burns each second and $v_e$
+is the speed the exhaust leaves at. A small model rocket burning
+$0.1\ \text{kg/s}$ with an exhaust speed of $300\ \text{m/s}$ gets
+$30\ \text{N}$ of thrust.
+
+### A changing mass
+
+Newton's second law gives the acceleration from the net force:
+
+$$
+a = \frac{T}{m} - g
+$$
+
+But $m$ is not constant: the rocket is burning its fuel. As it gets lighter,
+the same thrust accelerates it harder. There is no need for anything clever
+here. The loop just recomputes the mass at every step.
+
+When the fuel runs out, the thrust drops to zero and the rocket coasts,
+slowing under gravity until it falls back.
+
+<Callout kind="insight" title="The rocket equation">
+
+For this setup there is an exact answer for the speed at burnout, found by
+Konstantin Tsiolkovsky in 1903:
+
+$$
+v = v_e \ln\!\frac{m_0}{m_f} - g\,t_b
+$$
+
+where $m_0$ is the mass at lift-off, $m_f$ the mass once the fuel is gone and
+$t_b$ the burn time. The logarithm is why real rockets are mostly fuel: to go
+faster you need the ratio $m_0 / m_f$ to grow, and it grows slowly.
+
+</Callout>
+
+### Your task
+
+In `rocket_flight`, set the thrust while there is fuel left, and reduce the
+fuel each step. The program prints your top speed next to the rocket
+equation's.

@@ -1,0 +1,57 @@
+---
+id: drag
+title: Add the air
+summary: Air pushes back harder the faster you go, on the way up and on the way down.
+requires: [air-drag, newtons-second-law]
+check: rocket.drag
+estimatedMinutes: 20
+---
+
+Your rocket has been flying in a vacuum. Air changes things, and not equally
+for everything:
+
+<Interactive id="drop-test" props={{ place: "earth", air: true }} />
+
+Drop them with the air on, then turn it off and drop them again.
+
+### The drag force
+
+Air resistance grows quickly with speed. For something moving fast through
+air, a good model is
+
+$$
+F_\text{drag} = k\,v^2
+$$
+
+where $k$ bundles together the air's density and the object's size and shape.
+Double the speed and the drag is four times as large.
+
+The important part is its **direction**: drag always pushes against the
+motion. On the way up it points down, adding to gravity. On the way down it
+points up, fighting gravity.
+
+### Terminal velocity
+
+That second case has a striking consequence. As a falling object speeds up,
+drag grows until it exactly balances the weight. Then the net force is zero
+and the object stops accelerating. It falls at a steady **terminal velocity**:
+
+$$
+k\,v_t^2 = m\,g \quad\Longrightarrow\quad v_t = \sqrt{\frac{m\,g}{k}}
+$$
+
+For your empty rocket ($m = 1\ \text{kg}$, $k = 0.002\ \text{kg/m}$) that is
+about $70\ \text{m/s}$. However high it flies, it will not come down faster.
+
+<Callout kind="warning" title="Watch the sign">
+
+`v**2` is positive whether the rocket is going up or down, so it cannot tell
+you which way the force points. You need an expression that has the size of
+$v^2$ and the sign of $v$.
+
+</Callout>
+
+### Your task
+
+Compute `drag_force` so that it opposes the motion. The program prints the
+flight with and without air.

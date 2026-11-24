@@ -1,0 +1,49 @@
+---
+id: target-altitude
+title: Hit a target altitude
+summary: Plot the flight, then make the simulator answer a real question.
+requires: [eulers-method, air-drag]
+check: rocket.target-altitude
+estimatedMinutes: 25
+---
+
+You have a working simulator: gravity, thrust, a changing mass and air drag.
+The last step is to use it the way engineers do, to answer a question:
+
+**How much fuel does the rocket need to reach 400 metres?**
+
+### No formula to rearrange
+
+With air drag there is no equation you can solve for the fuel. But you do
+have a function that tells you how high the rocket goes for any amount of
+fuel. And you know one more thing: more fuel goes higher.
+
+That is enough. Pick a range that must contain the answer, say 0 to 2 kg:
+
+1. Try the middle of the range.
+2. If the rocket overshoots the target, the answer is in the lower half.
+   If it falls short, the answer is in the upper half.
+3. Keep that half and repeat.
+
+Every round halves the uncertainty. After 25 rounds it is smaller than a
+millionth of a gram. This is the **bisection method**, and it works for any
+question of the form "what setting gives this result?", as long as turning
+the setting up always pushes the result the same way.
+
+### Seeing the flight
+
+Numbers are easier to trust when you can see them. The starter code plots
+altitude against time for the flight you find, with a dashed line at the
+target. The curve should just touch it.
+
+<Callout kind="note" title="The first run takes a little longer">
+
+Plotting uses the matplotlib library, which is downloaded the first time you
+run this lab. After that it is kept on your device.
+
+</Callout>
+
+### Your task
+
+Write `apogee`, the rocket's highest point, and complete the loop in
+`fuel_for_altitude`.

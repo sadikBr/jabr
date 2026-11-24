@@ -1,0 +1,455 @@
+- id: rocket.constant-velocity
+  type: code
+  concepts: [velocity]
+  prompt: "Complete the loop so that each step moves `x` forward by the distance covered in one time step, then records it."
+  starter: |
+    def simulate(v, dt, steps):
+        """Positions of a point moving at constant velocity v.
+
+        Returns a list that starts at 0 and has one more entry per time step.
+        """
+        x = 0.0
+        positions = [x]
+        for _ in range(steps):
+            # TODO: move x forward by one time step, then add it to positions.
+            pass
+        return positions
+
+    # Four steps of half a second at 3 m/s.
+    print(simulate(v=3.0, dt=0.5, steps=4))
+  tests: |
+    def test_starts_at_zero():
+        assert simulate(3.0, 0.5, 4)[0] == 0, "The first position should be 0: the point has not moved yet."
+
+    def test_records_one_position_per_step():
+        assert len(simulate(3.0, 0.5, 4)) == 5, "Four steps should give five positions: the start, then one after each step."
+
+    def test_moves_velocity_times_dt_each_step():
+        positions = simulate(3.0, 0.5, 4)
+        expected = [0, 1.5, 3.0, 4.5, 6.0]
+        assert len(positions) == 5 and all(abs(a - b) < 1e-9 for a, b in zip(positions, expected)), f"At 3 m/s with dt = 0.5 s the positions should be {expected}, not {positions}."
+
+    def test_can_move_backwards():
+        positions = simulate(-2.0, 1.0, 3)
+        assert len(positions) == 4 and abs(positions[-1] + 6.0) < 1e-9, "A negative velocity should move the point backwards: -2 m/s for 3 s ends at -6."
+  hints:
+    - "In one time step the point covers a distance of `v * dt`."
+    - "Inside the loop: `x += v * dt`, then `positions.append(x)`."
+  solution: |
+    Each step adds the distance covered in `dt` seconds, then records the new position:
+
+    `x += v * dt` and `positions.append(x)`
+
+    That is all a simulation loop is: work out how things change over one small step, apply the change, repeat.
+
+- id: rocket.gravity
+  type: code
+  concepts: [eulers-method, acceleration, free-fall]
+  prompt: "Fill in `exact_height`, then the three update lines in `fall`. Run it and compare the two columns."
+  starter: |
+    G = 9.81  # m/s², downwards
+
+    def exact_height(y0, v0, t):
+        """Height at time t for an object that started at y0 moving up at v0."""
+        # TODO: return y0 + v0·t − ½·G·t²
+        return 0.0
+
+    def fall(y0, v0, dt, t_end):
+        """The same motion, found step by step with Euler's method.
+
+        Returns (times, heights).
+        """
+        steps = round(t_end / dt)
+        t, y, v = 0.0, y0, v0
+        times, heights = [t], [y]
+        for _ in range(steps):
+            # TODO: three lines.
+            #   1. move y using the current velocity
+            #   2. change v using the acceleration (gravity pulls down)
+            #   3. move the clock on
+            times.append(t)
+            heights.append(y)
+        return times, heights
+
+    # Drop from 100 m and compare with the exact answer after 3 seconds.
+    for dt in [0.5, 0.1, 0.01]:
+        times, heights = fall(y0=100.0, v0=0.0, dt=dt, t_end=3.0)
+        print(f"dt = {dt:<5} Euler: {heights[-1]:7.3f} m   exact: {exact_height(100.0, 0.0, 3.0):7.3f} m")
+  tests: |
+    def test_exact_height_formula():
+        assert abs(exact_height(100.0, 0.0, 2.0) - 80.38) < 1e-6, "Dropped from 100 m, after 2 s the height is 100 − ½·9.81·2² = 80.38 m."
+        assert abs(exact_height(0.0, 20.0, 1.0) - 15.095) < 1e-6, "Thrown up at 20 m/s, after 1 s the height is 20 − ½·9.81 = 15.095 m."
+
+    def test_starts_at_the_right_place_and_time():
+        times, heights = fall(100.0, 0.0, 0.1, 2.0)
+        assert times[0] == 0 and heights[0] == 100.0, "The first entry should be the start: t = 0 and y = y0."
+        assert len(times) == 21 and abs(times[-1] - 2.0) < 1e-9, "With dt = 0.1 up to t = 2 the clock should reach 2.0 in 20 steps. Did you add dt to t?"
+
+    def test_falls_faster_and_faster():
+        _, heights = fall(100.0, 0.0, 0.1, 2.0)
+        drops = [a - b for a, b in zip(heights, heights[1:])]
+        assert all(later > earlier for earlier, later in zip(drops[1:], drops[2:])), "Each step should drop further than the one before: gravity keeps adding to the speed."
+
+    def test_close_to_the_exact_answer_for_small_steps():
+        _, heights = fall(100.0, 0.0, 0.001, 2.0)
+        assert abs(heights[-1] - 80.38) < 0.02, f"With dt = 0.001 the height after 2 s should be within 2 cm of 80.38 m, not {heights[-1]:.3f} m."
+
+    def test_halving_the_step_halves_the_error():
+        def error(dt):
+            _, heights = fall(100.0, 0.0, dt, 2.0)
+            return abs(heights[-1] - (100.0 - 0.5 * 9.81 * 4.0))
+        coarse, fine = error(0.1), error(0.05)
+        assert fine > 0, "Your loop gives the exact answer, which stepping cannot do. Update y from v and v from gravity, one step at a time."
+        assert 1.7 < coarse / fine < 2.3, "Halving dt should roughly halve the error. Check that y and v each change by (rate × dt) per step."
+  hints:
+    - "The exact formula is `y0 + v0 * t - 0.5 * G * t**2`."
+    - "Euler's method moves each quantity by (its rate of change) × dt. The rate of change of `y` is `v`."
+    - "The three lines are `y += v * dt`, `v -= G * dt` and `t += dt`."
+  solution: |
+    The exact height is `y0 + v0 * t - 0.5 * G * t**2`.
+
+    Euler's method never uses that formula. It only knows the rates of change: height changes at rate $v$, and velocity changes at rate $-g$.
+
+    `y += v * dt`, then `v -= G * dt`, then `t += dt`
+
+    With $dt = 0.5$ the answer is off by more than 7 m; with $dt = 0.01$ by about 15 cm. Halving the step halves the error, which is the signature of Euler's method.
+
+- id: rocket.launch-angle
+  type: code
+  concepts: [projectile-motion, eulers-method]
+  prompt: "Split the launch speed into its two components, move `x` each step, and write the range formula. Then compare what the simulation gives with the formula."
+  starter: |
+    import math
+
+    G = 9.81
+
+    def ideal_range(speed, angle_deg):
+        """Distance to landing on flat ground with no air: v² sin(2θ) / g."""
+        # TODO
+        return 0.0
+
+    def launch(speed, angle_deg, dt=0.001):
+        """Flight path of a ball launched from the ground. Returns (xs, ys)."""
+        angle = math.radians(angle_deg)
+        x, y = 0.0, 0.0
+        vx = 0.0  # TODO: horizontal part of the launch velocity
+        vy = 0.0  # TODO: vertical part of the launch velocity
+        xs, ys = [x], [y]
+        for _ in range(1_000_000):
+            # TODO: move x. (Nothing pushes sideways, so vx never changes.)
+            y += vy * dt
+            vy -= G * dt
+            xs.append(x)
+            ys.append(y)
+            if y < 0:  # it has just gone below the ground
+                break
+        return xs, ys
+
+    def landing_distance(xs, ys):
+        """Where the path crosses the ground, between its last two points."""
+        x1, y1, x2, y2 = xs[-2], ys[-2], xs[-1], ys[-1]
+        return x1 + (x2 - x1) * y1 / (y1 - y2)
+
+    for angle in [30, 45, 60]:
+        xs, ys = launch(20.0, angle)
+        print(f"{angle}°: simulated {landing_distance(xs, ys):6.2f} m   formula {ideal_range(20.0, angle):6.2f} m")
+  tests: |
+    def test_range_formula():
+        assert abs(ideal_range(20.0, 45.0) - 40.775) < 0.01, "At 20 m/s and 45° the range is 20² · sin(90°) / 9.81 = 40.77 m. Remember math.sin wants radians."
+        assert abs(ideal_range(20.0, 30.0) - ideal_range(20.0, 60.0)) < 1e-9, "30° and 60° should give the same range: sin(60°) = sin(120°)."
+
+    def test_starts_on_the_ground_and_ends_just_below_it():
+        xs, ys = launch(20.0, 45.0)
+        assert (xs[0], ys[0]) == (0.0, 0.0), "The path should start at (0, 0)."
+        assert len(ys) > 100 and ys[-1] < 0 and ys[-2] >= 0, "The path should rise and come back down, ending with the first point below the ground. Did you set vy from the launch speed and angle?"
+
+    def test_moves_sideways_at_a_steady_speed():
+        xs, ys = launch(20.0, 60.0)
+        steps = [b - a for a, b in zip(xs, xs[1:])]
+        assert len(steps) > 100 and abs(steps[0] - 20.0 * 0.5 * 0.001) < 1e-9 and abs(steps[-1] - steps[0]) < 1e-12, "x should grow by vx·dt every step, with vx = speed · cos(angle). At 60° that is 10 m/s."
+
+    def test_simulation_agrees_with_the_formula():
+        for angle in [30.0, 45.0, 70.0]:
+            xs, ys = launch(20.0, angle)
+            assert len(xs) > 100, "The ball never took off. Check vx and vy."
+            simulated = landing_distance(xs, ys)
+            expected = 20.0**2 * math.sin(2 * math.radians(angle)) / 9.81
+            assert abs(simulated - expected) < 0.01 * expected, f"At {angle:.0f}° the simulation lands at {simulated:.2f} m but the formula says {expected:.2f} m."
+
+    def test_straight_up_comes_straight_down():
+        xs, ys = launch(20.0, 90.0)
+        assert len(xs) > 100 and abs(xs[-1]) < 1e-6 and max(ys) > 20, "Launched at 90° the ball should go straight up about 20 m and land where it started."
+  hints:
+    - "The horizontal part of the velocity is `speed * math.cos(angle)` and the vertical part is `speed * math.sin(angle)`."
+    - "Inside the loop, `x += vx * dt`. Gravity only changes `vy`, and that line is already there."
+    - "The formula is `speed**2 * math.sin(2 * math.radians(angle_deg)) / G`."
+  solution: |
+    The launch velocity splits into two independent parts:
+
+    `vx = speed * math.cos(angle)` and `vy = speed * math.sin(angle)`
+
+    Sideways nothing changes, so `x += vx * dt`. Vertically it is exactly the falling object from the last milestone.
+
+    The range formula is `speed**2 * math.sin(2 * math.radians(angle_deg)) / G`. The simulation never uses it, yet lands within a few centimetres of it: the step-by-step method really is solving the same physics.
+
+- id: rocket.thrust
+  type: code
+  concepts: [newtons-second-law, eulers-method]
+  prompt: "Give the rocket an engine. Set the thrust while there is fuel left, and burn the fuel as it flies."
+  starter: |
+    import math
+
+    G = 9.81
+
+    def rocket_flight(dry_mass, fuel_mass, burn_rate, exhaust_speed, dt=0.002):
+        """A rocket flying straight up, until it comes back to the ground.
+
+        burn_rate is in kg of fuel per second; exhaust_speed is in m/s.
+        Returns (times, heights, speeds, masses).
+        """
+        t, y, v = 0.0, 0.0, 0.0
+        fuel = fuel_mass
+        times, heights, speeds, masses = [t], [y], [v], [dry_mass + fuel]
+        for _ in range(500_000):
+            mass = dry_mass + fuel
+            # TODO: thrust is burn_rate × exhaust_speed while there is fuel, and 0 after.
+            thrust = 0.0
+            a = thrust / mass - G
+            y += v * dt
+            v += a * dt
+            # TODO: burn fuel for this step. It cannot go below zero.
+            t += dt
+            times.append(t)
+            heights.append(y)
+            speeds.append(v)
+            masses.append(dry_mass + fuel)
+            if y < 0:
+                break
+        return times, heights, speeds, masses
+
+    times, heights, speeds, masses = rocket_flight(
+        dry_mass=1.0, fuel_mass=0.5, burn_rate=0.1, exhaust_speed=300.0
+    )
+    print(f"Top speed: {max(speeds):6.1f} m/s")
+    print(f"Highest:   {max(heights):6.1f} m")
+    print(f"Flight:    {times[-1]:6.1f} s")
+    print(f"Rocket equation says the top speed should be {300.0 * math.log(1.5) - G * 5:.1f} m/s")
+  tests: |
+    def _flight(fuel=0.5, dt=0.002):
+        return rocket_flight(1.0, fuel, 0.1, 300.0, dt)
+
+    def test_leaves_the_ground():
+        times, heights, speeds, masses = _flight()
+        assert max(heights) > 50, "The rocket never took off. While there is fuel, the thrust should be burn_rate × exhaust_speed (here 30 N, about twice its weight)."
+
+    def test_gets_lighter_as_it_burns():
+        times, heights, speeds, masses = _flight()
+        assert abs(masses[0] - 1.5) < 1e-9, "It should start at dry mass + fuel = 1.5 kg."
+        halfway = masses[round(2.5 / 0.002)]
+        assert abs(halfway - 1.25) < 0.002, f"After 2.5 s it has burned 0.25 kg, so its mass should be 1.25 kg, not {halfway:.3f} kg."
+
+    def test_runs_out_of_fuel():
+        times, heights, speeds, masses = _flight()
+        assert abs(masses[-1] - 1.0) < 1e-9, f"Once the fuel is gone the mass should stay at the dry mass, 1.0 kg, not {masses[-1]:.3f} kg. Fuel must not go below zero."
+
+    def test_top_speed_matches_the_rocket_equation():
+        times, heights, speeds, masses = _flight(dt=0.001)
+        expected = 300.0 * math.log(1.5) - 9.81 * 5.0
+        assert abs(max(speeds) - expected) < 0.01 * expected, f"Top speed should be about {expected:.1f} m/s (the rocket equation), not {max(speeds):.1f} m/s. The engine must stop when the fuel runs out, after 5 s."
+
+    def test_more_fuel_goes_higher():
+        small = max(_flight(fuel=0.25)[1])
+        large = max(_flight(fuel=0.5)[1])
+        assert large > 2 * small > 0, "Doubling the fuel should much more than double the height."
+  hints:
+    - "Thrust is the fuel burned per second times how fast it leaves: `burn_rate * exhaust_speed`. Use it only `if fuel > 0`."
+    - "Each step burns `burn_rate * dt` kilograms of fuel."
+    - "`thrust = burn_rate * exhaust_speed if fuel > 0 else 0.0`, and after the motion update `fuel = max(fuel - burn_rate * dt, 0.0)`."
+  solution: |
+    While the engine burns, it pushes with a force equal to the mass thrown out per second times the speed it is thrown at:
+
+    `thrust = burn_rate * exhaust_speed if fuel > 0 else 0.0`
+
+    and every step uses up a little fuel:
+
+    `fuel = max(fuel - burn_rate * dt, 0.0)`
+
+    Because `mass` is recomputed each step, the same thrust accelerates the rocket harder and harder as it gets lighter. The top speed matches the rocket equation, $v = v_e \ln\frac{m_0}{m_f} - g\,t_b$, to within a fraction of a percent.
+
+- id: rocket.drag
+  type: code
+  concepts: [air-drag, newtons-second-law]
+  prompt: "Add air. Work out the drag force from the rocket's velocity, and make sure it always pushes against the motion."
+  starter: |
+    import math
+
+    G = 9.81
+
+    def rocket_flight(dry_mass, fuel_mass, burn_rate, exhaust_speed, drag=0.0, dt=0.002):
+        """A rocket flying straight up through air, until it lands.
+
+        drag is the constant k in the drag force k·v² (in kg/m).
+        Returns (times, heights, speeds, masses).
+        """
+        t, y, v = 0.0, 0.0, 0.0
+        fuel = fuel_mass
+        times, heights, speeds, masses = [t], [y], [v], [dry_mass + fuel]
+        for _ in range(500_000):
+            mass = dry_mass + fuel
+            thrust = burn_rate * exhaust_speed if fuel > 0 else 0.0
+            # TODO: the drag force. Its size is drag × v², and it points
+            # against the motion: down on the way up, up on the way down.
+            drag_force = 0.0
+            a = (thrust + drag_force) / mass - G
+            y += v * dt
+            v += a * dt
+            fuel = max(fuel - burn_rate * dt, 0.0)
+            t += dt
+            times.append(t)
+            heights.append(y)
+            speeds.append(v)
+            masses.append(dry_mass + fuel)
+            if y < 0:
+                break
+        return times, heights, speeds, masses
+
+    for k in [0.0, 0.002]:
+        times, heights, speeds, masses = rocket_flight(1.0, 0.5, 0.1, 300.0, drag=k)
+        print(f"drag = {k:<6} highest {max(heights):6.1f} m   top speed {max(speeds):5.1f} m/s   lands at {-speeds[-1]:5.1f} m/s")
+  tests: |
+    def _flight(drag, fuel=0.5):
+        return rocket_flight(1.0, fuel, 0.1, 300.0, drag=drag)
+
+    def test_no_drag_changes_nothing():
+        times, heights, speeds, masses = _flight(0.0)
+        assert abs(max(heights) - 429.9) < 1.0, f"With drag = 0 the rocket should still reach about 430 m, not {max(heights):.1f} m."
+
+    def test_air_lowers_the_flight():
+        without, with_air = max(_flight(0.0)[1]), max(_flight(0.002)[1])
+        assert with_air < 0.8 * without, f"With drag = 0.002 the rocket should reach well under 430 m (about 290 m), not {with_air:.1f} m."
+        assert abs(with_air - 292.5) < 3.0, f"With drag = 0.002 the highest point should be about 292 m, not {with_air:.1f} m. The force is drag × v², against the motion."
+
+    def test_drag_slows_the_fall_too():
+        speeds = _flight(0.002)[2]
+        assert -speeds[-1] < 62, f"It should land at under 60 m/s, not {-speeds[-1]:.1f} m/s. On the way down the drag must point up: check the sign."
+        assert -speeds[-1] > 50, f"It should still be falling fast when it lands (about 58 m/s), not {-speeds[-1]:.1f} m/s."
+
+    def test_never_falls_faster_than_terminal_velocity():
+        speeds = _flight(0.002, fuel=1.5)[2]
+        terminal = math.sqrt(1.0 * 9.81 / 0.002)
+        fastest_fall = -min(speeds)
+        assert 0.9 * terminal < fastest_fall <= 1.001 * terminal, f"Falling from high up, the rocket should approach but not pass its terminal velocity of {terminal:.1f} m/s. It reached {fastest_fall:.1f} m/s."
+  hints:
+    - "The size of the drag force is `drag * v**2`. But `v**2` is always positive, so that alone cannot point both ways."
+    - "`v * abs(v)` has the size of v² and the sign of v. A minus sign in front makes it point against the motion."
+    - "`drag_force = -drag * v * abs(v)`"
+  solution: |
+    Drag grows with the square of the speed and always opposes the motion:
+
+    `drag_force = -drag * v * abs(v)`
+
+    Writing `v * abs(v)` instead of `v**2` keeps the sign of the velocity, so one line is right both going up and coming down.
+
+    With air the rocket reaches about 292 m instead of 430 m, and lands at 58 m/s instead of 92 m/s. Dropped from higher up it settles at its terminal velocity, $\sqrt{mg/k} \approx 70$ m/s, where drag balances weight.
+
+- id: rocket.target-altitude
+  type: code
+  concepts: [eulers-method, air-drag]
+  prompt: "Write `apogee`, then `fuel_for_altitude`, which finds how much fuel reaches a target height. Run it to see the flight you tuned."
+  starter: |
+    import matplotlib.pyplot as plt
+
+    G = 9.81
+
+    def rocket_flight(dry_mass, fuel_mass, burn_rate, exhaust_speed, drag=0.0, dt=0.002):
+        """A rocket flying straight up through air, until it lands.
+
+        Returns (times, heights, speeds, masses).
+        """
+        t, y, v = 0.0, 0.0, 0.0
+        fuel = fuel_mass
+        times, heights, speeds, masses = [t], [y], [v], [dry_mass + fuel]
+        for _ in range(500_000):
+            mass = dry_mass + fuel
+            thrust = burn_rate * exhaust_speed if fuel > 0 else 0.0
+            drag_force = -drag * v * abs(v)
+            a = (thrust + drag_force) / mass - G
+            y += v * dt
+            v += a * dt
+            fuel = max(fuel - burn_rate * dt, 0.0)
+            t += dt
+            times.append(t)
+            heights.append(y)
+            speeds.append(v)
+            masses.append(dry_mass + fuel)
+            if y < 0:
+                break
+        return times, heights, speeds, masses
+
+    def apogee(fuel_mass, dry_mass=1.0, burn_rate=0.1, exhaust_speed=300.0, drag=0.002):
+        """The highest point the rocket reaches, in metres."""
+        # TODO: fly the rocket and return its greatest height.
+        return 0.0
+
+    def fuel_for_altitude(target, dry_mass=1.0, burn_rate=0.1, exhaust_speed=300.0, drag=0.002):
+        """How many kg of fuel make the rocket's apogee equal the target height.
+
+        More fuel always goes higher (up to 2 kg), so close in on the answer:
+        keep a range [low, high] that contains it, try the middle, and keep
+        the half the answer is in.
+        """
+        low, high = 0.0, 2.0
+        for _ in range(25):
+            middle = (low + high) / 2
+            # TODO: if this much fuel overshoots the target, the answer is
+            # in the lower half; otherwise it is in the upper half.
+            pass
+        return (low + high) / 2
+
+    target = 400.0
+    fuel = fuel_for_altitude(target)
+    print(f"To reach {target:.0f} m, load {fuel:.3f} kg of fuel.")
+    print(f"That flight peaks at {apogee(fuel):.1f} m.")
+
+    times, heights, speeds, masses = rocket_flight(1.0, fuel, 0.1, 300.0, drag=0.002)
+    plt.plot(times, heights)
+    plt.axhline(target, linestyle="--", color="gray")
+    plt.xlabel("time (s)")
+    plt.ylabel("altitude (m)")
+    plt.title("Rocket flight")
+    plt.show()
+  tests: |
+    def test_apogee_is_the_highest_point():
+        heights = rocket_flight(1.0, 0.5, 0.1, 300.0, drag=0.002)[1]
+        assert abs(apogee(0.5) - max(heights)) < 1e-9, f"apogee(0.5) should be the greatest height of that flight, {max(heights):.1f} m, not {apogee(0.5):.1f} m."
+        assert apogee(0.5, drag=0.0) > apogee(0.5), "apogee should pass its settings on to rocket_flight: with no drag the rocket goes higher."
+
+    def test_finds_the_fuel_for_400_metres():
+        fuel = fuel_for_altitude(400.0)
+        assert 0.0 < fuel < 2.0, f"The fuel should be between 0 and 2 kg, not {fuel:.3f} kg."
+        reached = max(rocket_flight(1.0, fuel, 0.1, 300.0, drag=0.002)[1])
+        assert abs(reached - 400.0) < 4.0, f"With {fuel:.3f} kg of fuel the rocket peaks at {reached:.1f} m, not within 4 m of 400 m."
+
+    def test_higher_targets_need_more_fuel():
+        assert fuel_for_altitude(200.0) < fuel_for_altitude(400.0) < fuel_for_altitude(600.0), "A higher target should need more fuel."
+
+    def test_works_without_air():
+        fuel = fuel_for_altitude(400.0, drag=0.0)
+        reached = max(rocket_flight(1.0, fuel, 0.1, 300.0, drag=0.0)[1])
+        assert abs(reached - 400.0) < 4.0, f"With no air and {fuel:.3f} kg of fuel the rocket peaks at {reached:.1f} m, not within 4 m of 400 m. Pass drag on to apogee."
+  hints:
+    - "`apogee` is one line: fly the rocket with `rocket_flight(dry_mass, fuel_mass, burn_rate, exhaust_speed, drag=drag)` and take `max` of the heights, which are the second thing it returns."
+    - "In the loop, compare `apogee(middle, dry_mass, burn_rate, exhaust_speed, drag)` with `target`."
+    - "If it is above the target, `high = middle`. Otherwise `low = middle`."
+  solution: |
+    The apogee is the largest height in the flight:
+
+    `return max(rocket_flight(dry_mass, fuel_mass, burn_rate, exhaust_speed, drag=drag)[1])`
+
+    To find the fuel, halve the range each time, keeping the half that contains the answer:
+
+    `if apogee(middle, dry_mass, burn_rate, exhaust_speed, drag) > target: high = middle` and otherwise `low = middle`
+
+    Twenty-five halvings narrow 2 kg down to less than a millionth of a gram. This is the bisection method, and it works for any quantity that only goes up as you turn the dial.
+
+    You now have a rocket simulator: gravity, thrust, a changing mass, air drag, and a way to tune a launch. Every line of physics in it is Newton's second law, stepped forward a little at a time.

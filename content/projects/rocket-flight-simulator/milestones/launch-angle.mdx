@@ -1,0 +1,56 @@
+---
+id: launch-angle
+title: Launch at an angle
+summary: Go two-dimensional, and check your simulation against a formula.
+requires: [projectile-motion, velocity]
+check: rocket.launch-angle
+estimatedMinutes: 20
+---
+
+So far everything has moved along one line. Now launch something at an angle
+and it moves in two directions at once. Try it:
+
+<Interactive id="projectile-sim" props={{ speed: 20, angle: 30 }} />
+
+Launch at 30°, then at 60°. They land in the same place. Then try 45°.
+
+### Two motions, side by side
+
+The trick to two dimensions is that the two directions do not interfere.
+Split the launch velocity into a horizontal and a vertical part:
+
+$$
+v_x = v\cos\theta \qquad\qquad v_y = v\sin\theta
+$$
+
+- **Sideways** nothing pushes or pulls, so $v_x$ never changes. This is the
+  constant-velocity point from the first milestone.
+- **Vertically** gravity acts, so $v_y$ changes. This is the falling object
+  from the second.
+
+Run both at once and you get the curved path.
+
+### Something to check against
+
+With no air and flat ground, the distance to landing has a neat formula:
+
+$$
+R = \frac{v^2 \sin(2\theta)}{g}
+$$
+
+It explains what you saw: $\sin(2\theta)$ is the same for 30° and 60°, and
+largest at 45°. Your simulation will not use this formula at all. If the two
+agree anyway, you can trust the simulation when there is no formula to check
+against, which is exactly where the rocket is heading.
+
+<Callout kind="tip" title="Radians">
+
+Python's `math.sin` and `math.cos` expect radians. `math.radians(angle_deg)`
+converts from degrees.
+
+</Callout>
+
+### Your task
+
+Set `vx` and `vy` from the launch speed and angle, move `x` inside the loop,
+and write `ideal_range`.

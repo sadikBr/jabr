@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 const lesson = "/courses/calculus-essentials/derivatives/what-is-a-derivative";
 

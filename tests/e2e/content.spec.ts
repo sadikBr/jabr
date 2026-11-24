@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 const lesson = "/courses/calculus-essentials/derivatives/what-is-a-derivative";
 const explainer =
@@ -24,7 +24,7 @@ test("course catalog leads to a course and on to a lesson", async ({
   await expect(page.getByText("Coming soon").first()).toBeVisible();
   await expectNoSidewaysScroll(page);
 
-  await page.getByRole("link", { name: /Start with/ }).click();
+  await page.getByTestId("continue-card").click();
   await expect(page).toHaveURL(lesson);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
     "What is a derivative?",

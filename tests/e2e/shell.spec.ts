@@ -1,10 +1,16 @@
-import { expect, test } from "@playwright/test";
+import { expect, test } from "./fixtures";
 
 const sections = [
   { name: "Explore", path: "/explore" },
   { name: "Courses", path: "/courses" },
   { name: "Projects", path: "/projects" },
 ] as const;
+// In the navigation, but not one of the landing page's three entry points.
+const progress = {
+  name: "Progress",
+  path: "/dashboard",
+  heading: "Your progress",
+};
 
 test("landing page shows the three entry points", async ({ page }) => {
   await page.goto("/");
@@ -32,8 +38,21 @@ test("main navigation reaches every section", async ({ page }) => {
   }
 });
 
+test("the progress page is in the main navigation", async ({ page }) => {
+  await page.goto("/");
+  const nav = page.getByRole("navigation", { name: "Main navigation" });
+  await nav
+    .getByRole("link", { name: progress.name })
+    .filter({ visible: true })
+    .click();
+  await expect(page).toHaveURL(progress.path);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    progress.heading,
+  );
+});
+
 test("pages do not scroll sideways", async ({ page }) => {
-  for (const path of ["/", ...sections.map((s) => s.path)]) {
+  for (const path of ["/", progress.path, ...sections.map((s) => s.path)]) {
     await page.goto(path);
     const overflow = await page.evaluate(
       () =>

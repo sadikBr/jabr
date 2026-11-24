@@ -92,10 +92,30 @@
       "mini": "Mini project"
     },
     "uses": "You'll use",
-    "note": "Projects open once code labs are ready. The plans are below.",
+    "note": "Projects that are still being written are listed with their plan.",
     "readiness": "Ready for {percent}% of what it needs",
     "learnFirst": "Learn first",
-    "readyAll": "You're practising everything this needs."
+    "readyAll": "You're practising everything this needs.",
+    "back": "All projects",
+    "open": "Open the project",
+    "milestoneCount": "{count, plural, one {# milestone} other {# milestones}}",
+    "aboutHours": "About {hours, plural, one {# hour} other {# hours}}",
+    "milestonesTitle": "Milestones",
+    "milestoneOf": "Milestone {current} of {total}",
+    "milestonePassed": "Passed",
+    "milestoneStarted": "In progress",
+    "progress": "{passed} of {total} milestones passed",
+    "start": "Start here",
+    "continue": "Continue",
+    "complete": "Project complete. You built it!",
+    "readinessTitle": "Are you ready?",
+    "buildsOn": "This milestone builds on the one before it, which you haven't passed yet:",
+    "passedTitle": "Milestone passed!",
+    "passedBody": "Your code does what it should. On to the next piece.",
+    "completeTitle": "Project complete!",
+    "completeBody": "That was the last milestone. You built the whole thing, from an empty loop to a tuned launch.",
+    "nextMilestone": "Next",
+    "backToProject": "Back to the project"
   },
   "common": {
     "backHome": "Back to home",
@@ -417,7 +437,9 @@
     "events": {
       "mastered": "Mastered {name}",
       "lesson-completed": "Finished {name}",
-      "goal": "Reached the goal in {name}"
+      "goal": "Reached the goal in {name}",
+      "milestone-passed": "Passed the milestone “{name}”",
+      "project-completed": "Completed the project {name}"
     },
     "lessonDone": "Finished",
     "lessonStarted": "In progress",
@@ -436,7 +458,8 @@
       "fileName": "jabr-progress"
     },
     "daysAgo": "{days, plural, =0 {Today} =1 {Yesterday} other {# days ago}}",
-    "prerequisiteFor": "First, for “{lesson}”"
+    "prerequisiteFor": "First, for “{lesson}”",
+    "projectsTitle": "Projects"
   },
   "map": {
     "title": "Knowledge map",
@@ -458,8 +481,8 @@
   },
   "prerequisites": {
     "title": "You'll use",
-    "ready": "You're practising everything this lesson builds on. Go for it.",
-    "gaps": "{count, plural, one {One of these is new to you.} other {Some of these are new to you.}} A quick look first will make this lesson easier.",
+    "ready": "You're practising everything this builds on. Go for it.",
+    "gaps": "{count, plural, one {One of these is new to you.} other {Some of these are new to you.}} A quick look first will make this easier.",
     "refresh": "Learn it in “{lesson}”",
     "read": "Read about it"
   },

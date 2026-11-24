@@ -35,7 +35,13 @@ export interface ProgressCatalog {
   }[];
   /** Questions that practise each concept, for review sessions. */
   questionsByConcept: Record<string, { id: string; type: QuestionType }[]>;
-  projects: { id: string; title: string; concepts: string[] }[];
+  /** Written projects, with their milestones in order. */
+  projects: {
+    id: string;
+    title: string;
+    href: string;
+    milestones: { key: string; title: string; href: string }[];
+  }[];
   /** Interactive titles by id. */
   interactives: Record<string, string>;
 }

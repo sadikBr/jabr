@@ -1,6 +1,6 @@
 "use client";
 
-import { BookCheck, Flag, Network, Sprout } from "lucide-react";
+import { BookCheck, Flag, Hammer, Network, Sprout, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -8,7 +8,7 @@ import { useState } from "react";
 import { ConceptChips } from "@/components/content/concept-chip";
 import { Button } from "@/components/ui/button";
 import { masteryStatuses } from "@/lib/mastery/mastery";
-import { isEmptyProgress } from "@/lib/progress/schema";
+import { isEmptyProgress, type ProgressEvent } from "@/lib/progress/schema";
 import {
   conceptStatus,
   countByStatus,
@@ -22,11 +22,14 @@ import { DataControls } from "./data-controls";
 import { ReviewCard } from "./review-card";
 import { CourseProgressBar } from "./lesson-status";
 import { MasteryIcon } from "./mastery-icon";
+import { ProjectProgressBar } from "./milestone-status";
 
 const eventIcons = {
   mastered: null, // uses the mastery ring
   "lesson-completed": BookCheck,
   goal: Flag,
+  "milestone-passed": Hammer,
+  "project-completed": Trophy,
 } as const;
 
 /** Whole calendar days from one moment to another, in the learner's time zone. */
@@ -70,12 +73,22 @@ export function DashboardView({ catalog }: { catalog: ProgressCatalog }) {
     );
   const recent = [...progress.events].reverse().slice(0, 8);
 
-  const eventName = (kind: string, id: string) =>
-    kind === "mastered"
-      ? catalog.concepts.find((concept) => concept.id === id)?.title
-      : kind === "lesson-completed"
-        ? catalog.lessons.find((lesson) => lesson.key === id)?.title
-        : catalog.interactives[id];
+  const eventName = (kind: ProgressEvent["kind"], id: string) => {
+    switch (kind) {
+      case "mastered":
+        return catalog.concepts.find((concept) => concept.id === id)?.title;
+      case "lesson-completed":
+        return catalog.lessons.find((lesson) => lesson.key === id)?.title;
+      case "goal":
+        return catalog.interactives[id];
+      case "milestone-passed":
+        return catalog.projects
+          .flatMap((project) => project.milestones)
+          .find((milestone) => milestone.key === id)?.title;
+      case "project-completed":
+        return catalog.projects.find((project) => project.id === id)?.title;
+    }
+  };
 
   if (empty) {
     const first = catalog.lessons[0];
@@ -167,6 +180,33 @@ export function DashboardView({ catalog }: { catalog: ProgressCatalog }) {
           ))}
         </ul>
       </section>
+
+      {catalog.projects.length > 0 ? (
+        <section>
+          <h2 className="mb-3 text-xl font-semibold">
+            {t("progress.projectsTitle")}
+          </h2>
+          <ul className="grid gap-4 md:grid-cols-2">
+            {catalog.projects.map((project) => (
+              <li key={project.id}>
+                <Link
+                  href={project.href}
+                  className="lift block rounded-2xl border bg-card p-5 hover:border-accent"
+                >
+                  <span className="block text-lg font-semibold">
+                    {project.title}
+                  </span>
+                  <ProjectProgressBar
+                    milestoneKeys={project.milestones.map((m) => m.key)}
+                    always
+                    className="mt-3"
+                  />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
         <section>

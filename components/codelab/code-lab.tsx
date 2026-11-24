@@ -47,7 +47,14 @@ type Phase =
  * A Python editor that runs in the browser. With tests it is a graded
  * exercise; without, a playground. The learner's code is kept on this device.
  */
-export function CodeLab({ view }: { view: QuestionView }) {
+export function CodeLab({
+  view,
+  onPassed,
+}: {
+  view: QuestionView;
+  /** Called each time a run passes every test. */
+  onPassed?: () => void;
+}) {
   const t = useTranslations("codelab");
   const starter = view.code?.starter ?? "";
   const tests = view.code?.tests;
@@ -112,6 +119,7 @@ export function CodeLab({ view }: { view: QuestionView }) {
       outcome.tests.length > 0 &&
       outcome.tests.every((test) => test.passed)
     ) {
+      onPassed?.();
       setChanges(
         recordAttempt({
           questionId: view.id,

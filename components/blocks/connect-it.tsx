@@ -3,6 +3,7 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 
 import { ConceptChips } from "@/components/content/concept-chip";
+import { projectHref } from "@/lib/content/projects";
 import { getConcepts, getExplainer, getProject } from "@/lib/content/queries";
 import { content } from "@/lib/content/source";
 
@@ -33,7 +34,7 @@ export async function ConnectIt({
       const project = getProject(content, id);
       return project
         ? {
-            href: "/projects",
+            href: projectHref(project),
             label: t("common.project"),
             icon: Hammer,
             ...project,

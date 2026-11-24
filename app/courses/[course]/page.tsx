@@ -20,6 +20,7 @@ import {
   getProject,
   lessonHref,
 } from "@/lib/content/queries";
+import { projectHref } from "@/lib/content/projects";
 import { content } from "@/lib/content/source";
 import { buildProgressCatalog } from "@/lib/progress/catalog.server";
 import { cn } from "@/lib/utils";
@@ -171,7 +172,7 @@ export default async function CoursePage({ params }: Props) {
                         <Hammer className="size-3.5" />
                       </span>
                       <Link
-                        href="/projects"
+                        href={projectHref(project)}
                         className="block rounded-xl border border-accent/50 bg-accent/10 p-4 transition-colors hover:border-accent"
                       >
                         <span className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
@@ -191,7 +192,7 @@ export default async function CoursePage({ params }: Props) {
 
         {capstone ? (
           <Link
-            href="/projects"
+            href={projectHref(capstone)}
             className="group mt-12 flex items-start gap-4 rounded-2xl border bg-card p-6 transition-colors hover:border-accent"
           >
             <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-accent text-accent-foreground">

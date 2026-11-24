@@ -15,6 +15,7 @@ import {
   getConcepts,
   lessonHref,
 } from "@/lib/content/queries";
+import { projectHref } from "@/lib/content/projects";
 import { content } from "@/lib/content/source";
 
 type Props = PageProps<"/concepts/[id]">;
@@ -62,7 +63,7 @@ export default async function ConceptPage({ params }: Props) {
     })),
     ...usage.projects.map((project) => ({
       key: project.id,
-      href: "/projects",
+      href: projectHref(project),
       icon: Hammer,
       label: t("common.project"),
       title: project.title,

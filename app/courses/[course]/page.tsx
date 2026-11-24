@@ -82,7 +82,7 @@ export default async function CoursePage({ params }: Props) {
         {/* Start, resume or move on, depending on the learner's progress. */}
         <ContinueCard
           lessons={catalog.lessons.filter(
-            (lesson) => lesson.courseTitle === course.title,
+            (lesson) => lesson.courseId === course.id,
           )}
           className="mt-6 max-w-xl"
         />

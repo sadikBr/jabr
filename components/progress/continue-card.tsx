@@ -4,23 +4,33 @@ import { ArrowRight, Play } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 
-import { continueLesson } from "@/lib/progress/summary";
 import { isEmptyProgress } from "@/lib/progress/schema";
 import { useProgress } from "@/lib/progress/use-progress";
+import { nextStep } from "@/lib/recommend/recommend";
 import { cn } from "@/lib/utils";
 
 import type { ProgressCatalog } from "./catalog";
 
+type Lesson = ProgressCatalog["lessons"][number];
+
+type Suggestion =
+  | { kind: "resume"; lesson: Lesson; step: number }
+  | { kind: "start" | "next"; lesson: Lesson }
+  /** `lesson` teaches something that `forLesson` needs. */
+  | { kind: "prerequisite"; lesson: Lesson; forLesson: Lesson };
+
 /**
- * The lesson to carry on with: the one in progress, or the next one not yet
- * started. With `onlyReturning`, nothing is shown to a first-time visitor.
+ * The lesson to carry on with. A lesson already in progress comes first;
+ * otherwise it is the next step through the lessons given, which may be an
+ * earlier lesson that fills a gap (see lib/recommend).
+ * With `onlyReturning`, nothing is shown to a first-time visitor.
  */
 export function ContinueCard({
   lessons,
   onlyReturning = false,
   className,
 }: {
-  lessons: ProgressCatalog["lessons"];
+  lessons: Lesson[];
   onlyReturning?: boolean;
   className?: string;
 }) {
@@ -28,12 +38,52 @@ export function ContinueCard({
   const progress = useProgress();
   if (onlyReturning && isEmptyProgress(progress)) return null;
 
-  const target = continueLesson(
-    progress,
-    lessons.map((lesson) => lesson.key),
-  );
-  const lesson = target && lessons.find((item) => item.key === target.key);
-  if (!target || !lesson) {
+  const find = (key: string) => lessons.find((lesson) => lesson.key === key);
+  const suggestion = ((): Suggestion | null => {
+    const inProgress = lessons
+      .filter((lesson) => progress.lessons[lesson.key]?.status === "started")
+      .sort(
+        (a, b) =>
+          progress.lessons[b.key]!.updatedAt -
+          progress.lessons[a.key]!.updatedAt,
+      )[0];
+    // "Started" from the moment a lesson is opened; only offer to resume one
+    // the learner actually got into.
+    if (inProgress && progress.lessons[inProgress.key]!.lastStep > 0) {
+      return {
+        kind: "resume",
+        lesson: inProgress,
+        step: progress.lessons[inProgress.key]!.lastStep,
+      };
+    }
+
+    const step = nextStep(
+      lessons.map((lesson) => ({ ...lesson, ready: true })),
+      {
+        mastery: Object.fromEntries(
+          Object.entries(progress.mastery).map(([id, m]) => [id, m.score]),
+        ),
+        completedLessons: new Set(
+          lessons
+            .filter(
+              (lesson) => progress.lessons[lesson.key]?.status === "completed",
+            )
+            .map((lesson) => lesson.key),
+        ),
+      },
+    );
+    if (step.kind === "done") return null;
+    const lesson = find(step.lessonKey);
+    if (!lesson) return null;
+    if (step.kind === "prerequisite") {
+      const forLesson = find(step.forLesson);
+      if (forLesson) return { kind: "prerequisite", lesson, forLesson };
+    }
+    const untouched = lessons.every((item) => !progress.lessons[item.key]);
+    return { kind: untouched ? "start" : "next", lesson };
+  })();
+
+  if (!suggestion) {
     return onlyReturning ? null : (
       <p
         className={cn(
@@ -45,8 +95,16 @@ export function ContinueCard({
       </p>
     );
   }
-  const resuming = progress.lessons[lesson.key]?.status === "started";
-  const firstTime = lessons.every((item) => !progress.lessons[item.key]);
+
+  const { lesson } = suggestion;
+  const label =
+    suggestion.kind === "resume"
+      ? t("continueResume")
+      : suggestion.kind === "start"
+        ? t("continueStart")
+        : suggestion.kind === "prerequisite"
+          ? t("prerequisiteFor", { lesson: suggestion.forLesson.title })
+          : t("continueNew");
 
   return (
     <Link
@@ -63,20 +121,15 @@ export function ContinueCard({
       </span>
       <span className="min-w-0 flex-1">
         <span className="block text-xs font-semibold tracking-wide text-tone uppercase">
-          {resuming
-            ? t("continueResume")
-            : firstTime
-              ? t("continueStart")
-              : t("continueNew")}{" "}
-          · {lesson.courseTitle}
+          {label} · {lesson.courseTitle}
         </span>
         <span className="block truncate text-lg font-semibold">
           {lesson.title}
         </span>
-        {resuming ? (
+        {suggestion.kind === "resume" ? (
           <span className="block text-sm text-muted-foreground">
             {t("continueStep", {
-              current: Math.min(target.step + 1, lesson.steps),
+              current: Math.min(suggestion.step + 1, lesson.steps),
               total: lesson.steps,
             })}
           </span>

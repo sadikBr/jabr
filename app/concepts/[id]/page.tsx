@@ -1,4 +1,4 @@
-import { ArrowRight, BookOpen, Compass, Hammer } from "lucide-react";
+import { ArrowRight, BookOpen, Compass, Hammer, Network } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -92,6 +92,13 @@ export default async function ConceptPage({ params }: Props) {
 
       <div className="mt-8 max-w-md">
         <MasteryMeter conceptId={concept.id} />
+        <Link
+          href={`/map#${concept.id}`}
+          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+        >
+          <Network aria-hidden="true" className="size-4" />
+          {t("map.seeOnMap")}
+        </Link>
       </div>
 
       {/* The concept's place in the graph: what it needs, what it unlocks. */}

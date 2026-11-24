@@ -8,6 +8,7 @@ import { LessonDeck } from "@/components/blocks/lesson-deck";
 import { ConceptChips } from "@/components/content/concept-chip";
 import { MdxContent } from "@/components/content/mdx-content";
 import { Container } from "@/components/layout/page-shell";
+import { PrerequisitePanel } from "@/components/progress/prerequisite-panel";
 import { Button } from "@/components/ui/button";
 import {
   getConcepts,
@@ -17,6 +18,7 @@ import {
   lessonNeighbours,
 } from "@/lib/content/queries";
 import { content } from "@/lib/content/source";
+import { learnLink } from "@/lib/progress/catalog.server";
 import type { StepKind } from "@/lib/content/vocabulary";
 
 type Props = PageProps<"/courses/[course]/[module]/[lesson]">;
@@ -94,7 +96,14 @@ export default async function LessonPage({ params }: Props) {
                 {t("lesson.youWillUse")}
               </dt>
               <dd>
-                <ConceptChips concepts={requires} />
+                <PrerequisitePanel
+                  concepts={requires.map(({ id, title, subject }) => ({
+                    id,
+                    title,
+                    subject,
+                    learn: learnLink(id, lesson.key),
+                  }))}
+                />
               </dd>
             </div>
           ) : null}

@@ -5,8 +5,10 @@ import { getTranslations } from "next-intl/server";
 import { ConceptChips } from "@/components/content/concept-chip";
 import { SubjectBadge } from "@/components/content/subject";
 import { Container, PageHeader } from "@/components/layout/page-shell";
+import { ProjectReadiness } from "@/components/progress/project-readiness";
 import { getConcepts } from "@/lib/content/queries";
 import { content } from "@/lib/content/source";
+import { learnLink } from "@/lib/progress/catalog.server";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("projects");
@@ -67,6 +69,13 @@ export default async function ProjectsPage() {
                 {t("projects.uses")}
               </p>
               <ConceptChips concepts={getConcepts(content, project.concepts)} />
+              <div className="mt-5 border-t pt-4">
+                <ProjectReadiness
+                  concepts={getConcepts(content, project.concepts).map(
+                    ({ id, title }) => ({ id, title, learn: learnLink(id) }),
+                  )}
+                />
+              </div>
             </li>
           );
         })}

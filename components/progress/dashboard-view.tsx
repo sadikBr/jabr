@@ -1,6 +1,6 @@
 "use client";
 
-import { BookCheck, Flag, Sprout } from "lucide-react";
+import { BookCheck, Flag, Network, Sprout } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -19,6 +19,7 @@ import { useProgress } from "@/lib/progress/use-progress";
 import type { ProgressCatalog } from "./catalog";
 import { ContinueCard } from "./continue-card";
 import { DataControls } from "./data-controls";
+import { ReviewCard } from "./review-card";
 import { CourseProgressBar } from "./lesson-status";
 import { MasteryIcon } from "./mastery-icon";
 
@@ -117,7 +118,10 @@ export function DashboardView({ catalog }: { catalog: ProgressCatalog }) {
         <h2 className="mb-3 text-xl font-semibold">
           {t("progress.continueTitle")}
         </h2>
-        <ContinueCard lessons={catalog.lessons} />
+        <div className="grid gap-4 lg:grid-cols-2">
+          <ContinueCard lessons={catalog.lessons} />
+          <ReviewCard questionsByConcept={catalog.questionsByConcept} />
+        </div>
       </section>
 
       <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -217,6 +221,21 @@ export function DashboardView({ catalog }: { catalog: ProgressCatalog }) {
           )}
         </section>
       </div>
+
+      <Link
+        href="/map"
+        className="lift group flex items-center gap-4 rounded-2xl border bg-card p-5 hover:border-primary/50"
+      >
+        <span className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-secondary text-secondary-foreground">
+          <Network aria-hidden="true" className="size-6" />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block text-lg font-semibold">{t("map.open")}</span>
+          <span className="block text-sm text-muted-foreground">
+            {t("map.openBody")}
+          </span>
+        </span>
+      </Link>
 
       <DataControls key="data" />
     </div>

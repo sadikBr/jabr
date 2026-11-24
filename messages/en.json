@@ -92,7 +92,10 @@
       "mini": "Mini project"
     },
     "uses": "You'll use",
-    "note": "Projects open once code labs are ready. The plans are below."
+    "note": "Projects open once code labs are ready. The plans are below.",
+    "readiness": "Ready for {percent}% of what it needs",
+    "learnFirst": "Learn first",
+    "readyAll": "You're practising everything this needs."
   },
   "common": {
     "backHome": "Back to home",
@@ -432,6 +435,65 @@
       "importFailed": "That file isn't a Jabr progress export.",
       "fileName": "jabr-progress"
     },
-    "daysAgo": "{days, plural, =0 {Today} =1 {Yesterday} other {# days ago}}"
+    "daysAgo": "{days, plural, =0 {Today} =1 {Yesterday} other {# days ago}}",
+    "prerequisiteFor": "First, for “{lesson}”"
+  },
+  "map": {
+    "title": "Knowledge map",
+    "lead": "Every concept and how they connect. Arrows run from what you need first to what it leads to.",
+    "all": "Everything",
+    "filterLabel": "Highlight a subject or course",
+    "viewLabel": "Show as",
+    "views": {
+      "map": "Map",
+      "list": "List"
+    },
+    "ready": "Ready to learn",
+    "canvasLabel": "Map of concepts. Each concept is a link to its page.",
+    "help": "Drag to move around, pinch or scroll to zoom. Select a concept to open it.",
+    "listHelp": "The same concepts as a list, grouped by subject.",
+    "open": "Open the knowledge map",
+    "openBody": "See how everything you're learning fits together.",
+    "seeOnMap": "See it on the map"
+  },
+  "prerequisites": {
+    "title": "You'll use",
+    "ready": "You're practising everything this lesson builds on. Go for it.",
+    "gaps": "{count, plural, one {One of these is new to you.} other {Some of these are new to you.}} A quick look first will make this lesson easier.",
+    "refresh": "Learn it in “{lesson}”",
+    "read": "Read about it"
+  },
+  "review": {
+    "title": "Review",
+    "lead": "A few quick questions on what you've mastered, timed so you don't forget it.",
+    "dueTitle": "{count, plural, one {# concept is due} other {# concepts are due}}",
+    "dueBody": "About {questions, plural, one {# question} other {# questions}}. It only takes a few minutes.",
+    "start": "Start review",
+    "noneTitle": "All caught up",
+    "noneNext": "Your next review is {days, plural, =0 {later today} =1 {tomorrow} other {in # days}}.",
+    "early": "Review early anyway",
+    "emptyTitle": "Nothing to review yet",
+    "emptyBody": "When you master a concept, it comes back here a few days later so it stays with you.",
+    "emptyCta": "Go to your progress",
+    "progress": "Question {current} of {total}",
+    "reviewing": "Reviewing",
+    "next": "Next question",
+    "finish": "Finish review",
+    "loading": "Getting your questions…",
+    "loadFailed": "Couldn't load the questions. Check your connection and try again.",
+    "retry": "Try again",
+    "doneTitle": "Review complete",
+    "doneBody": "Here's how it went and when each concept comes back.",
+    "ratings": {
+      "good": "Solid",
+      "hard": "Needed a hint",
+      "again": "Needs another look"
+    },
+    "nextIn": "{days, plural, =0 {Back later today} =1 {Back tomorrow} other {Back in # days}}",
+    "backToProgress": "Back to your progress",
+    "cardTitle": "Reviews",
+    "cardDue": "{count, plural, one {# concept to review} other {# concepts to review}}",
+    "cardNone": "Nothing due",
+    "cardEmpty": "Master a concept to start reviewing"
   }
 }

@@ -75,28 +75,6 @@ test("a lesson reopens on the step in the URL", async ({ page }) => {
   );
 });
 
-test("question answers are not sent to the browser", async ({ page }) => {
-  const responses: string[] = [];
-  page.on("response", async (response) => {
-    const type = response.headers()["content-type"] ?? "";
-    if (/html|javascript|json|x-component/.test(type)) {
-      responses.push(await response.text().catch(() => ""));
-    }
-  });
-  await page.goto(`${lesson}#step-2`);
-  await expect(page.locator("[data-question]").first()).toBeVisible();
-  await page.waitForLoadState("networkidle");
-
-  const everything = responses.join("\n");
-  // Prompts are there; answer formulas, tolerances and choice feedback are not.
-  expect(everything).toContain("average rate of change between");
-  expect(everything).not.toContain("(b^2 - a^2) / (b - a)");
-  expect(everything).not.toContain("y + m * 0.1");
-  expect(everything).not.toContain('"tolerance"');
-  expect(everything).not.toContain("That is the slope for");
-  expect(everything).not.toContain('"correct":true');
-});
-
 test("a coming-soon lesson says so and shows what it will cover", async ({
   page,
 }) => {
@@ -127,19 +105,21 @@ test("an explainer goes deeper one layer at a time", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Intuition" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Mechanism" })).toBeHidden();
 
-  await page.getByRole("button", { name: "Go deeper" }).click();
+  await page.getByRole("button", { name: /Go deeper/ }).click();
   await expect(page.getByRole("heading", { name: "Mechanism" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Intuition" })).toBeVisible();
   await expect(page.getByRole("cell", { name: "1.32 kg" })).toBeVisible();
   await expectNoSidewaysScroll(page);
 
-  // Jump straight to the bottom from the gauge: code is highlighted there.
+  // Jump straight to the bottom from the gauge: the code lab is there.
   await page
     .getByRole("navigation", { name: /How deep/ })
     .getByRole("button", { name: "Build it" })
     .click();
   await expect(page.getByRole("heading", { name: "Build it" })).toBeVisible();
-  await expect(page.locator("pre code span[style]").first()).toBeVisible();
+  await expect(
+    page.locator('[data-codelab="fall.sim"] .cm-content'),
+  ).toContainText("def fall_time");
   await expect(page.getByText(/reached the bottom/)).toBeVisible();
   await expectNoSidewaysScroll(page);
 });

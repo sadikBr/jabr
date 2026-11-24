@@ -3,6 +3,7 @@ import {
   type MasteryStatus,
   updateMastery,
 } from "@/lib/mastery/mastery";
+import { firstCard, rateCard, type ReviewRating } from "@/lib/review/schedule";
 
 import {
   MAX_ATTEMPTS,
@@ -58,6 +59,7 @@ export function applyAttempt(
   const priorCorrectSame = solvedSeeds.filter((s) => s === input.seed).length;
 
   const mastery = { ...progress.mastery };
+  const reviews = { ...progress.reviews };
   const changes: MasteryChange[] = [];
   const events: ProgressEvent[] = [];
   for (const conceptId of new Set(input.concepts)) {
@@ -79,13 +81,17 @@ export function applyAttempt(
       masteredAt: firstTimeMastered ? now : before?.masteredAt,
     };
     if (from !== to) changes.push({ conceptId, from, to });
-    if (firstTimeMastered)
+    if (firstTimeMastered) {
       events.push({ kind: "mastered", id: conceptId, at: now });
+      // A mastered concept comes back for review so it stays mastered.
+      reviews[conceptId] ??= firstCard(now);
+    }
   }
 
   const next: Progress = {
     ...progress,
     mastery,
+    reviews,
     questions: {
       ...progress.questions,
       [input.questionId]: {
@@ -190,6 +196,24 @@ export function applyLessonCompleted(
     },
     [{ kind: "lesson-completed", id: lessonKey, at: now }],
   );
+}
+
+/**
+ * Records the outcome of reviewing a concept: its card is rescheduled.
+ * (The answers themselves went through applyAttempt and updated mastery.)
+ */
+export function applyReview(
+  progress: Progress,
+  conceptId: string,
+  rating: ReviewRating,
+  now: number,
+): Progress {
+  const card = progress.reviews[conceptId];
+  if (!card) return progress;
+  return {
+    ...progress,
+    reviews: { ...progress.reviews, [conceptId]: rateCard(card, rating, now) },
+  };
 }
 
 /** Records the first time an interactive's goal is reached on a page. */

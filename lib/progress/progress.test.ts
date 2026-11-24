@@ -6,6 +6,7 @@ import {
   applyLessonCompleted,
   applyLessonStep,
   applyReveal,
+  applyReview,
   type AttemptInput,
 } from "./reduce";
 import {
@@ -27,7 +28,6 @@ import {
 } from "./store";
 import {
   conceptStatus,
-  continueLesson,
   countByStatus,
   courseProgress,
   lessonState,
@@ -193,6 +193,61 @@ describe("applyAttempt", () => {
   });
 });
 
+describe("reviews", () => {
+  const DAY = 86_400_000;
+  const mastered = () =>
+    play(
+      ["a", "b", "c", "d", "e"].map((questionId) => attempt({ questionId })),
+    );
+
+  it("creates a review card when a concept is first mastered, due in a few days", () => {
+    const beforeMastery = play(
+      ["a", "b", "c", "d"].map((questionId) => attempt({ questionId })),
+    );
+    expect(beforeMastery.reviews).toEqual({});
+    const progress = mastered();
+    expect(Object.keys(progress.reviews)).toEqual(["slope"]);
+    expect(progress.reviews.slope!.due).toBe(5000 + 3 * DAY);
+  });
+
+  it("keeps the existing card if mastery is lost and regained", () => {
+    const progress = mastered();
+    const card = progress.reviews.slope;
+    const again = play(
+      [
+        attempt({ questionId: "f", correct: false, score: 0 }),
+        attempt({ questionId: "g", correct: false, score: 0 }),
+        attempt({ questionId: "h" }),
+        attempt({ questionId: "i" }),
+      ],
+      progress,
+    );
+    expect(again.reviews.slope).toBe(card);
+  });
+
+  it("reschedules a card after a review, sooner if it went badly", () => {
+    const progress = mastered();
+    const due = progress.reviews.slope!.due;
+    const good = applyReview(progress, "slope", "good", due);
+    const again = applyReview(progress, "slope", "again", due);
+    expect(good.reviews.slope!.due).toBeGreaterThan(due + 3 * DAY);
+    expect(again.reviews.slope!.due).toBeLessThan(good.reviews.slope!.due);
+    expect(again.reviews.slope!.due).toBeGreaterThan(due);
+  });
+
+  it("ignores a review for a concept with no card", () => {
+    expect(applyReview(EMPTY_PROGRESS, "slope", "good", 1)).toBe(
+      EMPTY_PROGRESS,
+    );
+  });
+
+  it("loads progress saved before reviews existed", () => {
+    const old = JSON.parse(JSON.stringify(mastered()));
+    delete old.reviews;
+    expect(parseProgress(old)?.reviews).toEqual({});
+  });
+});
+
 describe("applyReveal", () => {
   it("counts against the concept and is tallied separately", () => {
     const started = play([
@@ -277,24 +332,6 @@ describe("summaries", () => {
       fraction: 0.25,
     });
     expect(courseProgress(EMPTY_PROGRESS, [])).toMatchObject({ fraction: 0 });
-  });
-
-  it("continues with the lesson worked on most recently", () => {
-    expect(continueLesson(progress, keys)).toEqual({ key: "c/c", step: 1 });
-  });
-
-  it("otherwise offers the first lesson not started, or nothing when all are done", () => {
-    expect(continueLesson(EMPTY_PROGRESS, keys)).toEqual({
-      key: "c/a",
-      step: 0,
-    });
-    const done = keys.reduce(
-      (p, key) => applyLessonCompleted(p, key, 1),
-      EMPTY_PROGRESS,
-    );
-    expect(continueLesson(done, keys)).toBeNull();
-    const oneLeft = applyLessonCompleted(EMPTY_PROGRESS, "c/a", 1);
-    expect(continueLesson(oneLeft, keys)).toEqual({ key: "c/b", step: 0 });
   });
 
   it("counts concepts by status and totals", () => {

@@ -1,12 +1,15 @@
 import {
   applyAttempt,
   applyGoal,
+  applyReview,
   applyLessonCompleted,
   applyLessonStep,
   applyReveal,
   type AttemptInput,
   type MasteryChange,
 } from "./reduce";
+import type { ReviewRating } from "@/lib/review/schedule";
+
 import { EMPTY_PROGRESS, parseProgress, type Progress } from "./schema";
 
 /**
@@ -85,6 +88,10 @@ export function recordLessonStep(lessonKey: string, step: number): void {
 
 export function recordLessonCompleted(lessonKey: string): void {
   commit(applyLessonCompleted(getProgress(), lessonKey, Date.now()));
+}
+
+export function recordReview(conceptId: string, rating: ReviewRating): void {
+  commit(applyReview(getProgress(), conceptId, rating, Date.now()));
 }
 
 export function recordGoal(contextId: string, interactiveId: string): void {

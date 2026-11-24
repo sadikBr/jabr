@@ -53,28 +53,6 @@ export function countByStatus(
   return counts;
 }
 
-/**
- * The lesson to offer under "continue": the one most recently worked on and
- * not finished; failing that, the first unfinished lesson in the given order.
- */
-export function continueLesson(
-  progress: Progress,
-  orderedLessonKeys: string[],
-): { key: string; step: number } | null {
-  const inProgress = orderedLessonKeys
-    .filter((key) => progress.lessons[key]?.status === "started")
-    .sort(
-      (a, b) => progress.lessons[b]!.updatedAt - progress.lessons[a]!.updatedAt,
-    )[0];
-  if (inProgress) {
-    return { key: inProgress, step: progress.lessons[inProgress]!.lastStep };
-  }
-  const next = orderedLessonKeys.find(
-    (key) => lessonState(progress, key) === "not-started",
-  );
-  return next ? { key: next, step: 0 } : null;
-}
-
 export interface ProgressTotals {
   questionsAnswered: number;
   questionsSolved: number;

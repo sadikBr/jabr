@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+import type { StoredCard } from "@/lib/review/schedule";
+
 /**
  * A learner's progress, as kept on their device (localStorage) until accounts
  * arrive. It refers to content by stable ids only. The shapes mirror the
@@ -60,6 +62,21 @@ const eventSchema = z.object({
   at: timestamp,
 });
 
+const reviewCardSchema = z.object({
+  due: timestamp,
+  fsrs: z.object({
+    stability: z.number(),
+    difficulty: z.number(),
+    elapsed_days: z.number(),
+    scheduled_days: z.number(),
+    reps: z.number().int().nonnegative(),
+    lapses: z.number().int().nonnegative(),
+    learning_steps: z.number().int().nonnegative(),
+    state: z.number().int().min(0).max(3),
+    last_review: timestamp.optional(),
+  }),
+}) satisfies z.ZodType<StoredCard>;
+
 export const progressSchema = z.object({
   version: z.literal(PROGRESS_VERSION),
   mastery: z.record(z.string(), masterySchema),
@@ -67,6 +84,12 @@ export const progressSchema = z.object({
   lessons: z.record(z.string(), lessonSchema),
   /** Interactive goals reached, keyed by `<page path>#<interactive id>`. */
   goals: z.record(z.string(), timestamp),
+  /**
+   * Spaced-review cards by concept id, created when a concept is first
+   * mastered. Optional in stored data so progress saved before reviews
+   * existed still loads.
+   */
+  reviews: z.record(z.string(), reviewCardSchema).default({}),
   attempts: z.array(attemptSchema),
   events: z.array(eventSchema),
 });
@@ -83,6 +106,7 @@ export const EMPTY_PROGRESS: Progress = Object.freeze({
   questions: {},
   lessons: {},
   goals: {},
+  reviews: {},
   attempts: [],
   events: [],
 });

@@ -48,8 +48,8 @@ test.describe("knowledge map", () => {
     });
     await page.goto("/map");
     const map = page.getByTestId("concept-map");
-    await expect(map.locator("[data-concept]")).toHaveCount(23);
-    await expect(map.locator(".react-flow__edge")).toHaveCount(29);
+    await expect(map.locator("[data-concept]")).toHaveCount(24);
+    await expect(map.locator(".react-flow__edge")).toHaveCount(31);
 
     await expect(map.locator('[data-concept="functions"]')).toHaveAttribute(
       "data-mastery",
@@ -79,7 +79,7 @@ test.describe("knowledge map", () => {
 
     const legend = page.getByTestId("map-legend");
     await expect(legend).toContainText(/Mastered\s*1/);
-    await expect(legend).toContainText(/Not started\s*20/);
+    await expect(legend).toContainText(/Not started\s*21/);
   });
 
   test("highlights a subject, lists the concepts, and opens a concept", async ({
@@ -89,7 +89,7 @@ test.describe("knowledge map", () => {
     const map = page.getByTestId("concept-map");
     await page.getByRole("button", { name: "Physics" }).click();
     await expect(page.getByTestId("map-legend")).toContainText(
-      /Not started\s*8/,
+      /Not started\s*9/,
     );
     await expect(map.locator('[data-concept="velocity"]')).not.toHaveClass(
       /opacity-25/,
@@ -298,7 +298,7 @@ test.describe("what to learn", () => {
     });
     await page.goto(lesson);
     await expect(page.getByTestId("prerequisites")).toContainText(
-      "You're practising everything this lesson builds on.",
+      "You're practising everything this builds on.",
     );
   });
 
@@ -312,8 +312,8 @@ test.describe("what to learn", () => {
     const rocket = page
       .locator("#rocket-flight-simulator")
       .getByTestId("project-readiness");
-    // 3 of the rocket simulator's 6 concepts are being practised.
-    await expect(rocket).toContainText("Ready for 50% of what it needs");
+    // 3 of the rocket simulator's 7 concepts are being practised.
+    await expect(rocket).toContainText("Ready for 43% of what it needs");
     await expect(rocket.getByRole("link", { name: "Air drag" })).toBeVisible();
     await expect(rocket.getByRole("link", { name: "Velocity" })).toHaveCount(0);
   });

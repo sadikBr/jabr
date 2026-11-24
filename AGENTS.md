@@ -14,9 +14,9 @@ A learning-by-doing platform for maths, physics, engineering and software.
 `PROJECT_BRIEF.md` is the source of truth for product decisions and the phase
 plan. This file records how the repo works. Keep it current.
 
-**Status:** Phases 0 (foundations), 1 (content pipeline and reading), 2
-(interactivity and grading) and 3 (progress on this device) are done. Phase 4
-(knowledge map and review) is next. Accounts are deferred: see the brief.
+**Status:** Phases 0 to 4 are done: foundations, content pipeline, interactivity
+and grading, progress on this device, knowledge map and review. Phase 5
+(projects) is next. Accounts are deferred: see the brief.
 
 ## Commands
 
@@ -171,6 +171,30 @@ Writing content:
 - Changing the stored shape means bumping `PROGRESS_VERSION` and writing a
   migration in `parseProgress`; unreadable data is ignored, never guessed at.
 
+## Knowledge map, recommendations and review
+
+- `lib/content/graph-layout.ts` positions the concept graph with dagre on the
+  server; the page passes the positions down, so the map never re-flows.
+  `components/graph/concept-map.tsx` draws it with React Flow and is loaded
+  in the browser only. Each node is a real link with its status in its
+  accessible name, and `/map#<concept-id>` opens centred on a concept.
+- The map shows everything when it fits at a readable zoom; otherwise it
+  opens on the concept the learner is working on, plus its neighbours. There
+  is always a list view of the same concepts.
+- `lib/recommend/` (pure, tested on small made-up graphs): `nextStep` through
+  a course, `gaps`, `readiness` for a project, `frontier` (ready to learn).
+  A gap only sends the learner elsewhere if a written, unfinished lesson can
+  fill it; otherwise it is reported alongside the lesson, never as a block.
+- `lib/review/schedule.ts` wraps ts-fsrs. A card is created when a concept is
+  first mastered (that counts as its first good review, so it is due in about
+  3 days). `lib/review/session.ts` picks the due concepts and up to two
+  questions each, parametrised first, never code labs.
+- A review rates each concept from its answers: all right with no hints is
+  "good", right with hints is "hard", any miss is "again". Answers also update
+  mastery as usual, through the same `QuestionCard`.
+- Stored progress gained `reviews` without a version bump: the field is
+  optional when read, so older saved progress still loads.
+
 ## Offline
 
 - `public/sw.js` is hand-written and small. Pages are network-first with a
@@ -281,6 +305,11 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 | 2026-11-24 | Mastery: a correct answer closes 30% of the gap to 1, hints shrink that, repeats of one question count for less | Simple, explainable, and one question cannot be farmed to mastery                                                                     |
 | 2026-11-24 | Export, import and reset on the progress page                                                                   | Device-only data needs a way to be kept safe and moved                                                                                |
 | 2026-11-24 | `/dashboard` is called "Progress" in the UI and sits in the main navigation                                     | It is the learner's home; "dashboard" says nothing to a learner                                                                       |
+| 2026-11-24 | ts-fsrs pinned to 5.x                                                                                           | Version 6 replaced the simple synchronous API with an async one and asks for Node 24                                                  |
+| 2026-11-24 | Graph layout is computed on the server, not in the browser                                                      | No layout flash, and dagre stays out of the client bundle                                                                             |
+| 2026-11-24 | Map filters dim other concepts instead of removing them                                                         | Positions stay put and the context stays visible                                                                                      |
+| 2026-11-24 | The map is reached from the Progress page and concept pages, not the main navigation                            | Five navigation items is the limit on a phone                                                                                         |
+| 2026-11-24 | Reviews can be done early                                                                                       | Lets a learner (and the owner) use review without waiting days                                                                        |
 
 ## Known limitations
 
@@ -289,8 +318,11 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   import on the progress page are the workaround.
 - Mastery is computed in the browser from graded results, so it can be
   edited by anyone who opens the developer tools. That only fools themselves.
-- Reviews and "what to learn next" are Phase 4; the dashboard shows the
-  lesson to continue, counts, concepts worked on and recent events only.
+- With one written lesson, recommendations and reviews have little to work
+  with: review draws on that lesson's questions only. They come into their
+  own as content is added (Phase 6).
+- The map lays out about 25 concepts comfortably. Past roughly 80 it will
+  need grouping by subject or course; revisit when the content gets there.
 - Code lab test results are computed in the browser and reported to the
   server, so a determined learner could fake a pass. Accepted for the MVP.
 - numpy and matplotlib need a connection the first time they are used; after

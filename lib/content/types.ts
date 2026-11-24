@@ -126,6 +126,8 @@ export interface ExpressionQuestion extends QuestionBase {
 export interface ParametrisedQuestion extends QuestionBase {
   type: "parametrised";
   params: Record<string, ParamSpec>;
+  /** Formulas for further values shown in the prompt, in order. */
+  derived: Record<string, string>;
   answer: string;
   tolerance: Tolerance;
   unit?: string;

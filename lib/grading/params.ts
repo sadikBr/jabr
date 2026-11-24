@@ -1,5 +1,5 @@
-import { paramValues } from "@/lib/content/parametrised";
-import type { ParamSpec } from "@/lib/content/types";
+import { paramValues, withDerived } from "@/lib/content/parametrised";
+import type { ParametrisedQuestion, ParamSpec } from "@/lib/content/types";
 
 import { createRandom, hashString, MAX_SEED } from "./prng";
 
@@ -24,6 +24,17 @@ export function pickParams(
     picked[name] = values[Math.floor(random() * values.length)]!;
   }
   return picked;
+}
+
+/**
+ * Every value a parametrised question uses for one seed: its randomly picked
+ * parameters plus the values derived from them.
+ */
+export function questionValues(
+  question: Pick<ParametrisedQuestion, "params" | "derived">,
+  seed: number,
+): Record<string, number> {
+  return withDerived(pickParams(question.params, seed), question.derived);
 }
 
 /** Replaces `{name}` placeholders with parameter values. */

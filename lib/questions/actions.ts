@@ -10,7 +10,7 @@ import {
   grade,
   type QuestionResponse,
 } from "@/lib/grading/grade";
-import { fillPlaceholders, pickParams } from "@/lib/grading/params";
+import { fillPlaceholders, questionValues } from "@/lib/grading/params";
 import { MAX_SEED } from "@/lib/grading/prng";
 
 import { conceptTitles } from "./concept-titles";
@@ -77,7 +77,7 @@ export async function checkAnswer(input: unknown): Promise<CheckResult> {
   });
   const values =
     question.type === "parametrised"
-      ? pickParams(question.params, parsed.data.seed)
+      ? questionValues(question, parsed.data.seed)
       : {};
 
   return {

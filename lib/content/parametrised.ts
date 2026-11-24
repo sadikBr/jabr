@@ -40,6 +40,22 @@ export function evaluateAnswer(
   return result;
 }
 
+/**
+ * Adds the derived values to a set of parameter values. Each formula may use
+ * the parameters and the derived values declared before it. Results are
+ * rounded to ten significant figures so they read cleanly in a prompt.
+ */
+export function withDerived(
+  values: Record<string, number>,
+  derived: Record<string, string>,
+): Record<string, number> {
+  const all = { ...values };
+  for (const [name, formula] of Object.entries(derived)) {
+    all[name] = Number(evaluateAnswer(formula, all).toPrecision(10));
+  }
+  return all;
+}
+
 /** Names used as `{name}` placeholders in a prompt, hint or solution. */
 export function placeholders(text: string, paramNames: string[]): string[] {
   return paramNames.filter((name) => text.includes(`{${name}}`));

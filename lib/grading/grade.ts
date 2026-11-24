@@ -7,7 +7,7 @@ import {
   parseExpression,
 } from "./expression";
 import { diagnoseNumber, parseNumber, withinTolerance } from "./numeric";
-import { defaultSeed, pickParams } from "./params";
+import { defaultSeed, questionValues } from "./params";
 import { hashString } from "./prng";
 
 /** What the learner submits, by question type. */
@@ -164,8 +164,8 @@ export function grade(
 
     case "parametrised": {
       if (response.type !== "text") return invalid("invalid-response");
-      const values = pickParams(
-        question.params,
+      const values = questionValues(
+        question,
         context.seed ?? defaultSeed(question.id),
       );
       const mistakes = question.commonMistakes.map((mistake) => ({

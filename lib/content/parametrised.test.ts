@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { evaluateAnswer, paramCombinations, paramValues } from "./parametrised";
+import {
+  evaluateAnswer,
+  paramCombinations,
+  paramValues,
+  withDerived,
+} from "./parametrised";
 
 describe("paramValues", () => {
   it("includes both ends of a range", () => {
@@ -45,5 +50,22 @@ describe("evaluateAnswer", () => {
   it("throws on unknown symbols and non-finite results", () => {
     expect(() => evaluateAnswer("2 * b", { a: 1 })).toThrow();
     expect(() => evaluateAnswer("1 / a", { a: 0 })).toThrow(/finite/);
+  });
+});
+
+describe("withDerived", () => {
+  it("adds values worked out from the parameters, in order", () => {
+    expect(
+      withDerived({ a: 3 }, { square: "a^2", next: "square + 1" }),
+    ).toEqual({ a: 3, square: 9, next: 10 });
+  });
+
+  it("rounds away floating-point noise", () => {
+    expect(withDerived({ a: 0.1 }, { sum: "a + 0.2" }).sum).toBe(0.3);
+  });
+
+  it("throws when a formula cannot be worked out", () => {
+    expect(() => withDerived({ a: 0 }, { bad: "1 / a" })).toThrow();
+    expect(() => withDerived({ a: 1 }, { early: "late", late: "a" })).toThrow();
   });
 });

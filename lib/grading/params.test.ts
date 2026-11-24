@@ -3,7 +3,12 @@ import { describe, expect, it } from "vitest";
 import { paramValues } from "@/lib/content/parametrised";
 import type { ParamSpec } from "@/lib/content/types";
 
-import { defaultSeed, fillPlaceholders, pickParams } from "./params";
+import {
+  defaultSeed,
+  fillPlaceholders,
+  pickParams,
+  questionValues,
+} from "./params";
 
 const params: Record<string, ParamSpec> = {
   v: { min: 10, max: 30, step: 1 },
@@ -45,5 +50,14 @@ describe("fillPlaceholders", () => {
     expect(
       fillPlaceholders("$\\frac{{b}^2 - {a}^2}{{b} - {a}}$", { a: 2, b: 5 }),
     ).toBe("$\\frac{5^2 - 2^2}{5 - 2}$");
+  });
+});
+
+describe("questionValues", () => {
+  it("is the picked parameters plus the values derived from them", () => {
+    const picked = pickParams(params, 5);
+    expect(questionValues({ params, derived: { double: "2 * v" } }, 5)).toEqual(
+      { ...picked, double: 2 * picked.v! },
+    );
   });
 });

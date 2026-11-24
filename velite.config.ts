@@ -230,7 +230,13 @@ const questions = defineCollection({
       ...questionBase,
       type: s.literal("parametrised"),
       params: s.record(param),
-      /** A mathjs formula of the params. */
+      /**
+       * Values worked out from the params, as mathjs formulas, for showing in
+       * the prompt (say, a table entry). Each may use the params and the
+       * derived values before it.
+       */
+      derived: s.record(s.string()).default({}),
+      /** A mathjs formula of the params and derived values. */
       answer: s.string(),
       tolerance,
       unit: s.string().optional(),

@@ -6,7 +6,7 @@ import { testNames } from "@/lib/grading/grade";
 import {
   defaultSeed,
   fillPlaceholders,
-  pickParams,
+  questionValues,
 } from "@/lib/grading/params";
 import { formatNumber } from "@/lib/maths/functions";
 
@@ -44,9 +44,7 @@ export interface QuestionSolution {
 }
 
 function valuesFor(question: Question, seed: number): Record<string, number> {
-  return question.type === "parametrised"
-    ? pickParams(question.params, seed)
-    : {};
+  return question.type === "parametrised" ? questionValues(question, seed) : {};
 }
 
 export function buildQuestionView(

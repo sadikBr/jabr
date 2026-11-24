@@ -7,6 +7,7 @@ import type {
   Explainer,
   Lesson,
   Milestone,
+  ParametrisedQuestion,
   Question,
 } from "./types";
 import { collectIds, type IssueCode, validateContent } from "./validate";
@@ -464,9 +465,34 @@ describe("validateContent", () => {
       prompt: "{a}?",
       hints: ["Think."],
       params: { a: { min: 0, max: 2, step: 1 } },
+      derived: {},
       answer,
       tolerance: { relative: 0.01 },
       commonMistakes: [],
+    });
+
+    it("rejects a derived value that fails for some parameters", () => {
+      const issue = issueAfter("parametrised-answer-error", (c) => {
+        c.questions = [
+          {
+            ...(parametrised("a + inverse") as ParametrisedQuestion),
+            derived: { inverse: "1 / (a - 1)" },
+          },
+        ];
+      });
+      expect(issue).toBeDefined();
+    });
+
+    it("lets the answer use derived values", () => {
+      const issue = issueAfter("parametrised-answer-error", (c) => {
+        c.questions = [
+          {
+            ...(parametrised("double + 1") as ParametrisedQuestion),
+            derived: { double: "2 * a" },
+          },
+        ];
+      });
+      expect(issue).toBeUndefined();
     });
 
     it("rejects a parametrised answer that fails for some parameters", () => {

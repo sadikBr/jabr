@@ -1,17 +1,18 @@
 import { describe, expect, it } from "vitest";
 
-import type { Question } from "@/lib/content/types";
+import type { ParametrisedQuestion, Question } from "@/lib/content/types";
 import { pickParams } from "@/lib/grading/params";
 
 import { buildQuestionSolution, buildQuestionView } from "./view";
 
 const base = { concepts: ["c"], hints: ["Think about $x$."] };
 
-const parametrised: Question = {
+const parametrised: ParametrisedQuestion = {
   ...base,
   id: "q.param",
   type: "parametrised",
   params: { a: { min: 1, max: 9, step: 1 } },
+  derived: {},
   prompt: "What is $2 \\times {a}$?",
   answer: "2 * a",
   tolerance: { absolute: 0.001 },
@@ -76,6 +77,30 @@ describe("buildQuestionView", () => {
       tests: "def test_x():\n    assert x == 2\n",
       testNames: ["test_x"],
     });
+  });
+});
+
+describe("derived values", () => {
+  const question: ParametrisedQuestion = {
+    ...parametrised,
+    id: "q.derived",
+    derived: { square: "a^2", next: "square + 1" },
+    prompt: "A table shows {square} and then {next}. What is the gap?",
+    answer: "next - square",
+    solution: "From {square} to {next}.",
+  };
+
+  it("shows derived values in the prompt and the solution", () => {
+    const { a } = pickParams(question.params, 7);
+    const view = buildQuestionView(question, 7);
+    expect(view.promptHtml).toContain(
+      `shows ${a! ** 2} and then ${a! ** 2 + 1}`,
+    );
+    const solution = buildQuestionSolution(question, 7);
+    expect(solution.solutionHtml).toContain(
+      `From ${a! ** 2} to ${a! ** 2 + 1}`,
+    );
+    expect(solution.answerText).toBe("1 m");
   });
 });
 

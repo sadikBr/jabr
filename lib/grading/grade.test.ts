@@ -149,6 +149,7 @@ describe("parametrised", () => {
       v: { min: 10, max: 30, step: 1 },
       angle: { choices: [30, 45, 60] },
     },
+    derived: {},
     prompt: "A ball is launched at {v} m/s at {angle}°. How far does it land?",
     answer: "v^2 * sin(2 * angle deg) / 9.81",
     tolerance: { relative: 0.02 },

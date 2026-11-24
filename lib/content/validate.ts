@@ -3,7 +3,7 @@ import { checkInteractiveProps, isInteractiveId } from "./interactive-specs";
 import type { MdxRefs } from "./mdx-refs";
 import { testNames } from "@/lib/grading/grade";
 
-import { evaluateAnswer, paramCombinations } from "./parametrised";
+import { evaluateAnswer, paramCombinations, withDerived } from "./parametrised";
 import type { ContentBundle, Lesson, Question } from "./types";
 import { depths, mdxComponentNames, stepKinds } from "./vocabulary";
 
@@ -510,12 +510,16 @@ export function validateContent(
 
     if (question.type === "parametrised") {
       const failures: string[] = [];
-      for (const values of paramCombinations(question.params)) {
+      for (const picked of paramCombinations(question.params)) {
         try {
-          evaluateAnswer(question.answer, values);
+          // Derived values first, then the answer, for every combination.
+          evaluateAnswer(
+            question.answer,
+            withDerived(picked, question.derived),
+          );
         } catch (cause) {
           failures.push(
-            `${JSON.stringify(values)}: ${cause instanceof Error ? cause.message : String(cause)}`,
+            `${JSON.stringify(picked)}: ${cause instanceof Error ? cause.message : String(cause)}`,
           );
         }
       }
@@ -523,13 +527,16 @@ export function validateContent(
         error(
           "parametrised-answer-error",
           source,
-          `The answer formula fails for ${failures.length} parameter combination(s), e.g. ${failures[0]}.`,
+          `The answer or a derived value fails for ${failures.length} parameter combination(s), e.g. ${failures[0]}.`,
         );
       }
-      const [firstValues] = paramCombinations(question.params);
+      const [firstPicked] = paramCombinations(question.params);
       for (const mistake of question.commonMistakes) {
         try {
-          evaluateAnswer(mistake.answer, firstValues ?? {});
+          evaluateAnswer(
+            mistake.answer,
+            withDerived(firstPicked ?? {}, question.derived),
+          );
         } catch (cause) {
           error(
             "parametrised-answer-error",

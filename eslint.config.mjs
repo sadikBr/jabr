@@ -12,6 +12,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "lib/db/generated/**",
     ".velite/**",
+    "public/pyodide/**",
     "playwright-report/**",
     "test-results/**",
   ]),

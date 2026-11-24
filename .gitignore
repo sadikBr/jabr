@@ -52,3 +52,6 @@ next-env.d.ts
 # velite (built content)
 /.velite
 /public/content
+
+# pyodide runtime (copied from node_modules on install)
+/public/pyodide

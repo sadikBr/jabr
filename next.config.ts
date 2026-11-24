@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -15,7 +17,20 @@ if (process.env.NODE_ENV === "development" && !process.env.VELITE_STARTED) {
 
 const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
 
+const pyodideVersion = (
+  JSON.parse(
+    readFileSync(
+      new URL("./node_modules/pyodide/package.json", import.meta.url),
+      "utf8",
+    ),
+  ) as { version: string }
+).version;
+
 const nextConfig: NextConfig = {
+  env: {
+    // The code-lab worker downloads numpy, matplotlib… for exactly this version.
+    NEXT_PUBLIC_PYODIDE_VERSION: pyodideVersion,
+  },
   experimental: {
     agentFeedback: true,
   },
@@ -31,6 +46,25 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     return [
+      {
+        // Always check for a new service worker, and keep it locked down.
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/javascript; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "Content-Security-Policy",
+            value:
+              "default-src 'self'; connect-src 'self' https://cdn.jsdelivr.net",
+          },
+        ],
+      },
       {
         source: "/(.*)",
         headers: [

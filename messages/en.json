@@ -1,0 +1,88 @@
+{
+  "meta": {
+    "title": "Jabr — learn by doing",
+    "titleTemplate": "%s · Jabr",
+    "description": "Understand how things work. Learn maths, physics, engineering and software through simulations, live code and real projects."
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "courses": "Courses",
+    "projects": "Projects",
+    "main": "Main navigation",
+    "skipToContent": "Skip to content"
+  },
+  "theme": {
+    "label": "Theme: {preference}. Switch theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  },
+  "home": {
+    "eyebrow": "Maths · Physics · Engineering · Software",
+    "title": "Understand how things work, by doing.",
+    "lead": "Jabr teaches every idea with something you can touch: a simulation to steer, code to run, a problem to crack. Then it connects the ideas, so what you learn in one subject carries into the next.",
+    "primaryCta": "Start exploring",
+    "secondaryCta": "Browse courses",
+    "figureAlt": "A curve with a tangent line touching it at one point, showing the slope at that point.",
+    "figureCaption": "The slope of the tangent is the derivative.",
+    "pathsTitle": "Three ways in",
+    "paths": {
+      "explore": {
+        "title": "Explore",
+        "body": "Start from a question — how does a rocket reach orbit? — and go as deep as you like."
+      },
+      "courses": {
+        "title": "Courses",
+        "body": "Structured, university-level courses built from interactive lessons and exam-style practice."
+      },
+      "projects": {
+        "title": "Projects",
+        "body": "Build something real, like a rocket flight simulator, and learn what it needs along the way."
+      }
+    },
+    "pillarsTitle": "How Jabr teaches",
+    "pillars": {
+      "doing": {
+        "title": "Learning by doing",
+        "body": "Sliders, live code and step-by-step problems with feedback. Reading is never the whole lesson."
+      },
+      "graph": {
+        "title": "One connected map",
+        "body": "Every concept lives once in a shared graph, so your mastery carries across subjects and gaps are easy to see."
+      },
+      "projects": {
+        "title": "Real projects",
+        "body": "Projects combine several subjects and link every milestone back to the concepts it uses."
+      }
+    }
+  },
+  "explore": {
+    "title": "Explore",
+    "lead": "Question-led explainers, from first intuition to the real maths.",
+    "emptyTitle": "Explainers are on the way",
+    "emptyBody": "The first ones cover rockets, falling feathers and how video games fake physics."
+  },
+  "courses": {
+    "title": "Courses",
+    "lead": "Structured courses where every lesson has something to do.",
+    "emptyTitle": "Courses are on the way",
+    "emptyBody": "Calculus essentials, Classical mechanics and Python for scientists come first."
+  },
+  "projects": {
+    "title": "Projects",
+    "lead": "Build real things and learn the concepts they need.",
+    "emptyTitle": "Projects are on the way",
+    "emptyBody": "The first capstone is a rocket flight simulator you build milestone by milestone."
+  },
+  "common": {
+    "backHome": "Back to home"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "That page doesn't exist, or it has moved."
+  },
+  "footer": {
+    "tagline": "Learn by doing."
+  }
+}

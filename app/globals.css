@@ -1,26 +1,106 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+
+/* Dark mode is driven by data-theme on <html>, set before paint (lib/theme.ts). */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --radius: 0.75rem;
+
+  --background: oklch(0.985 0.004 95);
+  --foreground: oklch(0.22 0.025 272);
+  --card: oklch(1 0 0);
+  --card-foreground: var(--foreground);
+  --muted: oklch(0.955 0.006 95);
+  --muted-foreground: oklch(0.46 0.025 272);
+  --border: oklch(0.905 0.008 95);
+  --input: oklch(0.87 0.01 95);
+  --ring: oklch(0.55 0.2 275);
+  --primary: oklch(0.46 0.2 275);
+  --primary-foreground: oklch(0.985 0.004 95);
+  --secondary: oklch(0.94 0.02 275);
+  --secondary-foreground: oklch(0.33 0.15 275);
+  --accent: oklch(0.8 0.15 78);
+  --accent-foreground: oklch(0.25 0.05 70);
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --background: oklch(0.17 0.022 272);
+  --foreground: oklch(0.95 0.008 95);
+  --card: oklch(0.21 0.025 272);
+  --muted: oklch(0.25 0.025 272);
+  --muted-foreground: oklch(0.74 0.02 272);
+  --border: oklch(0.31 0.03 272);
+  --input: oklch(0.36 0.03 272);
+  --ring: oklch(0.74 0.14 278);
+  --primary: oklch(0.74 0.14 278);
+  --primary-foreground: oklch(0.17 0.022 272);
+  --secondary: oklch(0.28 0.06 275);
+  --secondary-foreground: oklch(0.9 0.05 278);
+  --accent: oklch(0.82 0.15 80);
+  --accent-foreground: oklch(0.22 0.04 70);
+
+  color-scheme: dark;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  * {
+    border-color: var(--border);
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-block-start: 5rem;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }

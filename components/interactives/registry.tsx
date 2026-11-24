@@ -14,21 +14,38 @@ import type {
  * without importing React code. Adding an interactive means adding it to both.
  */
 const interactiveComponents: {
-  [Id in InteractiveId]: ComponentType<InteractiveProps<Id>>;
+  // Components may accept extra, server-rendered props beyond their spec.
+  [Id in InteractiveId]: ComponentType<
+    InteractiveProps<Id> & Record<string, unknown>
+  >;
 } = {
   "tangent-zoom": dynamic(() =>
     import("./tangent-zoom").then((module) => module.TangentZoom),
   ),
+  "projectile-sim": dynamic(() =>
+    import("./projectile-sim").then((module) => module.ProjectileSim),
+  ),
+  "drop-test": dynamic(() =>
+    import("./drop-test").then((module) => module.DropTest),
+  ),
+  "euler-stepper": dynamic(() =>
+    import("./euler-stepper").then((module) => module.EulerStepper),
+  ),
 };
 
-/** Renders the interactive with the given id. Props are validated on the server. */
+/**
+ * Renders the interactive with the given id. Props were validated against
+ * the spec on the server, which may also add server-rendered extras.
+ */
 export function InteractiveHost({
   id,
   props,
 }: {
   id: InteractiveId;
-  props: InteractiveProps<InteractiveId>;
+  props: Record<string, unknown>;
 }) {
-  const Component = interactiveComponents[id];
+  const Component = interactiveComponents[id] as ComponentType<
+    Record<string, unknown>
+  >;
   return <Component {...props} />;
 }

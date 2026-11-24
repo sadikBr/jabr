@@ -6,6 +6,7 @@ import {
   Check,
   CircleCheck,
   Eye,
+  History,
   Link2,
   PartyPopper,
   Pointer,
@@ -22,6 +23,11 @@ import {
 } from "react";
 
 import { Button } from "@/components/ui/button";
+import {
+  getProgress,
+  recordLessonCompleted,
+  recordLessonStep,
+} from "@/lib/progress/store";
 import type { StepKind } from "@/lib/content/vocabulary";
 import { cn } from "@/lib/utils";
 
@@ -61,41 +67,81 @@ function isTypingTarget(target: EventTarget | null): boolean {
  */
 export function LessonDeck({
   steps,
+  lessonKey,
   completion,
   children,
 }: {
   steps: DeckStep[];
+  /** When given, the step reached and completion are saved on this device. */
+  lessonKey?: string;
   completion: ReactNode;
   children: ReactNode;
 }) {
   const t = useTranslations("lesson");
   const [current, setCurrent] = useState(0);
+  const [resumedAt, setResumedAt] = useState<number | null>(null);
   const topRef = useRef<HTMLDivElement>(null);
   const moved = useRef(false);
   const done = current >= steps.length;
+
+  // Saves where the learner is, or that they finished. Called at the moment
+  // of the action rather than from an effect, so it is stored even if they
+  // leave the page straight away.
+  const save = useCallback(
+    (step: number) => {
+      if (!lessonKey) return;
+      if (step >= steps.length) recordLessonCompleted(lessonKey);
+      else recordLessonStep(lessonKey, step);
+    },
+    [lessonKey, steps.length],
+  );
 
   const goTo = useCallback(
     (index: number) => {
       const next = Math.min(Math.max(index, 0), steps.length);
       moved.current = true;
       setCurrent(next);
+      save(next);
       history.replaceState(null, "", `#step-${next + 1}`);
     },
-    [steps.length],
+    [steps.length, save],
   );
 
-  // Follow the step named in the URL hash, on load and when it changes.
+  // Work out the starting step, then follow the URL hash when it changes.
   useEffect(() => {
-    function openFromHash() {
+    function stepFromHash(): number | null {
       const match = /^#step-(\d+)$/.exec(window.location.hash);
-      if (!match) return;
+      if (!match) return null;
       const index = Number(match[1]) - 1;
-      if (index >= 0 && index <= steps.length) setCurrent(index);
+      return index >= 0 && index <= steps.length ? index : null;
     }
-    openFromHash();
-    window.addEventListener("hashchange", openFromHash);
-    return () => window.removeEventListener("hashchange", openFromHash);
-  }, [steps.length]);
+    function onHashChange() {
+      const step = stepFromHash();
+      if (step === null) return;
+      setCurrent(step);
+      save(step);
+    }
+
+    let start = stepFromHash();
+    let resumed = false;
+    if (start === null && lessonKey) {
+      // No step in the URL: pick up an unfinished lesson where it was left.
+      const saved = getProgress().lessons[lessonKey];
+      if (saved?.status === "started" && saved.lastStep > 0) {
+        start = Math.min(saved.lastStep, steps.length - 1);
+        resumed = true;
+      }
+    }
+    if (start !== null) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- the hash and saved progress only exist in the browser
+      setCurrent(start);
+      if (resumed) setResumedAt(start);
+    }
+    save(start ?? 0);
+
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, [steps.length, lessonKey, save]);
 
   // After a step change, bring the new step to the top and move focus to it.
   useEffect(() => {
@@ -167,6 +213,12 @@ export function LessonDeck({
       </nav>
 
       <div ref={topRef} className="scroll-mt-32 pt-8">
+        {resumedAt !== null && resumedAt === current ? (
+          <p className="animate-rise-in mb-6 flex items-center gap-2 rounded-xl bg-secondary px-4 py-2.5 text-sm font-medium text-secondary-foreground">
+            <History aria-hidden="true" className="size-4 shrink-0" />
+            {t("resumed", { step: current + 1 })}
+          </p>
+        ) : null}
         {children}
 
         {done ? (

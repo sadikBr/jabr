@@ -10,7 +10,8 @@
     "courses": "Courses",
     "projects": "Projects",
     "main": "Main navigation",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "progress": "Progress"
   },
   "theme": {
     "label": "Theme: {preference}. Switch theme",
@@ -57,7 +58,8 @@
     "tryTitle": "Try it: hit the target",
     "tryCaption": "No sign-up. Change the speed and angle, then launch.",
     "questionsTitle": "Start with a question",
-    "questionsAll": "All explainers"
+    "questionsAll": "All explainers",
+    "continueLabel": "Continue"
   },
   "explore": {
     "title": "Explore",
@@ -173,7 +175,8 @@
     "reviewAgain": "Go through it again",
     "comingSoonTitle": "This lesson is being written",
     "comingSoonBody": "Here is what it will cover. In the meantime, its concepts are already on the map.",
-    "previous": "Previous"
+    "previous": "Previous",
+    "resumed": "Welcome back. You're on step {step}."
   },
   "concept": {
     "prerequisites": "Builds on",
@@ -325,7 +328,8 @@
       "power-of-ten": "The digits look right, but it's out by a power of ten. Check your units.",
       "radians-mode": "This looks like a calculator in radians mode. The angle is in degrees.",
       "tests-failed": "Some checks didn't pass yet. Read their messages and try again."
-    }
+    },
+    "solvedBefore": "Solved"
   },
   "codelab": {
     "editorLabel": "Python code editor",
@@ -355,11 +359,79 @@
     "allPassed": "All checks passed. Nice work!",
     "passed": "Passed",
     "failed": "Failed",
-    "solution": "See a reference solution"
+    "solution": "See a reference solution",
+    "hint": "Give me a hint",
+    "anotherHint": "Another hint"
   },
   "offline": {
     "title": "You're offline",
     "body": "This page hasn't been saved on this device yet. Pages you have already opened still work, and so do their simulations and code labs.",
     "retry": "Try again"
+  },
+  "mastery": {
+    "status": {
+      "new": "Not started",
+      "learning": "Learning",
+      "practicing": "Practicing",
+      "mastered": "Mastered"
+    },
+    "justMastered": "Mastered!",
+    "slipped": "Keep practising.",
+    "yours": "Your mastery",
+    "hint": {
+      "new": "Answer a question that uses this concept and it will start to fill in.",
+      "learning": "You've started. A few more right answers will move this along.",
+      "practicing": "Getting there. Keep answering without hints to master it.",
+      "mastered": "You know this. It will come back in review so it stays fresh."
+    },
+    "legend": "Mastery"
+  },
+  "progress": {
+    "title": "Your progress",
+    "lead": "Everything you've practised, saved on this device.",
+    "emptyTitle": "Nothing here yet",
+    "emptyBody": "Answer a question or finish a lesson and your progress will start to fill in. No account needed.",
+    "emptyCta": "Start the first lesson",
+    "continueTitle": "Continue",
+    "continueStart": "Start here",
+    "continueResume": "Pick up where you left off",
+    "continueStep": "Step {current} of {total}",
+    "continueNew": "Next lesson",
+    "allDone": "You've finished every lesson that's written so far. More are on the way.",
+    "stats": {
+      "mastered": "Concepts mastered",
+      "practicing": "Practicing",
+      "learning": "Learning",
+      "solved": "Questions solved",
+      "lessons": "Lessons finished"
+    },
+    "coursesTitle": "Courses",
+    "courseLessons": "{completed} of {total} lessons",
+    "conceptsTitle": "Concepts you've worked on",
+    "conceptsEmpty": "Concepts appear here once you answer questions about them.",
+    "recentTitle": "Recent",
+    "recentEmpty": "Master a concept or finish a lesson and it will show up here.",
+    "events": {
+      "mastered": "Mastered {name}",
+      "lesson-completed": "Finished {name}",
+      "goal": "Reached the goal in {name}"
+    },
+    "lessonDone": "Finished",
+    "lessonStarted": "In progress",
+    "courseProgress": "{completed} of {total} lessons finished",
+    "data": {
+      "title": "Your data",
+      "body": "Your progress lives in this browser only. Clearing site data removes it, and it doesn't follow you to other devices. Export a copy to keep it safe or move it.",
+      "export": "Export",
+      "import": "Import",
+      "reset": "Reset progress",
+      "resetConfirm": "Really erase everything?",
+      "resetCancel": "Cancel",
+      "resetDone": "Progress erased.",
+      "imported": "Progress imported.",
+      "importFailed": "That file isn't a Jabr progress export.",
+      "fileName": "jabr-progress"
+    },
+    "daysAgo": "{days, plural, =0 {Today} =1 {Yesterday} other {# days ago}}"
   }
 }

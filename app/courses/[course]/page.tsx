@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowRight, Clock, Hammer, Rocket } from "lucide-react";
+import { ArrowLeft, Clock, Hammer, Rocket } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -7,7 +7,12 @@ import { getTranslations } from "next-intl/server";
 import { Cover } from "@/components/content/cover";
 import { SubjectBadge } from "@/components/content/subject";
 import { Container } from "@/components/layout/page-shell";
-import { Button } from "@/components/ui/button";
+import { ContinueCard } from "@/components/progress/continue-card";
+import {
+  CourseProgressBar,
+  LessonNode,
+  LessonStateBadge,
+} from "@/components/progress/lesson-status";
 import {
   courseLessons,
   getConcepts,
@@ -16,6 +21,7 @@ import {
   lessonHref,
 } from "@/lib/content/queries";
 import { content } from "@/lib/content/source";
+import { buildProgressCatalog } from "@/lib/progress/catalog.server";
 import { cn } from "@/lib/utils";
 
 type Props = PageProps<"/courses/[course]">;
@@ -38,7 +44,7 @@ export default async function CoursePage({ params }: Props) {
   if (!course) notFound();
   const t = await getTranslations();
   const lessons = courseLessons(content, course);
-  const firstReady = lessons.find((entry) => entry.lesson.status === "ready");
+  const catalog = buildProgressCatalog();
   const capstone = course.capstone
     ? getProject(content, course.capstone)
     : undefined;
@@ -73,16 +79,19 @@ export default async function CoursePage({ params }: Props) {
         <p className="mt-4 max-w-[70ch] text-lg leading-relaxed text-muted-foreground">
           {course.summary}
         </p>
-        {firstReady ? (
-          <Button asChild size="lg" className="mt-6 max-sm:w-full">
-            <Link href={lessonHref(firstReady.lesson)}>
-              <span className="truncate">
-                {t("courses.startLesson", { title: firstReady.lesson.title })}
-              </span>
-              <ArrowRight aria-hidden="true" className="rtl:rotate-180" />
-            </Link>
-          </Button>
-        ) : null}
+        {/* Start, resume or move on, depending on the learner's progress. */}
+        <ContinueCard
+          lessons={catalog.lessons.filter(
+            (lesson) => lesson.courseTitle === course.title,
+          )}
+          className="mt-6 max-w-xl"
+        />
+        <CourseProgressBar
+          lessonKeys={lessons
+            .filter((entry) => entry.lesson.status === "ready")
+            .map((entry) => entry.lesson.key)}
+          className="mt-6 max-w-md"
+        />
 
         <h2 className="mt-14 text-2xl font-semibold tracking-tight">
           {t("courses.modules")}
@@ -112,17 +121,11 @@ export default async function CoursePage({ params }: Props) {
                       const ready = lesson.status === "ready";
                       return (
                         <li key={lesson.key} className="relative ps-8">
-                          <span
-                            aria-hidden="true"
-                            className={cn(
-                              "absolute start-0 top-5 flex size-8 -translate-x-1/2 items-center justify-center rounded-full border-4 border-background text-xs font-bold rtl:translate-x-1/2",
-                              ready
-                                ? "bg-tone text-background"
-                                : "bg-muted text-muted-foreground",
-                            )}
-                          >
-                            {index + 1}
-                          </span>
+                          <LessonNode
+                            lessonKey={lesson.key}
+                            number={index + 1}
+                            ready={ready}
+                          />
                           <Link
                             href={lessonHref(lesson)}
                             className={cn(
@@ -134,6 +137,7 @@ export default async function CoursePage({ params }: Props) {
                               <span className="font-semibold">
                                 {lesson.title}
                               </span>
+                              <LessonStateBadge lessonKey={lesson.key} />
                               {ready && lesson.estimatedMinutes ? (
                                 <span className="flex items-center gap-1 text-xs text-muted-foreground">
                                   <Clock

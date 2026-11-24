@@ -9,6 +9,7 @@ export const navItems = [
   { href: "/explore", key: "explore" },
   { href: "/courses", key: "courses" },
   { href: "/projects", key: "projects" },
+  { href: "/dashboard", key: "progress" },
 ] as const;
 
 export type NavKey = (typeof navItems)[number]["key"];

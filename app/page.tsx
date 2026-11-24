@@ -13,8 +13,10 @@ import { getTranslations } from "next-intl/server";
 import { Interactive } from "@/components/blocks/interactive";
 import { subjectIcons } from "@/components/content/subject";
 import { Container } from "@/components/layout/page-shell";
+import { ContinueCard } from "@/components/progress/continue-card";
 import { Button } from "@/components/ui/button";
 import { content } from "@/lib/content/source";
+import { buildProgressCatalog } from "@/lib/progress/catalog.server";
 
 const paths = [
   { key: "explore", href: "/explore", icon: Compass, tone: "physics" },
@@ -30,6 +32,7 @@ const pillars = [
 
 export default async function HomePage() {
   const t = await getTranslations();
+  const catalog = buildProgressCatalog();
   // Written explainers first, then the ones still to come.
   const questions = [...content.explainers]
     .sort((a, b) => Number(b.status === "ready") - Number(a.status === "ready"))
@@ -99,6 +102,11 @@ export default async function HomePage() {
           </div>
         </Container>
       </div>
+
+      {/* Returning learners get their next lesson before anything else. */}
+      <Container className="empty:hidden [&:not(:empty)]:pt-8">
+        <ContinueCard lessons={catalog.lessons} onlyReturning />
+      </Container>
 
       <Container className="py-12 sm:py-16">
         <div className="flex flex-wrap items-end justify-between gap-3">

@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, Compass, Hammer, House } from "lucide-react";
+import { BookOpen, Compass, Hammer, House, Sprout } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -13,6 +13,7 @@ const icons = {
   explore: Compass,
   courses: BookOpen,
   projects: Hammer,
+  progress: Sprout,
 } as const;
 
 /** Inline links for the desktop header. */
@@ -56,7 +57,7 @@ export function MobileTabBar() {
       aria-label={t("main")}
       className="fixed inset-x-0 bottom-0 z-40 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
     >
-      <ul className="mx-auto grid max-w-lg grid-cols-4">
+      <ul className="mx-auto grid max-w-lg grid-cols-5">
         {items.map(({ href, key }) => {
           const active = isActivePath(pathname, href);
           const Icon = icons[key];

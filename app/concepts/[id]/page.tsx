@@ -8,6 +8,7 @@ import type { ComponentType, ReactNode } from "react";
 import { ConceptChips } from "@/components/content/concept-chip";
 import { SubjectBadge } from "@/components/content/subject";
 import { Container } from "@/components/layout/page-shell";
+import { MasteryMeter } from "@/components/progress/mastery-meter";
 import {
   conceptUsage,
   getConcept,
@@ -87,6 +88,10 @@ export default async function ConceptPage({ params }: Props) {
         <p className="mt-5 max-w-[70ch] border-s-4 border-tone ps-4 text-xl leading-relaxed">
           {concept.summary}
         </p>
+      </div>
+
+      <div className="mt-8 max-w-md">
+        <MasteryMeter conceptId={concept.id} />
       </div>
 
       {/* The concept's place in the graph: what it needs, what it unlocks. */}

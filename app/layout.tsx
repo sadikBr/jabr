@@ -3,7 +3,9 @@ import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 
+import { HydrationMarker } from "@/components/layout/hydration-marker";
 import { MobileTabBar } from "@/components/layout/nav-links";
+import { GoalRecorder } from "@/components/progress/goal-recorder";
 import { SiteHeader } from "@/components/layout/site-header";
 import { ServiceWorker } from "@/components/pwa/service-worker";
 import { localeDirection } from "@/i18n/config";
@@ -82,6 +84,8 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {site.name} · {t("footer.tagline")}
           </footer>
           <MobileTabBar />
+          <GoalRecorder />
+          <HydrationMarker />
           <ServiceWorker />
         </NextIntlClientProvider>
       </body>

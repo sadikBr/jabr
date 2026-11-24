@@ -103,6 +103,7 @@ export default async function LessonPage({ params }: Props) {
 
       {ready ? (
         <LessonDeck
+          lessonKey={lesson.key}
           steps={lesson.refs.steps.map((step) => ({
             kind: step.kind as StepKind,
             title: step.title ?? "",

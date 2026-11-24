@@ -23,6 +23,8 @@ export interface QuestionView {
   hintsHtml: string[];
   /** Parametrised questions can be retried with new numbers. */
   canVary: boolean;
+  /** The concepts it practises, for updating and showing mastery. */
+  concepts: { id: string; title: string }[];
   unit?: string;
   variables?: string[];
   multiple?: boolean;
@@ -50,6 +52,8 @@ function valuesFor(question: Question, seed: number): Record<string, number> {
 export function buildQuestionView(
   question: Question,
   seed?: number,
+  /** Concept titles by id. An id without a title is shown as it is. */
+  conceptTitles: Readonly<Record<string, string>> = {},
 ): QuestionView {
   const usedSeed = seed ?? defaultSeed(question.id);
   const values = valuesFor(question, usedSeed);
@@ -63,6 +67,10 @@ export function buildQuestionView(
     promptHtml: render(question.prompt),
     hintsHtml: question.hints.map(render),
     canVary: question.type === "parametrised",
+    concepts: question.concepts.map((id) => ({
+      id,
+      title: conceptTitles[id] ?? id,
+    })),
   };
 
   switch (question.type) {

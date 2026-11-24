@@ -585,3 +585,35 @@ figure[data-rehype-pretty-code-figure] {
 .animate-float {
   animation: float 5s ease-in-out infinite;
 }
+
+/* --- Mastery ---------------------------------------------------------------
+   data-mastery sets the tone, so bg-tone / text-tone work as for subjects.
+   Colour is never the only signal: each status also has its own ring shape
+   (components/progress/mastery-icon.tsx). */
+
+[data-mastery="new"] {
+  --tone: var(--muted-foreground);
+  --tone-soft: var(--muted);
+}
+[data-mastery="learning"] {
+  --tone: oklch(0.6 0.15 65);
+  --tone-soft: oklch(0.95 0.05 85);
+}
+[data-mastery="practicing"] {
+  --tone: oklch(0.52 0.15 250);
+  --tone-soft: oklch(0.945 0.03 250);
+}
+[data-mastery="mastered"] {
+  --tone: var(--success);
+  --tone-soft: var(--success-soft);
+}
+[data-theme="dark"] {
+  [data-mastery="learning"] {
+    --tone: oklch(0.82 0.14 80);
+    --tone-soft: oklch(0.3 0.05 70);
+  }
+  [data-mastery="practicing"] {
+    --tone: oklch(0.78 0.12 250);
+    --tone-soft: oklch(0.29 0.06 250);
+  }
+}

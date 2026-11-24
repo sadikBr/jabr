@@ -13,6 +13,8 @@ import {
 import { fillPlaceholders, pickParams } from "@/lib/grading/params";
 import { MAX_SEED } from "@/lib/grading/prng";
 
+import { conceptTitles } from "./concept-titles";
+
 import {
   buildQuestionSolution,
   buildQuestionView,
@@ -108,7 +110,9 @@ export async function getQuestionVariant(
   const parsed = variantInput.safeParse(input);
   if (!parsed.success) return null;
   const question = findQuestion(parsed.data.questionId);
-  return question ? buildQuestionView(question, parsed.data.seed) : null;
+  return question
+    ? buildQuestionView(question, parsed.data.seed, conceptTitles)
+    : null;
 }
 
 /**

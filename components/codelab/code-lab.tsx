@@ -3,6 +3,7 @@
 import {
   Check,
   CircleAlert,
+  Lightbulb,
   Play,
   RotateCcw,
   Square,
@@ -10,10 +11,12 @@ import {
   X,
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 
 import { Html } from "@/components/questions/html";
+import { MasteryChanges } from "@/components/progress/mastery-changes";
 import { Button } from "@/components/ui/button";
 import { describeTest, type RunOutcome } from "@/lib/codelab/harness";
 import {
@@ -24,6 +27,8 @@ import {
 } from "@/lib/codelab/runner";
 import { checkAnswer } from "@/lib/questions/actions";
 import type { QuestionSolution, QuestionView } from "@/lib/questions/view";
+import type { MasteryChange } from "@/lib/progress/reduce";
+import { recordAttempt } from "@/lib/progress/store";
 import { cn } from "@/lib/utils";
 
 const CodeEditor = dynamic(() => import("./editor"), {
@@ -50,6 +55,9 @@ export function CodeLab({ view }: { view: QuestionView }) {
   const [phase, setPhase] = useState<Phase>({ kind: "idle" });
   const [output, setOutput] = useState("");
   const [solution, setSolution] = useState<QuestionSolution | null>(null);
+  const [changes, setChanges] = useState<MasteryChange[]>([]);
+  const [hintsShown, setHintsShown] = useState(0);
+  const pathname = usePathname();
   const outputRef = useRef<HTMLDivElement>(null);
   const busy = phase.kind === "busy";
 
@@ -96,6 +104,26 @@ export function CodeLab({ view }: { view: QuestionView }) {
     );
 
     const outcome = result.kind === "finished" ? result.outcome : null;
+    // Passing every test counts as solving it. Failed runs are not recorded:
+    // running, reading the message and fixing is how code gets written.
+    if (
+      outcome &&
+      !outcome.error &&
+      outcome.tests.length > 0 &&
+      outcome.tests.every((test) => test.passed)
+    ) {
+      setChanges(
+        recordAttempt({
+          questionId: view.id,
+          concepts: view.concepts.map((concept) => concept.id),
+          contextId: pathname,
+          seed: view.seed,
+          correct: true,
+          score: 1,
+          hintsUsed: hintsShown,
+        }),
+      );
+    }
     if (outcome && outcome.tests.length > 0 && !outcome.error) {
       // Tests ran here in the browser; the server records the result.
       try {
@@ -194,6 +222,32 @@ export function CodeLab({ view }: { view: QuestionView }) {
         <span className="sm:hidden">{t("smallScreen")} </span>
         {t("tabHint")}
       </p>
+
+      {view.hintsHtml.length > 0 ? (
+        <div className="space-y-2 border-t px-4 py-3 sm:px-5">
+          {view.hintsHtml.slice(0, hintsShown).map((html, index) => (
+            <div
+              key={index}
+              className="animate-rise-in flex gap-3 rounded-e-xl border-s-4 border-accent bg-accent/10 px-4 py-3"
+            >
+              <Lightbulb
+                aria-hidden="true"
+                className="mt-0.5 size-5 shrink-0 text-accent-foreground dark:text-accent"
+              />
+              <Html html={html} className="rich min-w-0" />
+            </div>
+          ))}
+          {hintsShown < view.hintsHtml.length ? (
+            <Button
+              variant="outline"
+              onClick={() => setHintsShown((count) => count + 1)}
+            >
+              <Lightbulb aria-hidden="true" />
+              {hintsShown === 0 ? t("hint") : t("anotherHint")}
+            </Button>
+          ) : null}
+        </div>
+      ) : null}
 
       <div
         ref={outputRef}
@@ -326,6 +380,12 @@ export function CodeLab({ view }: { view: QuestionView }) {
           ) : null}
         </div>
       </div>
+
+      {changes.length > 0 ? (
+        <div className="border-t px-4 py-3 sm:px-5">
+          <MasteryChanges changes={changes} concepts={view.concepts} />
+        </div>
+      ) : null}
 
       {allPassed && solution?.solutionHtml ? (
         <details className="group border-t">

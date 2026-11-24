@@ -10,12 +10,17 @@ import {
   WifiOff,
   X,
 } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { type FormEvent, useEffect, useId, useState } from "react";
 
+import { MasteryChanges } from "@/components/progress/mastery-changes";
 import { Button } from "@/components/ui/button";
 import type { FeedbackCode } from "@/lib/grading/grade";
 import { MAX_SEED } from "@/lib/grading/prng";
+import type { MasteryChange } from "@/lib/progress/reduce";
+import { recordAttempt, recordReveal } from "@/lib/progress/store";
+import { useProgress } from "@/lib/progress/use-progress";
 import {
   checkAnswer,
   type CheckResult,
@@ -61,6 +66,9 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
   const [attempts, setAttempts] = useState(0);
   const [solution, setSolution] = useState<QuestionSolution | null>(null);
   const [score, setScore] = useState(0);
+  const [changes, setChanges] = useState<MasteryChange[]>([]);
+  const pathname = usePathname();
+  const solvedBefore = (useProgress().questions[view.id]?.correct ?? 0) > 0;
 
   const isSelfCheck = view.type === "self-check";
   const settled = status === "correct" || status === "revealed";
@@ -94,6 +102,7 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
     setHintsShown(0);
     setAttempts(0);
     setSolution(null);
+    setChanges([]);
   }
 
   async function withServer<T>(call: () => Promise<T>): Promise<T | null> {
@@ -132,6 +141,19 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
     }
     setAttempts((count) => count + 1);
     setScore(result.score);
+    // Progress is kept on this device; the server only grades.
+    setChanges(
+      recordAttempt({
+        questionId: view.id,
+        concepts: view.concepts.map((concept) => concept.id),
+        contextId: pathname,
+        seed: view.seed,
+        correct: result.correct,
+        score: result.score,
+        hintsUsed: hintsShown,
+        selfAssessed: isSelfCheck,
+      }),
+    );
     if (isSelfCheck) {
       // A self-check is a reflection, not a pass/fail: it is done once saved.
       setStatus(result.correct ? "correct" : "revealed");
@@ -153,7 +175,16 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
     setSolution(result);
     setFeedback(null);
     // For a self-check, revealing the model answer is the next step, not the end.
-    if (!isSelfCheck) setStatus("revealed");
+    if (isSelfCheck) return;
+    setStatus("revealed");
+    setChanges(
+      recordReveal({
+        questionId: view.id,
+        concepts: view.concepts.map((concept) => concept.id),
+        contextId: pathname,
+        seed: view.seed,
+      }),
+    );
   }
 
   async function newNumbers() {
@@ -221,6 +252,12 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
         <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {t(`types.${view.type}`)}
         </p>
+        {solvedBefore && status === "idle" ? (
+          <span className="flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-xs font-semibold text-success">
+            <Check aria-hidden="true" className="size-3" strokeWidth={3} />
+            {t("solvedBefore")}
+          </span>
+        ) : null}
         {view.canVary && (settled || attempts > 0) ? (
           <Button
             variant="ghost"
@@ -448,6 +485,7 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
               {t(`problems.${problem}`)}
             </p>
           ) : null}
+          <MasteryChanges changes={changes} concepts={view.concepts} />
         </div>
 
         {hintsShown > 0 ? (

@@ -6,7 +6,8 @@ import { getTranslations } from "next-intl/server";
 import { Cover } from "@/components/content/cover";
 import { SubjectBadge } from "@/components/content/subject";
 import { Container, PageHeader } from "@/components/layout/page-shell";
-import { courseStats } from "@/lib/content/queries";
+import { CourseProgressBar } from "@/components/progress/lesson-status";
+import { courseLessons, courseStats } from "@/lib/content/queries";
 import { content } from "@/lib/content/source";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -73,6 +74,12 @@ export default async function CoursesPage() {
                       </span>
                     ) : null}
                   </p>
+                  <CourseProgressBar
+                    lessonKeys={courseLessons(content, course)
+                      .filter((entry) => entry.lesson.status === "ready")
+                      .map((entry) => entry.lesson.key)}
+                    className="mt-4"
+                  />
                 </div>
               </Link>
             </li>

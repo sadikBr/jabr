@@ -1,6 +1,11 @@
 import { fireEvent, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import {
+  clearProgressCache,
+  getProgress,
+  recordAttempt,
+} from "@/lib/progress/store";
 import type { CheckResult } from "@/lib/questions/actions";
 import type { QuestionView } from "@/lib/questions/view";
 import { renderWithIntl } from "@/tests/unit/render";
@@ -13,6 +18,7 @@ const actions = vi.hoisted(() => ({
   revealSolution: vi.fn(),
 }));
 vi.mock("@/lib/questions/actions", () => actions);
+vi.mock("next/navigation", () => ({ usePathname: () => "/lesson" }));
 
 const numeric: QuestionView = {
   id: "q.numeric",
@@ -21,6 +27,7 @@ const numeric: QuestionView = {
   promptHtml: "What is 2 × 3?",
   hintsHtml: ["First hint", "Second hint"],
   canVary: true,
+  concepts: [{ id: "slope", title: "Slope of a line" }],
   unit: "m",
 };
 
@@ -31,6 +38,7 @@ const choice: QuestionView = {
   promptHtml: "Pick one",
   hintsHtml: [],
   canVary: false,
+  concepts: [],
   multiple: false,
   choices: [
     { id: "a", html: "Alpha" },
@@ -45,6 +53,7 @@ const selfCheck: QuestionView = {
   promptHtml: "Explain it",
   hintsHtml: [],
   canVary: false,
+  concepts: [],
   rubricLength: 2,
 };
 
@@ -65,6 +74,7 @@ describe("QuestionCard", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    clearProgressCache();
   });
 
   it("sends the answer with the question's seed and celebrates a correct one", async () => {
@@ -196,6 +206,70 @@ describe("QuestionCard", () => {
       questionId: "q.numeric",
       seed: 4242,
     });
+  });
+
+  it("saves the attempt on this device and says what moved", async () => {
+    actions.checkAnswer.mockResolvedValue(graded({ correct: true, score: 1 }));
+    renderWithIntl(<QuestionCard initial={numeric} />);
+    fireEvent.click(screen.getByRole("button", { name: "Give me a hint" }));
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "6" } });
+    fireEvent.click(check());
+    await screen.findByText("Correct!");
+
+    const saved = getProgress();
+    expect(saved.attempts).toEqual([
+      expect.objectContaining({
+        questionId: "q.numeric",
+        seed: 5,
+        correct: true,
+        hintsUsed: 1,
+      }),
+    ]);
+    expect(saved.mastery.slope?.score).toBeCloseTo(0.21, 10); // 0.3 × 0.7 for one hint
+    const changes = screen.getByTestId("mastery-changes");
+    expect(changes).toHaveTextContent("Slope of a line");
+    expect(changes).toHaveTextContent("Not started");
+    expect(changes).toHaveTextContent("Learning");
+  });
+
+  it("does not save an unreadable answer, and counts a revealed solution against the concept", async () => {
+    actions.checkAnswer.mockResolvedValueOnce(
+      graded({ invalid: true, feedback: { code: "input-syntax" } }),
+    );
+    renderWithIntl(<QuestionCard initial={numeric} />);
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "6 +" } });
+    fireEvent.click(check());
+    await screen.findByText(/doesn't read as maths/);
+    expect(getProgress().attempts).toHaveLength(0);
+
+    actions.checkAnswer.mockResolvedValue(graded({}));
+    actions.revealSolution.mockResolvedValue({ answerText: "6 m" });
+    fireEvent.change(screen.getByRole("textbox"), { target: { value: "5" } });
+    fireEvent.click(check());
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Show the solution" }),
+    );
+    await screen.findByText("6 m");
+    expect(getProgress().questions["q.numeric"]).toMatchObject({
+      attempts: 2,
+      wrong: 2,
+      revealed: 1,
+      correct: 0,
+    });
+  });
+
+  it("marks a question solved on an earlier visit", () => {
+    recordAttempt({
+      questionId: "q.numeric",
+      concepts: ["slope"],
+      contextId: "/",
+      seed: 5,
+      correct: true,
+      score: 1,
+      hintsUsed: 0,
+    });
+    renderWithIntl(<QuestionCard initial={numeric} />);
+    expect(screen.getByText("Solved")).toBeVisible();
   });
 
   it("submits the selected choice and marks the right one", async () => {

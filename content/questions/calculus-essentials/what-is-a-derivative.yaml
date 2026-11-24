@@ -143,3 +143,40 @@
     At the instant $t = 2$ s, the cyclist's position is increasing at a rate of 5 metres per second. In other words, their velocity at that moment is 5 m/s.
 
     A derivative's units are always the output's units divided by the input's units.
+
+- id: calc.deriv.code-slope
+  type: code
+  concepts: [derivative-definition, average-rate-of-change]
+  prompt: "Now make the computer do the zooming. Complete `secant_slope` so it returns the slope of the line through the points at `x` and `x + h` on the graph of `f`. Then run it and watch the slopes of $x^3$ at $x = 2$ settle."
+  starter: |
+    def f(x):
+        return x**3
+
+    def secant_slope(f, x, h):
+        # Replace the next line with the slope: rise over run.
+        return 0
+
+    # Shrink h and watch the slope settle on one number.
+    for h in [1, 0.1, 0.01, 0.001]:
+        print(f"h = {h:<6} slope = {secant_slope(f, 2, h):.4f}")
+  tests: |
+    def test_slope_of_a_straight_line():
+        line = lambda x: 3 * x + 1
+        assert abs(secant_slope(line, 0, 1) - 3) < 1e-9, "For the line y = 3x + 1 the slope should be 3 everywhere."
+
+    def test_matches_the_numbers_from_the_lesson():
+        square = lambda x: x * x
+        assert abs(secant_slope(square, 1, 0.1) - 2.1) < 1e-9, "For x² at x = 1 with h = 0.1, the lesson found 2.1."
+
+    def test_approaches_the_derivative():
+        cube = lambda x: x**3
+        assert abs(secant_slope(cube, 2, 1e-6) - 12) < 1e-3, "For x³ at x = 2 the slopes should approach 12."
+  hints:
+    - "The rise is `f(x + h) - f(x)`. The run is `h`."
+    - "Return `(f(x + h) - f(x)) / h`."
+  solution: |
+    The slope of the secant line is the change in $f$ divided by the change in $x$:
+
+    `return (f(x + h) - f(x)) / h`
+
+    With that in place the printed slopes are 19, 12.61, 12.0601 and 12.006: they are closing in on $12$, the derivative of $x^3$ at $x = 2$.

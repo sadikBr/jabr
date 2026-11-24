@@ -10,7 +10,14 @@ related:
 
 <Layer depth="intuition">
 
-In 1971, standing on the Moon, astronaut David Scott held out a geology hammer
+Before you read anything, try it. Which one lands first?
+
+<Interactive id="drop-test" props={{ place: "moon" }} />
+
+Now switch to **Earth**, turn the **air** on, and drop them again.
+
+What you just did on the Moon has been done for real. In 1971, astronaut
+David Scott stood on the lunar surface, held out a geology hammer
 in one hand and a falcon feather in the other, and let go of both. They fell
 side by side and hit the dust at the same moment.
 
@@ -65,6 +72,8 @@ drag is enough to balance its weight, and it stops speeding up almost
 immediately. The hammer's weight is so much larger that the same drag barely
 matters.
 
+<Question id="fall.vacuum-race" />
+
 <Callout kind="note" title="Falling is not about weight">
 
 Without air, a bowling ball, a feather and a grain of sand dropped together
@@ -108,6 +117,8 @@ $$
 
 On Earth ($g = 9.81\ \text{m/s}^2$) with no air, the same drop takes about
 $0.57\ \text{s}$, for the hammer and the feather alike.
+
+<Question id="fall.moon-drop-time" />
 
 **Where does $g$ come from?** Newton's law of gravitation says a planet of
 mass $M$ pulls on an object of mass $m$, a distance $r$ from its centre, with
@@ -157,42 +168,37 @@ You can watch drag break the tie with a few lines of Python. The loop below
 takes many small time steps. At each one it works out the acceleration from
 the forces, then nudges the velocity and the height forward.
 
-```python
-def fall_time(m, k, h=1.6, g=9.81, dt=0.0001):
-    """Seconds for an object to fall h metres. k is its drag constant."""
-    y, v, t = h, 0.0, 0.0
-    while y > 0:
-        a = g - (k / m) * v**2   # gravity minus drag
-        v += a * dt
-        y -= v * dt
-        t += dt
-    return t
-
-print(f"Hammer, no air:  {fall_time(1.32, 0):.2f} s")
-print(f"Feather, no air: {fall_time(0.003, 0):.2f} s")
-print(f"Hammer, in air:  {fall_time(1.32, 0.005):.2f} s")
-print(f"Feather, in air: {fall_time(0.003, 0.01):.2f} s")
-```
-
-```text
-Hammer, no air:  0.57 s
-Feather, no air: 0.57 s
-Hammer, in air:  0.57 s
-Feather, in air: 1.05 s
-```
+<CodeLab id="fall.sim" />
 
 With `k = 0` the mass makes no difference, just as the maths said. Turn the
-air on and the hammer does not notice, while the 3-gram feather takes nearly twice
-as long.
+air on and the hammer does not notice, while the 3-gram feather takes nearly
+twice as long.
 
 Things to try:
 
-- Set `g = 1.62` to drop them on the Moon.
-- Drop from `h = 100`. How long before the feather stops speeding up?
-- Find the feather's terminal velocity from the formula, then check that the
-  simulation agrees.
+- Set `g=1.62` in a call, as in `fall_time(1.32, 0, g=1.62)`, to drop the
+  hammer on the Moon.
+- Drop from `h=100`. How much longer does the feather take now?
+- Work out the feather's terminal velocity from the formula, then make the
+  program print `v` to check that it agrees.
 
-That step-by-step loop is called Euler's method, and it is the engine inside
+### How small do the steps need to be?
+
+The program takes ten thousand steps a second. Is that overkill? Here is the
+same idea on a simpler job: tracking the **speed** of a falling object with
+drag. The smooth curve is the exact answer. The straight segments are what
+you get by stepping.
+
+<Interactive
+  id="euler-stepper"
+  props={{ problem: "falling-with-drag", steps: 3, goal: { maxError: 0.1 } }}
+/>
+
+With only a few steps the estimate overshoots. Each time you double
+the number of steps, the error at the end roughly halves. That trade, more
+steps for more accuracy, is at the heart of every simulation.
+
+This step-by-step recipe is called Euler's method, and it is the engine inside
 the rocket simulator you can build in Projects.
 
 <ConnectIt

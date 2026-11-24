@@ -1,0 +1,65 @@
+- id: fall.vacuum-race
+  type: multiple-choice
+  concepts: [free-fall, mass]
+  prompt: "A bowling ball and a tennis ball are dropped together from the same height inside a chamber with all the air pumped out. What happens?"
+  choices:
+    - id: together
+      text: "They land at the same moment"
+      correct: true
+    - id: bowling
+      text: "The bowling ball lands first, because gravity pulls on it harder"
+      feedback: "Gravity does pull on it harder. But it also has that much more mass to get moving, and the two effects cancel exactly."
+    - id: tennis
+      text: "The tennis ball lands first, because it is lighter and easier to move"
+      feedback: "It is easier to move, but gravity also pulls on it less by exactly the same factor."
+    - id: depends
+      text: "It depends on what they are made of"
+      feedback: "With no air, nothing about the object matters: not its mass, its shape or its material."
+  solution: |
+    They land together. Weight is proportional to mass, and so is resistance to acceleration, so $a = \frac{mg}{m} = g$ for both.
+
+- id: fall.moon-drop-time
+  type: parametrised
+  concepts: [free-fall]
+  params:
+    h: { min: 2, max: 10, step: 1 }
+  prompt: "An astronaut on the Moon ($g = 1.62\\ \\text{m/s}^2$) drops a wrench from a height of ${h}$ m. How long does it take to reach the ground?"
+  answer: "sqrt(2 * h / 1.62)"
+  tolerance: { relative: 0.02 }
+  unit: s
+  commonMistakes:
+    - answer: "sqrt(2 * h / 9.81)"
+      feedback: "That is how long it would take on Earth. Use the Moon's gravity, $1.62\\ \\text{m/s}^2$."
+    - answer: "2 * h / 1.62"
+      feedback: "That is $t^2$. Take the square root to get $t$."
+    - answer: "sqrt(h / 1.62)"
+      feedback: "Check the formula: $h = \\tfrac{1}{2} g t^2$, so $t = \\sqrt{2h / g}$. Don't lose the 2."
+  hints:
+    - "Starting from rest, the distance fallen is $h = \\tfrac{1}{2} g t^2$."
+    - "Rearranged: $t = \\sqrt{\\dfrac{2h}{g}}$."
+  solution: |
+    From $h = \tfrac{1}{2} g t^2$:
+
+    $$t = \sqrt{\frac{2h}{g}} = \sqrt{\frac{2 \times {h}}{1.62}}$$
+
+    The wrench's mass never appears, so a feather dropped beside it would take exactly as long.
+
+- id: fall.sim
+  type: code
+  concepts: [eulers-method, air-drag]
+  prompt: "This program drops an object in small time steps. Run it, then change the numbers and run it again."
+  starter: |
+    def fall_time(m, k, h=1.6, g=9.81, dt=0.0001):
+        """Seconds for an object to fall h metres. k is its drag constant."""
+        y, v, t = h, 0.0, 0.0
+        while y > 0:
+            a = g - (k / m) * v**2   # gravity minus drag
+            v += a * dt
+            y -= v * dt
+            t += dt
+        return t
+
+    print(f"Hammer, no air:  {fall_time(1.32, 0):.2f} s")
+    print(f"Feather, no air: {fall_time(0.003, 0):.2f} s")
+    print(f"Hammer, in air:  {fall_time(1.32, 0.005):.2f} s")
+    print(f"Feather, in air: {fall_time(0.003, 0.01):.2f} s")

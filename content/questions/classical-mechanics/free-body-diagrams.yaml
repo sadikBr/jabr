@@ -1,0 +1,219 @@
+- id: mech.fbd.lift
+  type: parametrised
+  concepts: [net-force, newtons-second-law, free-body-diagram]
+  params:
+    mass: { choices: [500, 800, 1000] }
+    extra: { choices: [-1.5, -1, 1, 1.5, 2] }
+  derived:
+    tension: "mass * (9.8 + extra)"
+    weight: "mass * 9.8"
+  prompt: "A lift and its passengers have a total mass of {mass} kg. At one moment the cable pulls upwards with {tension} N. What is the lift's acceleration? Take upwards as positive and $g = 9.8$ m/s²."
+  answer: "(tension - mass * 9.8) / mass"
+  tolerance: { absolute: 0.01 }
+  unit: "m/s²"
+  commonMistakes:
+    - answer: "tension / mass"
+      feedback: "The cable is not the only force. The weight, {weight} N, pulls the other way."
+    - answer: "(mass * 9.8 - tension) / mass"
+      feedback: "Right size, wrong sign. With upwards as positive, the net force is the tension minus the weight."
+  hints:
+    - "Two forces act on the lift: the cable's pull upwards and its weight downwards."
+    - "Its weight is ${mass} \\times 9.8 = {weight}$ N. The net force is {tension} − {weight} N."
+  solution: |
+    The diagram has two forces: tension {tension} N upwards and weight ${mass} \times 9.8 = {weight}$ N downwards. With upwards as positive:
+
+    $$a = \frac{F_{\text{net}}}{m} = \frac{{tension} - {weight}}{{mass}} \text{ m/s}^2$$
+
+    A positive answer means the acceleration is upwards, a negative one downwards. Neither tells you which way the lift is moving.
+
+- id: mech.fbd.scales
+  type: parametrised
+  concepts: [normal-force, newtons-second-law]
+  params:
+    mass: { choices: [50, 60, 70, 80] }
+    a: { choices: [1, 1.5, 2] }
+  derived:
+    weight: "mass * 9.8"
+  prompt: "A {mass} kg person stands on bathroom scales in a lift that is accelerating **upwards** at {a} m/s². How hard do the scales push up on them? (This is the force the scales display. Use $g = 9.8$ m/s².)"
+  answer: "mass * (9.8 + a)"
+  tolerance: { relative: 0.005 }
+  unit: N
+  commonMistakes:
+    - answer: "mass * 9.8"
+      feedback: "That is their weight, which is what the scales would show at rest. If that were all, the net force would be zero and they would not accelerate."
+    - answer: "mass * (9.8 - a)"
+      feedback: "For the person to accelerate upwards, the upward push must be bigger than their weight, not smaller."
+    - answer: "mass * a"
+      feedback: "That is the net force. The scales must supply that and hold up the person's weight as well."
+  hints:
+    - "Two forces act on the person: their weight down and the normal force from the scales up."
+    - "Net force = $N - mg$, and it must equal $ma$."
+  solution: |
+    On the person: the normal force $N$ upwards and the weight ${mass} \times 9.8 = {weight}$ N downwards. The second law, with upwards positive:
+
+    $$N - {weight} = {mass} \times {a} \quad\Rightarrow\quad N = {mass} \times (9.8 + {a}) \text{ N}$$
+
+    The scales read more than the person's weight. This is the heavy feeling as a lift sets off upwards.
+
+- id: mech.fbd.ramp-acceleration
+  type: parametrised
+  concepts: [free-body-diagram, vector-components, net-force]
+  params:
+    angle: { choices: [10, 15, 20, 25, 40] }
+  prompt: "A sledge slides down a smooth, icy slope tilted at {angle}° to the horizontal. Ignoring friction and the air, what is its acceleration? (Use $g = 9.8$ m/s².)"
+  answer: "9.8 * sin(angle deg)"
+  tolerance: { relative: 0.01 }
+  unit: "m/s²"
+  commonMistakes:
+    - answer: "9.8 * cos(angle deg)"
+      feedback: "That is the component of $g$ pressing into the slope. The component along the slope uses sine."
+    - answer: "9.8"
+      feedback: "That would be free fall. The slope's normal force cancels part of the weight."
+  hints:
+    - "Only the component of the weight along the slope causes the acceleration."
+    - "That component is $mg\\sin\\theta$, so $a = g\\sin\\theta$."
+  solution: |
+    Along the slope the only force component is $mg\sin\theta$, so
+
+    $$a = g\sin\theta = 9.8 \times \sin({angle}°) \text{ m/s}^2$$
+
+    The sledge's mass does not matter.
+
+- id: mech.fbd.ramp-normal
+  type: parametrised
+  concepts: [normal-force, vector-components]
+  params:
+    mass: { choices: [2, 5, 10] }
+    angle: { choices: [20, 30, 35, 45] }
+  derived:
+    weight: "mass * 9.8"
+  prompt: "A {mass} kg box rests on a ramp tilted at {angle}° to the horizontal. How big is the normal force from the ramp on the box? (Use $g = 9.8$ m/s².)"
+  answer: "mass * 9.8 * cos(angle deg)"
+  tolerance: { relative: 0.01 }
+  unit: N
+  commonMistakes:
+    - answer: "mass * 9.8"
+      feedback: "That is the box's full weight. On a slope the surface only has to balance the part of the weight pressing into it."
+    - answer: "mass * 9.8 * sin(angle deg)"
+      feedback: "That is the component of the weight along the slope. The normal force balances the component into the slope, which uses cosine."
+  hints:
+    - "At right angles to the ramp, the box is not accelerating, so the forces in that direction balance."
+    - "The component of the weight pressing into the ramp is $mg\\cos\\theta$."
+  solution: |
+    The box does not move into or out of the ramp, so the normal force balances the component of the weight at right angles to the surface:
+
+    $$N = mg\cos\theta = {weight} \times \cos({angle}°) \text{ N}$$
+
+    That is less than its weight of {weight} N.
+
+- id: mech.fbd.two-pulls
+  type: parametrised
+  concepts: [net-force, vector-components, newtons-second-law]
+  params:
+    east: { choices: [30, 60, 90] }
+    north: { choices: [40, 80, 120] }
+    mass: { choices: [10, 20, 25] }
+  derived:
+    e2: "east^2"
+    n2: "north^2"
+  prompt: "Two people pull a {mass} kg crate across smooth ice with ropes. One pulls east with {east} N and the other pulls north with {north} N. What is the size of the crate's acceleration?"
+  answer: "sqrt(east^2 + north^2) / mass"
+  tolerance: { relative: 0.01 }
+  unit: "m/s²"
+  commonMistakes:
+    - answer: "(east + north) / mass"
+      feedback: "The two pulls are at right angles, so their sizes do not simply add. Use Pythagoras to find the net force."
+  hints:
+    - "The net force is the vector sum of the two pulls. They are at right angles."
+    - "Its size is $\\sqrt{{east}^2 + {north}^2}$ N. Then divide by the mass."
+  solution: |
+    The pulls are perpendicular, so the net force has size
+
+    $$F_{\text{net}} = \sqrt{{east}^2 + {north}^2} = \sqrt{{e2} + {n2}} \text{ N}$$
+
+    and the acceleration is that divided by {mass} kg. (The weight and the normal force are in the diagram too, but they are vertical and cancel each other.)
+
+- id: mech.fbd.puck
+  type: multiple-choice
+  concepts: [free-body-diagram, newtons-first-law]
+  prompt: "An ice hockey puck glides across frictionless ice at a steady 10 m/s. Which forces belong in its free-body diagram?"
+  choices:
+    - id: two
+      text: "Its weight and the normal force from the ice, and nothing else"
+      correct: true
+    - id: forward
+      text: "Its weight, the normal force, and a forward force keeping it moving"
+      feedback: "What object would be supplying that forward force? Nothing is touching the puck except the ice. Steady motion needs no force."
+    - id: none
+      text: "No forces at all, since it moves at a steady speed"
+      feedback: "The net force is zero, but that is because two real forces cancel. Gravity still pulls on the puck and the ice still holds it up."
+    - id: stick
+      text: "Its weight, the normal force, and the force from the stick that hit it"
+      feedback: "The stick's force ended when the stick lost contact. A force is not something an object carries with it."
+  hints:
+    - "Go through the recipe: gravity, then everything touching the puck."
+  solution: |
+    Gravity pulls it down and the ice pushes it up. Nothing else touches it, so there is nothing else to draw. Those two forces cancel, the net force is zero, and by the first law the puck keeps its velocity.
+
+- id: mech.fbd.normal-vs-weight
+  type: multiple-choice
+  multiple: true
+  concepts: [normal-force]
+  prompt: "In which of these situations is the normal force on a person **different** in size from their weight? Select all that apply."
+  choices:
+    - id: slope
+      text: "Standing on a steep hillside"
+      correct: true
+    - id: lift-up
+      text: "Standing in a lift that is speeding up as it rises"
+      correct: true
+    - id: floor
+      text: "Standing still on a level floor"
+      feedback: "Here the two forces are the only ones acting and the person is not accelerating, so they must be equal in size."
+    - id: lift-steady
+      text: "Standing in a lift moving upwards at a steady speed"
+      feedback: "Steady speed means no acceleration, so the forces balance exactly as they do at rest."
+  hints:
+    - "The normal force is whatever the second law requires. When is the vertical acceleration not zero, or the surface not level?"
+  solution: |
+    On a slope the surface only balances part of the weight ($mg\cos\theta$). In a lift accelerating upwards the floor must push harder than the weight to produce the acceleration.
+
+    Standing still, or moving at a steady velocity, there is no acceleration and the normal force equals the weight.
+
+- id: mech.fbd.belongs
+  type: multiple-choice
+  concepts: [free-body-diagram, newtons-third-law]
+  prompt: "You are drawing a free-body diagram for a lamp hanging from the ceiling by a cord. Which of these forces does **not** belong in it?"
+  choices:
+    - id: on-cord
+      text: "The lamp's downward pull on the cord"
+      correct: true
+    - id: weight
+      text: "The Earth's downward pull on the lamp"
+      feedback: "That is the lamp's weight. It acts on the lamp, so it belongs."
+    - id: tension
+      text: "The cord's upward pull on the lamp"
+      feedback: "That is the tension. It acts on the lamp, so it belongs."
+    - id: all
+      text: "They all belong"
+      feedback: "One of them is a force the lamp exerts on something else."
+  hints:
+    - "A free-body diagram shows only the forces acting on the chosen object. For each force, ask: what is it acting on?"
+  solution: |
+    The lamp's pull on the cord is a force **on the cord**. It is the third-law partner of the cord's pull on the lamp, and it belongs in the cord's diagram.
+
+    The lamp's own diagram has just two arrows: its weight down and the tension up. They cancel, so the lamp hangs still.
+
+- id: mech.fbd.explain
+  type: self-check
+  concepts: [free-body-diagram, net-force]
+  prompt: "A child is sliding down a playground slide at a steady speed. Describe the free-body diagram: which forces act on the child, in which directions, and what must be true about their sum?"
+  rubric:
+    - "You included the weight, straight down, and the normal force, at right angles to the slide."
+    - "You included friction, along the slide and pointing up it, against the motion."
+    - "You said the three forces add to zero, because a steady speed in a straight line means no acceleration."
+    - "You did not add a force pushing the child down the slide."
+  solution: |
+    Three forces act on the child: their weight (straight down), the normal force from the slide (at right angles to its surface), and friction (along the slide, pointing up it).
+
+    The speed is steady, so the acceleration is zero and the three forces must add up to zero. In particular, friction exactly balances the component of the weight along the slide. There is no separate force pulling the child down the slide: that is just a component of the weight.

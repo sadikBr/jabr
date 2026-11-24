@@ -1,0 +1,19 @@
+id: classical-mechanics
+title: Classical mechanics
+subject: physics
+level: university-year-1
+summary: How things move, and why. Describe motion with graphs and vectors, then meet the forces behind it, with simulations you can steer.
+modules:
+  - id: describing-motion
+    title: Describing motion
+    summary: Position, velocity and acceleration in one dimension, then in two with vectors.
+    lessons: [motion-in-one-dimension, vectors, projectile-motion]
+  - id: forces
+    title: Forces
+    summary: Newton's laws, and how to find the motion of anything once you know the forces on it.
+    lessons: [newtons-laws, free-body-diagrams, gravity-and-weight, drag]
+  - id: energy-and-momentum
+    title: Energy and momentum
+    summary: Two quantities that are conserved, and the shortcuts they give.
+    lessons: [work-and-energy, conservation-of-energy, momentum]
+capstone: rocket-flight-simulator

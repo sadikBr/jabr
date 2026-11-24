@@ -1,0 +1,226 @@
+- id: mech.grav.weight
+  type: parametrised
+  concepts: [gravity-and-weight]
+  params:
+    mass: { choices: [0.5, 2, 12, 65] }
+  prompt: "What is the weight, on Earth, of an object with a mass of {mass} kg? (Use $g = 9.8$ m/s².)"
+  answer: "mass * 9.8"
+  tolerance: { relative: 0.005 }
+  unit: N
+  commonMistakes:
+    - answer: "mass"
+      feedback: "That is its mass, in kilograms. Weight is a force, in newtons: multiply by $g$."
+    - answer: "mass / 9.8"
+      feedback: "Multiply by $g$ rather than dividing: $W = mg$."
+  hints:
+    - "$W = mg$."
+  solution: |
+    $$W = mg = {mass} \times 9.8 \text{ N}$$
+
+- id: mech.grav.elsewhere
+  type: parametrised
+  concepts: [gravity-and-weight]
+  params:
+    mass: { choices: [60, 70, 80] }
+    g: { choices: [1.62, 3.71, 24.8] }
+  prompt: "An astronaut has a mass of {mass} kg. What does she weigh on a world where $g = {g}$ m/s²?"
+  answer: "mass * g"
+  tolerance: { relative: 0.005 }
+  unit: N
+  commonMistakes:
+    - answer: "mass * 9.8"
+      feedback: "That is her weight on Earth. Use the value of $g$ for this world."
+  hints:
+    - "Her mass is the same everywhere. Only $g$ changes."
+  solution: |
+    $$W = mg = {mass} \times {g} \text{ N}$$
+
+    Her mass is still {mass} kg. Only the pull on each of those kilograms is different.
+
+- id: mech.grav.mass
+  type: parametrised
+  concepts: [gravity-and-weight]
+  params:
+    weight: { choices: [49, 98, 196, 490] }
+  prompt: "A parcel weighs {weight} N on Earth. What is its mass? (Use $g = 9.8$ m/s².)"
+  answer: "weight / 9.8"
+  tolerance: { relative: 0.005 }
+  unit: kg
+  commonMistakes:
+    - answer: "weight * 9.8"
+      feedback: "Divide rather than multiply: from $W = mg$, the mass is $\\dfrac{W}{g}$."
+  hints:
+    - "Rearrange $W = mg$ for $m$."
+  solution: |
+    $$m = \frac{W}{g} = \frac{{weight}}{9.8} \text{ kg}$$
+
+- id: mech.grav.vacuum
+  type: multiple-choice
+  concepts: [gravity-and-weight, free-fall, newtons-second-law]
+  prompt: "A 10 kg steel ball and a 1 kg steel ball are dropped together inside a tall chamber with all the air pumped out. Which statement is correct?"
+  choices:
+    - id: both
+      text: "Gravity pulls ten times harder on the big ball, and they fall with the same acceleration"
+      correct: true
+    - id: same-force
+      text: "Gravity pulls equally hard on both, so they fall with the same acceleration"
+      feedback: "They do fall together, but not because the forces are equal. The weight of the 10 kg ball is ten times larger."
+    - id: faster
+      text: "Gravity pulls ten times harder on the big ball, so it falls with ten times the acceleration"
+      feedback: "The force is ten times larger, but so is the mass it has to accelerate. Look at $a = \\frac{mg}{m}$."
+    - id: lighter
+      text: "The small ball accelerates faster, because it is easier to move"
+      feedback: "It is easier to move, but it is also pulled less hard, by exactly the same factor."
+  hints:
+    - "Work out the weight of each ball, then divide each by its own mass."
+  solution: |
+    The weights are $98$ N and $9.8$ N: ten times apart. Dividing each by its own mass gives $\frac{98}{10} = \frac{9.8}{1} = 9.8$ m/s². The bigger pull acts on a bigger mass, and the acceleration comes out the same.
+
+- id: mech.grav.moon-jump
+  type: parametrised
+  concepts: [gravity-and-weight, free-fall]
+  params:
+    height: { choices: [0.4, 0.5, 0.6] }
+  prompt: "On Earth you can jump {height} m straight up. If you left the ground at the same speed on the Moon, where $g = 1.62$ m/s², how high would you go? (Use $g = 9.8$ m/s² on Earth.)"
+  answer: "height * 9.8 / 1.62"
+  tolerance: { relative: 0.02 }
+  unit: m
+  commonMistakes:
+    - answer: "height * 1.62 / 9.8"
+      feedback: "Weaker gravity lets you go higher, not lower. The ratio is the other way up."
+  hints:
+    - "At the top of a jump the velocity is zero: $0 = u^2 - 2gh$, so $h = \\dfrac{u^2}{2g}$."
+    - "With the same take-off speed $u$, the height is proportional to $\\dfrac{1}{g}$."
+  solution: |
+    From $v^2 = u^2 + 2as$ with $v = 0$ at the top, the height of a jump is $h = \dfrac{u^2}{2g}$. For the same take-off speed, $h$ is proportional to $\dfrac{1}{g}$:
+
+    $$h_{\text{Moon}} = {height} \times \frac{9.8}{1.62} \text{ m}$$
+
+    About six times higher, and you would be off the ground for about six times as long.
+
+- id: mech.grav.code-worlds
+  type: code
+  concepts: [gravity-and-weight, free-fall]
+  prompt: "Complete the two functions: `weight` returns the weight in newtons of a mass where gravity has strength `g`, and `fall_time` returns how long something takes to fall a given height from rest. The loop then prints a comparison of four worlds."
+  starter: |
+    import math
+
+    WORLDS = {"Earth": 9.81, "Moon": 1.62, "Mars": 3.71, "Jupiter": 24.79}
+
+    def weight(mass, g):
+        """The weight, in newtons, of `mass` kilograms where gravity is `g`."""
+        # Replace the next line.
+        return 0
+
+    def fall_time(height, g):
+        """Seconds to fall `height` metres from rest, with no air."""
+        # Replace the next line: rearrange height = (1/2) g t**2 for t.
+        return 0
+
+    print("world     weight of 70 kg   time to fall 2 m")
+    for world, g in WORLDS.items():
+        print(f"{world:<9} {weight(70, g):>13.0f} N {fall_time(2, g):>16.2f} s")
+  tests: |
+    def test_weight_on_earth():
+        assert abs(weight(10, 9.81) - 98.1) < 1e-9, "10 kg where g = 9.81 weighs 98.1 N."
+
+    def test_weight_on_the_moon():
+        assert abs(weight(70, 1.62) - 113.4) < 1e-9, "70 kg on the Moon weighs 113.4 N."
+
+    def test_a_one_second_fall():
+        assert abs(fall_time(4.9, 9.8) - 1) < 1e-9, "With g = 9.8, falling 4.9 m from rest takes exactly 1 s."
+
+    def test_falling_is_slower_on_the_moon():
+        assert abs(fall_time(2, 1.62) - 1.5713) < 1e-3, "Falling 2 m on the Moon takes about 1.57 s."
+  hints:
+    - "The weight is `mass * g`."
+    - "From $h = \\tfrac{1}{2}gt^2$: $t = \\sqrt{\\dfrac{2h}{g}}$, which is `math.sqrt(2 * height / g)`."
+  solution: |
+    `return mass * g`
+
+    `return math.sqrt(2 * height / g)`
+
+    The table shows a 70 kg person weighing 687 N on Earth, 113 N on the Moon and 1735 N on Jupiter, while a 2 m drop takes 0.64 s, 1.57 s and 0.40 s. Notice that `fall_time` never asks for the mass.
+
+- id: mech.grav.mass-or-weight
+  type: multiple-choice
+  multiple: true
+  concepts: [gravity-and-weight, mass]
+  prompt: "An astronaut travels from the Earth to the Moon. Which of these are true once she is there? Select all that apply."
+  choices:
+    - id: mass-same
+      text: "Her mass is the same as it was on Earth"
+      correct: true
+    - id: weight-less
+      text: "Her weight is about a sixth of what it was"
+      correct: true
+    - id: mass-less
+      text: "Her mass is about a sixth of what it was"
+      feedback: "Mass is the amount of matter, and none of it was left behind. It is her weight that changes."
+    - id: easier
+      text: "A sideways shove now gives her about six times the acceleration"
+      feedback: "How hard she is to accelerate depends on her mass, which has not changed. $a = \\frac{F}{m}$ gives the same answer as on Earth."
+  hints:
+    - "Which of mass and weight depends on $g$?"
+    - "Which one appears in $F = ma$?"
+  solution: |
+    Her mass is unchanged, and with it her inertia: pushing her sideways is exactly as hard as before. Her weight, $mg$, falls with $g$ from $9.8$ to $1.62$ N per kilogram, about a sixth.
+
+- id: mech.grav.scales
+  type: multiple-choice
+  concepts: [gravity-and-weight, normal-force]
+  prompt: "You are standing on bathroom scales in a lift when its cable snaps, and for a moment lift, scales and you are all in free fall. What do the scales read?"
+  choices:
+    - id: zero
+      text: "Zero"
+      correct: true
+    - id: normal
+      text: "Your usual weight"
+      feedback: "Scales show how hard they push up on you. If they still pushed with your full weight, the net force on you would be zero and you would not be falling."
+    - id: double
+      text: "Twice your usual weight"
+      feedback: "That would need the lift to be accelerating upwards at $g$. Here it is accelerating downwards at $g$."
+    - id: half
+      text: "Half your usual weight"
+      feedback: "That would be a lift accelerating downwards at half of $g$. In free fall it is the full $g$."
+  hints:
+    - "Scales read the normal force. Write the second law for you, with your acceleration equal to $g$ downwards."
+  solution: |
+    Taking downwards as positive, the second law for you is $mg - N = ma$. In free fall $a = g$, so $N = 0$: the scales read nothing.
+
+    Your weight has not gone anywhere. Gravity still pulls with $mg$, which is exactly why you are accelerating. What has vanished is the push that usually opposes it.
+
+- id: mech.grav.orbit
+  type: multiple-choice
+  concepts: [gravity-and-weight, free-fall]
+  prompt: "Why do astronauts float inside the International Space Station?"
+  choices:
+    - id: falling
+      text: "They and the station are in free fall together"
+      correct: true
+    - id: no-gravity
+      text: "There is no gravity that far from the Earth"
+      feedback: "At the station's height gravity is still about 90% as strong as at the surface. Without it the station would fly off in a straight line."
+    - id: no-air
+      text: "There is no air in space to hold them down"
+      feedback: "Air does not hold you down on Earth. Gravity does."
+    - id: far
+      text: "The Moon's gravity cancels the Earth's"
+      feedback: "The station is about a thousand times closer to the Earth than to the Moon. The Moon's pull there is tiny."
+  hints:
+    - "Think about the scales in the falling lift."
+  solution: |
+    The station and everything in it are falling freely around the Earth. Like the scales in the falling lift, the floor does not need to push on the astronauts, so they feel weightless. Gravity is still acting on them: it is what keeps them in orbit.
+
+- id: mech.grav.explain
+  type: self-check
+  concepts: [gravity-and-weight, free-fall]
+  prompt: 'Someone says: "Heavier things must fall faster, because gravity pulls on them harder." Explain what is right about that sentence and what is wrong with it.'
+  rubric:
+    - "You agreed that gravity does pull harder on a heavier object: weight is proportional to mass."
+    - "You said a heavier object is also harder to accelerate, in proportion to its mass."
+    - "You said the two effects cancel, so the acceleration is $g$ for everything (when air does not matter)."
+  solution: |
+    The second half is right: weight is $mg$, so a heavier object is pulled harder.
+
+    But acceleration is force divided by mass, and the heavier object has more mass in exactly the same proportion. $a = \frac{mg}{m} = g$, whatever the mass. When heavy things do fall faster in everyday life, the cause is air resistance, not gravity.

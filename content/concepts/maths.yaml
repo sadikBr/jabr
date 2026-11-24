@@ -98,3 +98,16 @@
   summary: Following a quantity forward in small steps, using its derivative as the direction to move at each step.
   prerequisites: [derivative-definition, tangent-line]
   lesson: calculus-essentials/numerical-methods/eulers-method
+
+- id: vectors
+  title: Vectors
+  subject: maths
+  summary: Quantities with both a size and a direction, drawn as arrows and added tip to tail.
+  lesson: classical-mechanics/describing-motion/vectors
+
+- id: vector-components
+  title: Vector components
+  subject: maths
+  summary: Splitting a vector into perpendicular parts with sine and cosine, so each direction can be handled on its own.
+  prerequisites: [vectors]
+  lesson: classical-mechanics/describing-motion/vectors

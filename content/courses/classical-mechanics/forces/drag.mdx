@@ -1,0 +1,175 @@
+---
+id: drag
+title: "Drag"
+summary: "Air pushes back harder the faster you go, which is why falling things stop speeding up."
+teaches: [air-drag, terminal-velocity]
+requires: [gravity-and-weight, net-force, eulers-method]
+estimatedMinutes: 20
+---
+
+<Step kind="see" title="Why raindrops don't hurt">
+
+A raindrop falls from a cloud about two kilometres up. If gravity were the
+only force on it, the equations of free fall say it would hit you at around
+200 metres per second, faster than a racing car. Rain would be lethal.
+
+Instead it arrives at a gentle 9 m/s or so. Something stops it speeding up,
+and you already know what. Drop the hammer and the feather again, this time on
+Earth.
+
+<Interactive
+  id="drop-test"
+  title="Scott's experiment, back on Earth"
+  props={{ place: "earth", air: true }}
+/>
+
+Anything moving through air has to shove air out of its way, and the air
+pushes back. That push is called **drag**.
+
+<Callout kind="definition" title="Air drag">
+
+Drag acts in the direction opposite to the motion. For most everyday objects
+moving at everyday speeds, its size grows with the **square** of the speed:
+
+$$
+F_{\text{drag}} = k\,v^2
+$$
+
+The constant $k$ depends on the object's size and shape and on the density of
+the air: a parachute has a large $k$, a dart a small one. It does **not**
+depend on the object's mass.
+
+</Callout>
+
+That last point explains the feather. Gravity pulls on each object in
+proportion to its mass, but drag does not care about mass at all. For the
+hammer, drag is tiny compared with its weight and barely matters. For the
+feather, drag is comparable to its weight almost immediately.
+
+Now follow a falling object from the moment it is released, using its
+free-body diagram: weight $mg$ downwards, drag $kv^2$ upwards.
+
+- **At first** it is moving slowly, so the drag is tiny. The net force is
+  nearly the whole weight and it accelerates at nearly $g$.
+- **As it speeds up** the drag grows. The net force shrinks, so it is still
+  gaining speed but more and more slowly.
+- **Eventually** the drag grows to equal the weight. The net force is zero, so
+  the acceleration is zero, and the speed stops changing.
+
+<Callout kind="definition" title="Terminal velocity">
+
+The steady speed at which drag balances weight is the **terminal velocity**.
+Setting $k v_t^2 = mg$:
+
+$$
+v_t = \sqrt{\frac{mg}{k}}
+$$
+
+</Callout>
+
+<WorkedExample title="A skydiver, before and after">
+
+A skydiver has a mass of 80 kg. Falling spread-eagled, $k \approx 0.25$ kg/m:
+
+$$
+v_t = \sqrt{\frac{80 \times 9.8}{0.25}} = \sqrt{3136} = 56 \text{ m/s}
+$$
+
+That is about 200 km/h. Opening the parachute raises $k$ to about 30 kg/m:
+
+$$
+v_t = \sqrt{\frac{80 \times 9.8}{30}} \approx 5.1 \text{ m/s}
+$$
+
+which is about the speed you reach by jumping off a wall a little over a
+metre high. Survivable.
+
+</WorkedExample>
+
+<Callout kind="insight" title="Why small things fall slowly">
+
+Make an object twice as big in every direction and its mass goes up eight
+times, but the area it presents to the air only four times. Weight wins, and
+its terminal velocity rises. Shrink it and drag wins.
+
+That is why dust floats, drizzle drifts, and raindrops fall faster than fog.
+The biologist J. B. S. Haldane pointed out that a mouse can survive a fall
+down a mine shaft that would kill a person.
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Balance the forces">
+
+<Question id="mech.drag.force" />
+
+<Question id="mech.drag.acceleration" />
+
+<Question id="mech.drag.terminal" />
+
+<Question id="mech.drag.heavier" />
+
+There is a catch. With drag, the acceleration changes all the time, so the
+constant-acceleration equations no longer apply. The speed follows
+$\frac{dv}{dt} = g - \frac{k}{m}v^2$: a rule for the slope, not a formula for
+the answer. That is a job for Euler's method.
+
+Here it is for a ball with a terminal velocity of 12 m/s, over the first
+second and a half of its fall. Watch the true curve bend over as drag builds,
+and add steps until Euler's method keeps up.
+
+<Interactive
+  id="euler-stepper"
+  title="Step a falling ball forwards"
+  props={{ problem: "falling-with-drag", steps: 3, goal: { maxError: 0.2 } }}
+/>
+
+Now write the simulation yourself, for the skydiver.
+
+<CodeLab id="mech.drag.code-skydiver" />
+
+Drag matters sideways as well as downwards. Launch a ball with the air off,
+then turn it on and launch again with the same settings.
+
+<Interactive
+  id="projectile-sim"
+  title="A throw with and without air"
+  props={{ speed: 25, angle: 45, gravity: 9.8 }}
+/>
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="mech.drag.double" />
+
+<Question id="mech.drag.at-terminal" />
+
+<Question id="mech.drag.parachute" />
+
+<Question id="mech.drag.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+With weight and drag you can now explain the whole of the hammer and feather
+story, on the Moon and on Earth.
+
+You also have every ingredient of a flight simulator. A rocket's free-body
+diagram has three arrows: thrust, weight and drag. At each moment they give a
+net force; the second law turns it into an acceleration; and one Euler step
+turns that into a new velocity and a new position. None of the three forces
+stays constant during a launch, and it does not matter. The loop does not
+care.
+
+That is the capstone project, and you are ready for it.
+
+<ConnectIt
+  concepts={["eulers-method", "newtons-second-law", "projectile-motion"]}
+  explainers={["why-do-a-hammer-and-a-feather-fall-at-the-same-rate"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Step>

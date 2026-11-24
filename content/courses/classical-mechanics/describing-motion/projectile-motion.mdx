@@ -1,0 +1,156 @@
+---
+id: projectile-motion
+title: "Projectile motion"
+summary: "Two simple motions at once: steady sideways, free fall up and down. Together they make a parabola."
+teaches: [projectile-motion]
+requires: [vector-components, free-fall]
+estimatedMinutes: 20
+---
+
+<Step kind="see" title="Two motions at once">
+
+Kick a ball, throw a stone, fire a cannon: once it leaves, the only thing
+acting on it is gravity (as long as the air does not matter much). Anything
+moving like that is called a **projectile**.
+
+Start by getting a feel for it. Land the ball on the flag.
+
+<Interactive
+  id="projectile-sim"
+  title="Hit the flag"
+  props={{ speed: 20, angle: 45, gravity: 9.8, goal: { target: 55 } }}
+/>
+
+There is more than one way to do it. At 25 m/s, both 30° and 60° land in the
+same place: one low and fast, one high and slow. To see why, split the motion
+in two.
+
+Gravity pulls straight down. It has no sideways part at all. So:
+
+- **Horizontally**, nothing speeds the ball up or slows it down. It keeps the
+  horizontal velocity it started with.
+- **Vertically**, the ball is in free fall, exactly as if it had been thrown
+  straight up.
+
+The two do not affect each other. The curved path is just these two simple
+motions happening at the same time.
+
+<Callout kind="definition" title="Projectile motion">
+
+A projectile launched at speed $v$ and angle $\theta$ above the horizontal
+starts with velocity components
+
+$$
+v_x = v\cos\theta \qquad\qquad v_y = v\sin\theta
+$$
+
+After a time $t$ its position is
+
+$$
+x = v_x\,t \qquad\qquad y = v_y\,t - \tfrac{1}{2}gt^2
+$$
+
+Constant velocity sideways, constant acceleration up and down.
+
+</Callout>
+
+<WorkedExample title="A launch at 20 m/s and 30°">
+
+Take $g = 9.8$ m/s².
+
+**Split the velocity.** $v_x = 20\cos 30° \approx 17.3$ m/s and
+$v_y = 20\sin 30° = 10$ m/s.
+
+**Time in the air** depends only on the vertical motion. The ball is back on
+the ground when $y = 0$:
+
+$$
+0 = 10t - 4.9t^2 \quad\Rightarrow\quad t = \frac{10}{4.9} \approx 2.04 \text{ s}
+$$
+
+**How far it goes** is the horizontal velocity times that time:
+
+$$
+x = 17.3 \times 2.04 \approx 35.3 \text{ m}
+$$
+
+**How high it gets** is the vertical motion again: at the top $v_y$ has
+fallen to zero, so $0 = 10^2 - 2 \times 9.8 \times h$, giving
+$h \approx 5.1$ m.
+
+</WorkedExample>
+
+Doing those same steps with symbols instead of numbers gives two formulas
+worth knowing for a launch from level ground:
+
+$$
+T = \frac{2v\sin\theta}{g} \qquad\qquad R = \frac{v^2\sin 2\theta}{g}
+$$
+
+<Callout kind="insight" title="Why 45° goes furthest, and why 30° matches 60°">
+
+The range depends on the angle through $\sin 2\theta$. That is as large as it
+can be, $1$, when $2\theta = 90°$: a launch at 45°.
+
+And $\sin 2\theta$ takes the same value for two angles that add up to 90°,
+because $\sin 60° = \sin 120°$. A steep launch stays up longer but moves
+sideways more slowly, and the two effects balance exactly.
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Split it, then solve each part">
+
+The method is always the same: horizontal and vertical separately, linked
+only by the time.
+
+<Question id="mech.proj.vertical-velocity" />
+
+<Question id="mech.proj.flight-time" />
+
+<Question id="mech.proj.range" />
+
+Here is a famous experiment to think about before you calculate anything.
+
+<Question id="mech.proj.same-time" />
+
+<Question id="mech.proj.off-table" />
+
+The 45° rule comes with small print: it only holds when the ball lands at the
+height it was launched from. Throw from a clifftop and the best angle changes.
+Finding it with algebra is painful. Finding it with a loop is easy.
+
+<CodeLab id="mech.proj.code-best-angle" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="mech.proj.complementary" />
+
+<Question id="mech.proj.top" />
+
+<Question id="mech.proj.constant" />
+
+<Question id="mech.proj.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Everything on this page assumed no air. Turn on air resistance in the
+launcher at the top and the ball falls short, the path is no longer a
+parabola, and no tidy formula describes it. The only way to follow the motion
+then is to step it forwards a moment at a time, which is what Euler's method
+does and what you will build in the rocket project.
+
+First, though, the missing piece. You now know how to _describe_ motion in
+one dimension and in two. The next module is about what _causes_ it.
+
+<ConnectIt
+  concepts={["force", "newtons-second-law", "air-drag", "eulers-method"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Step>

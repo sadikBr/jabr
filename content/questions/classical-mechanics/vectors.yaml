@@ -1,0 +1,254 @@
+- id: mech.vec.horizontal
+  type: parametrised
+  concepts: [vector-components]
+  params:
+    size: { choices: [10, 20, 40, 50] }
+    angle: { choices: [20, 25, 35, 40, 55, 65] }
+  prompt: "A force of {size} N acts at {angle}° above the horizontal. What is its horizontal component?"
+  answer: "size * cos(angle deg)"
+  tolerance: { relative: 0.01 }
+  unit: N
+  commonMistakes:
+    - answer: "size * sin(angle deg)"
+      feedback: "That is the vertical component. With the angle measured from the horizontal, the horizontal part uses cosine."
+  hints:
+    - "The horizontal component is the side of the triangle next to the angle."
+    - "$A_x = A\\cos\\theta$."
+  solution: |
+    The angle is measured from the horizontal, so the horizontal component uses cosine:
+
+    $$A_x = {size} \cos({angle}°) \text{ N}$$
+
+- id: mech.vec.climb
+  type: parametrised
+  concepts: [vector-components]
+  params:
+    speed: { choices: [60, 70, 80, 90] }
+    angle: { choices: [8, 10, 12, 15] }
+  prompt: "A plane climbs at {speed} m/s along a path tilted {angle}° above the horizontal. How fast is it gaining height?"
+  answer: "speed * sin(angle deg)"
+  tolerance: { relative: 0.01 }
+  unit: m/s
+  commonMistakes:
+    - answer: "speed * cos(angle deg)"
+      feedback: "That is how fast it moves forwards over the ground. Gaining height is the vertical component, which uses sine."
+  hints:
+    - "The rate of gaining height is the vertical component of the velocity."
+    - "$A_y = A\\sin\\theta$."
+  solution: |
+    Its rate of climb is the vertical component of its velocity:
+
+    $$v_y = {speed} \sin({angle}°) \text{ m/s}$$
+
+    A shallow angle means most of the speed is horizontal, so the climb rate is only a small fraction of it.
+
+- id: mech.vec.walk-distance
+  type: parametrised
+  concepts: [vectors, vector-components]
+  params:
+    east: { choices: [3, 5, 6, 8] }
+    north: { choices: [4, 7, 9, 12] }
+  derived:
+    e2: "east^2"
+    n2: "north^2"
+  prompt: "You walk {east} km east and then {north} km north. How far are you from where you started, in a straight line?"
+  answer: "sqrt(east^2 + north^2)"
+  tolerance: { relative: 0.01 }
+  unit: km
+  commonMistakes:
+    - answer: "east + north"
+      feedback: "That is how far you walked. The straight-line distance back is the long side of a right-angled triangle."
+  hints:
+    - "The two legs of the walk are at right angles. Draw them tip to tail."
+    - "Use Pythagoras: $\\sqrt{{east}^2 + {north}^2}$."
+  solution: |
+    The two displacements are the components of your total displacement, so its size is
+
+    $$\sqrt{{east}^2 + {north}^2} = \sqrt{{e2} + {n2}} \text{ km}$$
+
+- id: mech.vec.walk-direction
+  type: parametrised
+  concepts: [vector-components]
+  params:
+    east: { choices: [3, 5, 6, 8] }
+    north: { choices: [4, 7, 9, 12] }
+  prompt: "After walking {east} km east and then {north} km north, in what direction are you from your starting point? Give the angle north of east, in degrees."
+  answer: "atan(north / east) * 180 / pi"
+  tolerance: { absolute: 0.5 }
+  unit: "°"
+  commonMistakes:
+    - answer: "atan(east / north) * 180 / pi"
+      feedback: "That is the angle measured from north. Measured from east, the opposite side is the northward leg: $\\tan\\theta = \\frac{{north}}{{east}}$."
+    - answer: "atan(north / east)"
+      feedback: "That looks like an answer in radians. Switch your calculator to degrees."
+  hints:
+    - "$\\tan\\theta = \\dfrac{A_y}{A_x}$, with east as $x$ and north as $y$."
+    - "$\\theta = \\tan^{-1}\\left(\\dfrac{{north}}{{east}}\\right)$."
+  solution: |
+    With east as $x$ and north as $y$:
+
+    $$\tan\theta = \frac{{north}}{{east}} \quad\Rightarrow\quad \theta = \tan^{-1}\left(\frac{{north}}{{east}}\right)$$
+
+    measured from east towards north.
+
+- id: mech.vec.add
+  type: parametrised
+  concepts: [vectors, vector-components]
+  params:
+    ax: { choices: [2, 4, 6] }
+    ay: { choices: [1, 3, 5] }
+    bx: { choices: [1, 2, 3] }
+    by: { choices: [2, 4, 7] }
+  derived:
+    rx: "ax + bx"
+    ry: "ay - by"
+  prompt: |
+    Two forces act on a crate. In newtons, their components are $\mathbf{A} = ({ax},\ {ay})$ and $\mathbf{B} = ({bx},\ -{by})$. What is the magnitude of their sum?
+  answer: "sqrt((ax + bx)^2 + (ay - by)^2)"
+  tolerance: { relative: 0.01 }
+  unit: N
+  commonMistakes:
+    - answer: "sqrt(ax^2 + ay^2) + sqrt(bx^2 + by^2)"
+      feedback: "You added the two magnitudes. That only works when the vectors point the same way. Add the components first, then find the size."
+    - answer: "sqrt((ax + bx)^2 + (ay + by)^2)"
+      feedback: "Watch the sign: the $y$ component of $\\mathbf{B}$ is negative."
+  hints:
+    - "Add the $x$ components, then the $y$ components. Mind the minus sign."
+    - "The sum is $({rx},\\ {ry})$. Now use Pythagoras."
+  solution: |
+    Add component by component:
+
+    $$\mathbf{A} + \mathbf{B} = ({ax} + {bx},\ {ay} - {by}) = ({rx},\ {ry})$$
+
+    Its magnitude is $\sqrt{({rx})^2 + ({ry})^2}$ N.
+
+- id: mech.vec.possible
+  type: multiple-choice
+  concepts: [vectors]
+  prompt: "A force of 3 N and a force of 4 N act on the same object. You do not know their directions. Which of these could **not** be the size of their sum?"
+  choices:
+    - id: half
+      text: "0.5 N"
+      correct: true
+    - id: one
+      text: "1 N"
+      feedback: "This happens when they point in exactly opposite directions: $4 - 3 = 1$."
+    - id: five
+      text: "5 N"
+      feedback: "This happens when they are at right angles: $\\sqrt{3^2 + 4^2} = 5$."
+    - id: seven
+      text: "7 N"
+      feedback: "This happens when they point the same way: $3 + 4 = 7$."
+  hints:
+    - "What is the biggest the sum can be? And the smallest? Think about the arrows tip to tail."
+  solution: |
+    Pointing the same way they add to $7$ N, the largest possible. Pointing opposite ways they leave $1$ N, the smallest. Every other arrangement falls in between, so $0.5$ N is impossible.
+
+- id: mech.vec.code-resultant
+  type: code
+  concepts: [vectors, vector-components]
+  prompt: "Complete `resultant`. It is given a list of vectors, each as a `(magnitude, angle_in_degrees)` pair, and must return the magnitude and angle of their sum. Add up the components, then convert back."
+  starter: |
+    import math
+
+    def resultant(vectors):
+        """The sum of the vectors, as (magnitude, angle in degrees)."""
+        total_x = 0
+        total_y = 0
+        for magnitude, angle in vectors:
+            # Replace the next two lines: add this vector's components.
+            total_x += 0
+            total_y += 0
+        size = math.hypot(total_x, total_y)
+        direction = math.degrees(math.atan2(total_y, total_x))
+        return size, direction
+
+    # Rowing at 3 m/s aimed at 131.8 degrees, in a 2 m/s current.
+    size, direction = resultant([(3, 131.8), (2, 0)])
+    print(f"You travel at {size:.2f} m/s, in the direction {direction:.1f} degrees")
+  tests: |
+    def test_one_vector_is_its_own_sum():
+        size, direction = resultant([(5, 40)])
+        assert abs(size - 5) < 1e-9 and abs(direction - 40) < 1e-9, "The sum of a single vector should be that vector."
+
+    def test_right_angle():
+        size, direction = resultant([(3, 0), (4, 90)])
+        assert abs(size - 5) < 1e-9, "3 along x and 4 along y should give a sum of size 5."
+        assert abs(direction - 53.1301) < 1e-3, "…pointing at about 53.13 degrees."
+
+    def test_opposite_vectors_cancel():
+        size, _ = resultant([(6, 30), (6, 210)])
+        assert size < 1e-9, "Two equal vectors in opposite directions should sum to zero."
+
+    def test_three_vectors():
+        size, direction = resultant([(2, 0), (2, 120), (2, 240)])
+        assert size < 1e-9, "Three equal vectors 120 degrees apart should sum to zero."
+  hints:
+    - "The trigonometry functions in Python's `math` module work in radians. Convert with `math.radians(angle)`."
+    - "`total_x += magnitude * math.cos(math.radians(angle))`, and the same with `sin` for `total_y`."
+  solution: |
+    Each vector contributes its two components:
+
+    `total_x += magnitude * math.cos(math.radians(angle))`
+    `total_y += magnitude * math.sin(math.radians(angle))`
+
+    For the boat the output is 2.24 m/s at 90.0 degrees: straight across, exactly as the workbench showed.
+
+- id: mech.vec.which
+  type: multiple-choice
+  multiple: true
+  concepts: [vectors]
+  prompt: "Which of these are vectors? Select all that apply."
+  choices:
+    - id: velocity
+      text: "The velocity of a plane"
+      correct: true
+    - id: force
+      text: "The force of a kick on a ball"
+      correct: true
+    - id: temperature
+      text: "The temperature of a room"
+      feedback: "A temperature has a size but no direction: it is a scalar."
+    - id: mass
+      text: "The mass of a suitcase"
+      feedback: "Mass has no direction: it is a scalar. (Its weight, the pull of gravity on it, is a vector.)"
+  hints:
+    - "For each one, ask: would it make sense to say which way it points?"
+  solution: |
+    Velocity and force both have a direction as well as a size, so they are vectors. Temperature and mass are just amounts: scalars.
+
+- id: mech.vec.upstream
+  type: parametrised
+  concepts: [vectors, vector-components]
+  params:
+    row: { choices: [3, 4, 5] }
+    current: { choices: [1, 1.5, 2] }
+  prompt: "A river flows at {current} m/s, and you can row at {row} m/s. To travel straight across, how many degrees upstream of straight-across must you aim?"
+  answer: "asin(current / row) * 180 / pi"
+  tolerance: { absolute: 0.5 }
+  unit: "°"
+  commonMistakes:
+    - answer: "atan(current / row) * 180 / pi"
+      feedback: "Close, but the {row} m/s is the long side of the triangle (your rowing), not the side straight across. Use sine."
+    - answer: "asin(current / row)"
+      feedback: "That looks like an answer in radians. Switch your calculator to degrees."
+  hints:
+    - "The upstream part of your rowing must cancel the current exactly."
+    - "If you aim at an angle $\\phi$ upstream of straight-across, the upstream part of your rowing is ${row}\\sin\\phi$."
+  solution: |
+    Aiming at an angle $\phi$ upstream of straight-across, the upstream component of your rowing is ${row}\sin\phi$. It must equal the current:
+
+    $${row}\sin\phi = {current} \quad\Rightarrow\quad \phi = \sin^{-1}\left(\frac{{current}}{{row}}\right)$$
+
+- id: mech.vec.explain
+  type: self-check
+  concepts: [vectors]
+  prompt: "A pilot points her plane due north and flies at a steady airspeed, but a wind is blowing from the west. Explain, using vectors, where the plane actually goes, and what she should do to travel due north over the ground."
+  rubric:
+    - "You said the plane's velocity over the ground is the sum of two vectors: its velocity through the air and the wind's velocity."
+    - "You said the plane drifts east of north, because the wind adds an eastward component."
+    - "You said she should point the nose somewhat west of north, so the westward part of her airspeed cancels the wind."
+  solution: |
+    The plane's velocity over the ground is its velocity through the air plus the velocity of the air itself. A wind from the west blows towards the east, adding an eastward component, so the plane tracks east of north.
+
+    To go due north she must aim west of north, just enough that the westward component of her airspeed cancels the wind. It is the rowing boat again, with air for water.

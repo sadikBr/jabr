@@ -1,0 +1,180 @@
+---
+id: vectors
+title: "Vectors"
+summary: "Arrows with a size and a direction: how to add them, and how to split them into parts."
+teaches: [vectors, vector-components]
+requires: []
+estimatedMinutes: 20
+---
+
+<Step kind="see" title="Rowing across a river">
+
+You want to row straight across a river to a jetty on the far bank. You can
+row at 3 m/s. The river flows past at 2 m/s. If you point the boat straight at
+the jetty and row, where do you end up?
+
+Not at the jetty. While you row across, the water carries you downstream. Your
+actual motion is a combination of the two, and "3 m/s" plus "2 m/s" is not
+5 m/s, because the two are in different directions.
+
+Below, the purple arrow is your rowing and the red arrow is the current. The
+amber arrow is where you really go. Change the direction you row in until you
+travel straight across.
+
+<Interactive
+  id="vector-add"
+  title="Aim the boat"
+  props={{
+    a: { magnitude: 3, angle: 90 },
+    b: { magnitude: 2, angle: 0 },
+    lockB: true,
+    labels: "boat",
+    unit: "m/s",
+    goal: { direction: 90, tolerance: 2 },
+  }}
+/>
+
+You had to aim upstream, at about 132°, so that part of your rowing cancels
+the current. And notice your speed over the ground once you do: not 3 m/s,
+but about 2.2 m/s. Some of your effort is spent just standing still against
+the river.
+
+Velocity is an example of a quantity where direction matters as much as size.
+
+<Callout kind="definition" title="Vectors and scalars">
+
+A **vector** has a size (its _magnitude_) and a direction. Displacement,
+velocity, acceleration and force are all vectors. We draw them as arrows.
+
+A **scalar** has a size only: mass, time, temperature, speed.
+
+To add two vectors, put them **tip to tail**: start the second arrow where the
+first one ends. Their sum runs from the very start to the very end. The order
+does not matter.
+
+</Callout>
+
+Drawing arrows is fine for building intuition, but nobody wants to calculate
+with a ruler and protractor. The practical way to handle vectors is to split
+each one into two parts at right angles, one horizontal and one vertical.
+
+In the next workbench there is a single vector. Change its size and direction
+and watch its two parts, drawn dashed. Then try to hit the target.
+
+<Interactive
+  id="vector-add"
+  title="Split a vector into parts"
+  props={{
+    mode: "components",
+    a: { magnitude: 4, angle: 30 },
+    goal: { x: 3, y: -4 },
+  }}
+/>
+
+A horizontal part of 3 and a vertical part of −4 needed a vector of size
+exactly 5. That is Pythagoras: the two parts and the vector make a
+right-angled triangle, and $3^2 + 4^2 = 5^2$.
+
+<Callout kind="definition" title="Components">
+
+A vector of magnitude $A$ at an angle $\theta$, measured anticlockwise from the
+positive $x$ direction, has **components**
+
+$$
+A_x = A\cos\theta \qquad\qquad A_y = A\sin\theta
+$$
+
+Going the other way, from components back to size and direction:
+
+$$
+A = \sqrt{A_x^2 + A_y^2} \qquad\qquad \tan\theta = \frac{A_y}{A_x}
+$$
+
+</Callout>
+
+<Callout kind="insight" title="To add vectors, add their components">
+
+Tip-to-tail addition becomes ordinary arithmetic, one direction at a time:
+
+$$
+R_x = A_x + B_x \qquad\qquad R_y = A_y + B_y
+$$
+
+This is the whole reason components are worth the trouble. Two dimensions
+turn into two separate one-dimensional problems.
+
+</Callout>
+
+<WorkedExample title="The boat, by components">
+
+Take $x$ as downstream and $y$ as straight across. The current is
+$(2,\ 0)$ m/s. You row at 3 m/s, at an angle to be found. To travel straight
+across, the $x$ components must cancel:
+
+$$
+3\cos\theta + 2 = 0 \quad\Rightarrow\quad \cos\theta = -\tfrac{2}{3} \quad\Rightarrow\quad \theta \approx 131.8°
+$$
+
+Then the $y$ component of your rowing is all that is left:
+
+$$
+3\sin(131.8°) \approx 2.24 \text{ m/s}
+$$
+
+That is the speed at which you cross, and it matches what the workbench
+showed. (By Pythagoras it is $\sqrt{3^2 - 2^2} = \sqrt{5}$.)
+
+</WorkedExample>
+
+</Step>
+
+<Step kind="do" title="Split, combine and add">
+
+Make sure your calculator is in **degrees** for these.
+
+<Question id="mech.vec.horizontal" />
+
+<Question id="mech.vec.climb" />
+
+Now the other way: from two parts at right angles back to a size and a
+direction.
+
+<Question id="mech.vec.walk-distance" />
+
+<Question id="mech.vec.walk-direction" />
+
+<Question id="mech.vec.add" />
+
+<Question id="mech.vec.possible" />
+
+Adding by components is mechanical, which makes it a natural thing to hand to
+a computer.
+
+<CodeLab id="mech.vec.code-resultant" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="mech.vec.which" />
+
+<Question id="mech.vec.upstream" />
+
+<Question id="mech.vec.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Components are about to earn their keep. Throw a ball at an angle, and its
+velocity has a horizontal part and a vertical part. Gravity only acts on the
+vertical one. Treat them separately and a complicated-looking curved path
+turns into two simple motions you already understand.
+
+Forces are vectors too. When several act on one object, they add tip to tail
+just like the rowing and the current, and it is the sum, the **net force**,
+that decides what the object does.
+
+<ConnectIt concepts={["projectile-motion", "force", "net-force"]} />
+
+</Step>

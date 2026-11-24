@@ -1,0 +1,242 @@
+- id: mech.newton.acceleration
+  type: parametrised
+  concepts: [newtons-second-law]
+  params:
+    force: { choices: [12, 18, 24, 30, 36] }
+    mass: { choices: [2, 3, 4, 6] }
+  prompt: "A net force of {force} N acts on a {mass} kg trolley. What is its acceleration?"
+  answer: "force / mass"
+  tolerance: { absolute: 0.01 }
+  unit: "m/s²"
+  commonMistakes:
+    - answer: "force * mass"
+      feedback: "More mass should mean less acceleration, not more. Divide the force by the mass."
+    - answer: "mass / force"
+      feedback: "It is the other way up: $a = \\dfrac{F}{m}$."
+  hints:
+    - "$F = ma$. Which quantity do you want on its own?"
+    - "$a = \\dfrac{F}{m}$."
+  solution: |
+    $$a = \frac{F}{m} = \frac{{force}}{{mass}} \text{ m/s}^2$$
+
+- id: mech.newton.force
+  type: parametrised
+  concepts: [newtons-second-law]
+  params:
+    mass: { choices: [800, 1000, 1200, 1500] }
+    a: { choices: [1.5, 2, 2.5, 3] }
+  prompt: "What net force is needed to make a {mass} kg car accelerate at {a} m/s²?"
+  answer: "mass * a"
+  tolerance: { relative: 0.005 }
+  unit: N
+  hints:
+    - "Newton's second law, as it is usually written."
+    - "$F = ma$."
+  solution: |
+    $$F = ma = {mass} \times {a} \text{ N}$$
+
+- id: mech.newton.net
+  type: parametrised
+  concepts: [newtons-second-law, force]
+  params:
+    push: { choices: [200, 250, 300] }
+    drag: { choices: [50, 80, 110] }
+    mass: { choices: [50, 60, 80] }
+  derived:
+    net: "push - drag"
+  prompt: "A cyclist and her bike have a total mass of {mass} kg. She drives the bike forwards with {push} N, while air resistance and friction push back with {drag} N in total. What is her acceleration?"
+  answer: "(push - drag) / mass"
+  tolerance: { absolute: 0.01 }
+  unit: "m/s²"
+  commonMistakes:
+    - answer: "push / mass"
+      feedback: "That ignores the forces holding her back. The second law uses the net force."
+    - answer: "(push + drag) / mass"
+      feedback: "The two forces point in opposite directions, so the resistance subtracts."
+  hints:
+    - "Find the net force first, taking forwards as positive."
+    - "The net force is ${push} - {drag} = {net}$ N."
+  solution: |
+    The net force along the road is ${push} - {drag} = {net}$ N forwards, so
+
+    $$a = \frac{{net}}{{mass}} \text{ m/s}^2$$
+
+- id: mech.newton.braking-force
+  type: parametrised
+  concepts: [newtons-second-law, constant-acceleration]
+  params:
+    mass: { choices: [1000, 1200, 1500] }
+    speed: { choices: [10, 20, 30] }
+    distance: { choices: [25, 40, 50] }
+  derived:
+    squared: "speed^2"
+    a: "speed^2 / (2 * distance)"
+  prompt: "A {mass} kg car travelling at {speed} m/s brakes steadily and stops in {distance} m. How big is the braking force?"
+  answer: "mass * speed^2 / (2 * distance)"
+  tolerance: { relative: 0.01 }
+  unit: N
+  commonMistakes:
+    - answer: "speed^2 / (2 * distance)"
+      feedback: "That is the size of the deceleration, in m/s². Multiply by the mass to get the force."
+    - answer: "mass * speed^2 / distance"
+      feedback: "Check the deceleration: from $v^2 = u^2 + 2as$ it is $\\dfrac{u^2}{2s}$, with a 2."
+  hints:
+    - "Two steps: use the motion to find the deceleration, then the second law to find the force."
+    - "From $v^2 = u^2 + 2as$ with $v = 0$, the deceleration is $\\dfrac{{squared}}{2 \\times {distance}}$."
+  solution: |
+    **The motion.** From $v^2 = u^2 + 2as$ with $v = 0$:
+
+    $$a = -\frac{u^2}{2s} = -\frac{{squared}}{2 \times {distance}} = -{a} \text{ m/s}^2$$
+
+    **The force.** By the second law its size is
+
+    $$F = ma = {mass} \times {a} \text{ N}$$
+
+    acting backwards, opposite to the motion.
+
+- id: mech.newton.spacecraft
+  type: multiple-choice
+  concepts: [newtons-first-law]
+  prompt: "A space probe is far from any star or planet, coasting at 15 km/s with its engine off. What happens next?"
+  choices:
+    - id: forever
+      text: "It carries on at 15 km/s in a straight line, indefinitely"
+      correct: true
+    - id: slows
+      text: "It gradually slows down and eventually stops"
+      feedback: "Slowing down is a change in motion, and that needs a force. Out there, nothing is pushing back on it."
+    - id: needs-engine
+      text: "It stops as soon as its fuel runs out"
+      feedback: "The engine is already off. It was needed to reach this speed, not to keep it."
+    - id: curves
+      text: "It drifts off course into a curve"
+      feedback: "Changing direction is also a change in motion and also needs a force."
+  hints:
+    - "Is any net force acting on the probe?"
+  solution: |
+    No net force acts on the probe, so by the first law its velocity cannot change: same speed, same direction. The Voyager probes, launched in 1977, are still coasting out of the solar system with their main engines long silent.
+
+- id: mech.newton.collision
+  type: multiple-choice
+  concepts: [newtons-third-law, newtons-second-law]
+  prompt: "A lorry travelling at speed hits a fly. During the collision, which one experiences the larger force?"
+  choices:
+    - id: same
+      text: "Neither: the forces are the same size"
+      correct: true
+    - id: fly
+      text: "The fly, because it is the one that gets squashed"
+      feedback: "The fly fares worse, but not because the force on it is larger. The same force acting on a tiny mass produces an enormous acceleration."
+    - id: lorry
+      text: "The lorry, because it is so much heavier"
+      feedback: "The lorry's mass does not change the size of the pair of forces. It only means the lorry barely notices."
+    - id: moving
+      text: "The fly, because the lorry was the one moving"
+      feedback: "The third law does not care which object was moving. The two forces are always equal in size."
+  hints:
+    - "The third law: if A pushes on B, then B pushes on A…"
+    - "Equal forces do not mean equal effects. What does the second law say about the two accelerations?"
+  solution: |
+    By the third law, the force of the lorry on the fly and the force of the fly on the lorry are equal in size and opposite in direction.
+
+    The outcomes differ because of the second law, $a = \frac{F}{m}$: the same force gives the fly's tiny mass a huge acceleration, and the lorry's huge mass an acceleration far too small to notice.
+
+- id: mech.newton.code-push
+  type: code
+  concepts: [newtons-second-law, newtons-first-law, eulers-method]
+  prompt: "Complete `simulate_push`. A block on frictionless ice is pushed with a steady force for `push_time` seconds and then left alone. On each small step of time, work out the acceleration from the second law, and let the loop update the velocity. Then run it and compare the three experiments."
+  starter: |
+    def simulate_push(force, mass, push_time, total_time=5.0, dt=0.01):
+        """The block's velocity at the end, in m/s."""
+        velocity = 0.0
+        for step in range(round(total_time / dt)):
+            time = step * dt
+            # Replace the next line. During the push the acceleration comes
+            # from the second law; once the push has ended there is no force.
+            acceleration = 0
+            velocity += acceleration * dt
+        return velocity
+
+    print(f" 6 N on 2 kg for 2 s: {simulate_push(6, 2, 2):.2f} m/s")
+    print(f" 6 N on 4 kg for 2 s: {simulate_push(6, 4, 2):.2f} m/s")
+    print(f"12 N on 4 kg for 2 s: {simulate_push(12, 4, 2):.2f} m/s")
+  tests: |
+    def test_speeds_up_at_force_over_mass():
+        assert abs(simulate_push(6, 2, 2) - 6) < 1e-6, "6 N on 2 kg is 3 m/s². After 2 s of pushing the block should be doing 6 m/s."
+
+    def test_twice_the_mass_half_the_speed():
+        assert abs(simulate_push(6, 4, 2) - 3) < 1e-6, "The same push on twice the mass should give half the speed: 3 m/s."
+
+    def test_keeps_its_speed_after_the_push():
+        assert abs(simulate_push(10, 5, 1, total_time=20) - 2) < 1e-6, "Once the push ends, nothing changes the velocity: it should still be 2 m/s after 20 s."
+
+    def test_no_push_no_motion():
+        assert simulate_push(10, 5, 0) == 0, "With a push lasting no time at all, the block should stay at rest."
+  hints:
+    - "The push is still going while `time < push_time`."
+    - "`acceleration = force / mass if time < push_time else 0`"
+  solution: |
+    The second law while the push lasts, and no force after it:
+
+    `acceleration = force / mass if time < push_time else 0`
+
+    The three runs print 6, 3 and 6 m/s. Doubling the mass halved the final speed, and doubling the force as well brought it back.
+
+- id: mech.newton.steady
+  type: multiple-choice
+  concepts: [newtons-first-law, newtons-second-law]
+  prompt: "A parachutist is coming down at a steady 5 m/s. What can you say about the net force on her?"
+  choices:
+    - id: zero
+      text: "It is zero"
+      correct: true
+    - id: down
+      text: "It points downwards, because she is moving downwards"
+      feedback: "The net force matches the acceleration, not the velocity. Her velocity is not changing, so she has no acceleration."
+    - id: up
+      text: "It points upwards, because the parachute is holding her up"
+      feedback: "The parachute does pull upwards, but her weight pulls down just as hard. Together they cancel."
+    - id: weight
+      text: "It equals her weight"
+      feedback: "If her weight were the only force she would be speeding up. The parachute's pull balances it."
+  hints:
+    - "Is her velocity changing? What does the second law say the net force must be?"
+  solution: |
+    Steady speed in a straight line means zero acceleration, and by the second law that means zero net force. The upward pull of the parachute exactly balances her weight.
+
+- id: mech.newton.pair
+  type: multiple-choice
+  concepts: [newtons-third-law]
+  prompt: "A book rests on a table. The Earth's gravity pulls down on the book. According to the third law, what is the partner of that force?"
+  choices:
+    - id: book-on-earth
+      text: "The book's gravitational pull upwards on the Earth"
+      correct: true
+    - id: normal
+      text: "The table's upward push on the book"
+      feedback: "This is the tempting one. It is equal and opposite here, but it acts on the same object, the book, and has a different cause. A third-law pair always acts on two different objects."
+    - id: book-on-table
+      text: "The book's downward push on the table"
+      feedback: "That force is paired with the table's push on the book. The question is about the Earth's pull on the book."
+    - id: none
+      text: "It has no partner, because nothing is moving"
+      feedback: "Every force has a partner, whether or not anything moves."
+  hints:
+    - "If A acts on B, the partner is B acting on A. Here A is the Earth and B is the book."
+  solution: |
+    Swap the two objects: the Earth pulls the book down, so the book pulls the Earth up, with a force of the same size. The Earth is so massive that it does not noticeably move.
+
+    The table's push on the book is a different force altogether. It balances the weight because the book is not accelerating (the first law), not because of the third law.
+
+- id: mech.newton.explain
+  type: self-check
+  concepts: [newtons-first-law]
+  prompt: "A car stops suddenly, and a passenger without a seat belt is thrown forwards. Is anything really throwing them? Explain what is going on using Newton's first law."
+  rubric:
+    - "You said nothing pushes the passenger forwards: they simply keep moving at the speed the car had."
+    - "You said the car slows down because a force acts on it (the brakes, through the tyres), but that force does not act on the passenger."
+    - "You said a seat belt provides the backward force needed to slow the passenger down with the car."
+  solution: |
+    Nothing throws the passenger forwards. Before braking, car and passenger move together. The brakes put a backward force on the car, so the car slows down. No such force acts on the passenger, so by the first law they carry on at the original speed, and the car slows down around them.
+
+    A seat belt supplies the backward force that makes the passenger slow down too.

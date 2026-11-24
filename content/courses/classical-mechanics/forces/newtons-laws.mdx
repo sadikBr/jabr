@@ -1,0 +1,174 @@
+---
+id: newtons-laws
+title: "Newton's laws"
+summary: "Three laws that connect forces to motion, and the single equation at their centre."
+teaches: [force, mass, newtons-first-law, newtons-second-law, newtons-third-law]
+requires: [vectors, acceleration]
+estimatedMinutes: 25
+---
+
+<Step kind="see" title="What does a push do?">
+
+So far you have described motion without asking what causes it. Time to ask.
+
+Here is a block on a sheet of ice so slippery that there is no friction at
+all. You can push it with a steady force for a while and then let go. Before
+you try: once you stop pushing, what do you expect the block to do?
+
+<Interactive
+  id="push-lab"
+  title="Push a block across the ice"
+  props={{ mass: 4, force: 6, duration: 2, goal: { speed: 6 } }}
+/>
+
+Two things are worth noticing.
+
+**After the push ends, the block does not slow down.** It carries on at
+exactly the speed it had. On ice, nothing is acting along the surface to
+change its motion, so its motion does not change. Now switch the surface to
+carpet and push again: the block stops, but only because friction, another
+force, is acting on it.
+
+**During the push, the block speeds up at a steady rate**, and that rate
+depends on two things. Double the force and the acceleration doubles. Double
+the mass and the acceleration halves.
+
+Isaac Newton turned those observations into three laws, published in 1687.
+They are still how engineers design bridges, cars and spacecraft.
+
+<Callout kind="definition" title="Newton's first law">
+
+An object stays at rest, or keeps moving in a straight line at a constant
+speed, unless a net force acts on it.
+
+</Callout>
+
+This is not what everyday life suggests. On Earth, things you stop pushing
+come to a halt, so for two thousand years people believed that motion needs a
+force to keep it going. It does not. What it needs is the _absence_ of
+friction and drag. Forces do not cause motion: they cause **changes** in
+motion.
+
+<Callout kind="definition" title="Newton's second law">
+
+The acceleration of an object is the net force on it divided by its mass:
+
+$$
+\vec{F}_{\text{net}} = m\,\vec{a}
+$$
+
+Force is measured in **newtons**: 1 N is the force that gives 1 kg an
+acceleration of 1 m/s².
+
+</Callout>
+
+Three things are packed into that small equation.
+
+- **Net** force. If several forces act, add them as vectors first. Only the
+  total matters.
+- **Mass** measures how hard it is to change an object's motion, its
+  _inertia_. The same push does less to a loaded trolley than to an empty one.
+- It is a **vector** equation. The acceleration points the same way as the
+  net force, which is not always the way the object is moving. A braking car
+  moves forwards while its acceleration points backwards.
+
+<WorkedExample title="A car pulling away">
+
+A 1200 kg car's engine drives it forwards with 3000 N. Friction and air
+resistance together push back with 600 N. What is its acceleration?
+
+Add the forces along the road, taking forwards as positive:
+
+$$
+F_{\text{net}} = 3000 - 600 = 2400 \text{ N}
+$$
+
+Then the second law:
+
+$$
+a = \frac{F_{\text{net}}}{m} = \frac{2400}{1200} = 2 \text{ m/s}^2
+$$
+
+</WorkedExample>
+
+The third law is about where forces come from. A force is always something
+one object does _to another_, and it never happens in one direction only.
+
+<Callout kind="definition" title="Newton's third law">
+
+If object A pushes on object B, then B pushes back on A with a force of the
+same size in the opposite direction.
+
+</Callout>
+
+Push on a wall and the wall pushes on your hand: that is why your hand feels
+it. A rocket throws exhaust gas backwards, and the gas pushes the rocket
+forwards. You walk by pushing the ground backwards with your foot, and it is
+the ground's push on you that moves you forwards.
+
+<Callout kind="warning" title="The two forces never cancel">
+
+The pair in the third law act on **different objects**: one on A, one on B.
+To find out what happens to an object, you only add up the forces acting _on
+that object_. The partner forces belong to somebody else's diagram.
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Use the second law">
+
+The second law works in any direction you need it to: find the acceleration
+from the force, or the force from the acceleration.
+
+<Question id="mech.newton.acceleration" />
+
+<Question id="mech.newton.force" />
+
+<Question id="mech.newton.net" />
+
+Combine it with what you know about motion and you can work out forces you
+could never measure directly.
+
+<Question id="mech.newton.braking-force" />
+
+Now the first and third laws, where the trap is usually intuition rather than
+arithmetic.
+
+<Question id="mech.newton.spacecraft" />
+
+<Question id="mech.newton.collision" />
+
+You can rebuild the ice experiment in a few lines of code: at each small step
+of time, the force decides the acceleration, and the acceleration changes the
+velocity. This loop is the heart of every physics simulation.
+
+<CodeLab id="mech.newton.code-push" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="mech.newton.steady" />
+
+<Question id="mech.newton.pair" />
+
+<Question id="mech.newton.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+The second law is a machine: put in the net force, and out comes the
+acceleration. From the acceleration, the equations of motion (or Euler's
+method) give you everything else. So the real work in mechanics is finding
+the net force, and that starts with a careful drawing of every force acting
+on the object. Those drawings are called free-body diagrams.
+
+<ConnectIt
+  concepts={["free-body-diagram", "net-force", "gravity-and-weight"]}
+  explainers={["how-does-a-rocket-reach-orbit"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Step>

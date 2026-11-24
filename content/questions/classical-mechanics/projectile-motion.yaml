@@ -1,0 +1,243 @@
+- id: mech.proj.vertical-velocity
+  type: parametrised
+  concepts: [projectile-motion, vector-components]
+  params:
+    speed: { choices: [15, 20, 25, 30] }
+    angle: { choices: [25, 35, 40, 50, 60] }
+  prompt: "A ball is kicked at {speed} m/s, at {angle}° above the ground. What is the vertical component of its velocity at that moment?"
+  answer: "speed * sin(angle deg)"
+  tolerance: { relative: 0.01 }
+  unit: m/s
+  commonMistakes:
+    - answer: "speed * cos(angle deg)"
+      feedback: "That is the horizontal component. The vertical one uses sine."
+  hints:
+    - "Split the velocity into components, as in the last lesson."
+    - "$v_y = v\\sin\\theta$."
+  solution: |
+    $$v_y = {speed}\sin({angle}°) \text{ m/s}$$
+
+    This is the part of the velocity that gravity will act on. The horizontal part, ${speed}\cos({angle}°)$, stays the same for the whole flight.
+
+- id: mech.proj.flight-time
+  type: parametrised
+  concepts: [projectile-motion, free-fall]
+  params:
+    speed: { choices: [15, 20, 25, 30] }
+    angle: { choices: [25, 35, 40, 50, 60] }
+  prompt: "A ball is kicked from level ground at {speed} m/s, at {angle}° above the horizontal. How long is it in the air? (Use $g = 9.8$ m/s².)"
+  answer: "2 * speed * sin(angle deg) / 9.8"
+  tolerance: { relative: 0.01 }
+  unit: s
+  commonMistakes:
+    - answer: "speed * sin(angle deg) / 9.8"
+      feedback: "That is the time to reach the top. Coming down takes the same again."
+    - answer: "2 * speed / 9.8"
+      feedback: "Only the vertical part of the velocity fights gravity. Use $v_y = {speed}\\sin({angle}°)$, not the full speed."
+  hints:
+    - "Time in the air depends only on the vertical motion."
+    - "It is the same as throwing a ball straight up at $v_y = {speed}\\sin({angle}°)$ and waiting for it to come back."
+  solution: |
+    Vertically, the ball behaves as if thrown straight up at $v_y = {speed}\sin({angle}°)$. It returns to the ground when $0 = v_y t - \tfrac{1}{2}gt^2$:
+
+    $$T = \frac{2v_y}{g} = \frac{2 \times {speed}\sin({angle}°)}{9.8} \text{ s}$$
+
+- id: mech.proj.range
+  type: parametrised
+  concepts: [projectile-motion]
+  params:
+    speed: { choices: [10, 15, 20, 25] }
+    angle: { choices: [20, 30, 40, 55, 70] }
+  derived:
+    double: "2 * angle"
+    squared: "speed^2"
+  prompt: "A golf ball leaves level ground at {speed} m/s, at {angle}° above the horizontal. Ignoring the air, how far away does it land? (Use $g = 9.8$ m/s².)"
+  answer: "speed^2 * sin(2 * angle deg) / 9.8"
+  tolerance: { relative: 0.01 }
+  unit: m
+  commonMistakes:
+    - answer: "speed^2 * sin(angle deg) / 9.8"
+      feedback: "The formula has $\\sin 2\\theta$: double the angle before taking the sine."
+    - answer: "speed^2 / 9.8"
+      feedback: "That is the range at 45°, the largest possible. At {angle}° it is less."
+  hints:
+    - "Either find the time in the air and multiply by the horizontal velocity, or use the range formula."
+    - "$R = \\dfrac{v^2\\sin 2\\theta}{g}$, and here $2\\theta = {double}°$."
+  solution: |
+    Using the range formula with $2\theta = {double}°$:
+
+    $$R = \frac{v^2\sin 2\theta}{g} = \frac{{squared} \times \sin({double}°)}{9.8} \text{ m}$$
+
+    You get the same answer the long way: the time in the air times the horizontal velocity.
+
+- id: mech.proj.same-time
+  type: multiple-choice
+  concepts: [projectile-motion, free-fall]
+  prompt: "From the same height and at the same moment, one ball is simply dropped and another is fired horizontally at high speed. Ignoring the air, which hits the level ground first?"
+  choices:
+    - id: together
+      text: "They land at the same time"
+      correct: true
+    - id: dropped
+      text: "The dropped ball, because it takes the shorter path"
+      feedback: "Its path is shorter, but the fired ball is also moving faster. What matters is the vertical motion alone, and that is identical for both."
+    - id: fired
+      text: "The fired ball, because it is moving faster"
+      feedback: "Its extra speed is all horizontal. Gravity does not care about that: both balls start with zero vertical velocity."
+    - id: depends
+      text: "It depends on how fast the second ball is fired"
+      feedback: "The firing speed changes how far away it lands, not when. The time to fall depends only on the height."
+  hints:
+    - "Horizontal and vertical motions are independent. Compare just the vertical parts."
+  solution: |
+    Both balls start with zero vertical velocity, from the same height, with the same downward acceleration $g$. Their vertical motions are identical, so they reach the ground together. The fired ball just lands further away.
+
+- id: mech.proj.off-table
+  type: parametrised
+  concepts: [projectile-motion]
+  params:
+    speed: { choices: [1.5, 2, 3] }
+    height: { choices: [0.8, 1, 1.25] }
+  prompt: "A marble rolls off the edge of a table {height} m high, moving horizontally at {speed} m/s. How far from the foot of the table does it land? (Use $g = 9.8$ m/s².)"
+  answer: "speed * sqrt(2 * height / 9.8)"
+  tolerance: { relative: 0.015 }
+  unit: m
+  commonMistakes:
+    - answer: "sqrt(2 * height / 9.8)"
+      feedback: "That is the time it takes to fall, in seconds. Multiply by the horizontal velocity to get the distance."
+  hints:
+    - "Vertically it starts from rest and falls {height} m. How long does that take?"
+    - "${height} = \\tfrac{1}{2}gt^2$ gives the time. Horizontally it moves at a steady {speed} m/s for that long."
+  solution: |
+    **Vertical:** it falls {height} m from rest, so ${height} = \tfrac{1}{2} \times 9.8 \times t^2$, giving $t = \sqrt{\dfrac{2 \times {height}}{9.8}}$ s.
+
+    **Horizontal:** it travels at a steady {speed} m/s for that time:
+
+    $$x = {speed} \times \sqrt{\frac{2 \times {height}}{9.8}} \text{ m}$$
+
+- id: mech.proj.code-best-angle
+  type: code
+  concepts: [projectile-motion]
+  prompt: |
+    Complete `landing_distance` for a ball thrown from `height` metres above the ground. The only missing piece is the time in the air: the ball lands when $\text{height} + v_y t - \tfrac{1}{2}gt^2 = 0$, which you can solve with the quadratic formula (take the positive root). The loop underneath then tries every angle to find the best one from three different heights.
+  starter: |
+    import math
+
+    G = 9.8
+
+    def landing_distance(speed, angle, height=0):
+        """How far away a ball lands, thrown at `angle` degrees from `height` metres up."""
+        vx = speed * math.cos(math.radians(angle))
+        vy = speed * math.sin(math.radians(angle))
+        # Replace the next line with the time in the air.
+        time = 0
+        return vx * time
+
+    for height in [0, 10, 20]:
+        best = max(range(1, 90), key=lambda angle: landing_distance(20, angle, height))
+        distance = landing_distance(20, best, height)
+        print(f"From {height:>2} m up, the best angle is {best} degrees: it lands {distance:.1f} m away")
+  tests: |
+    def test_level_ground_matches_the_range_formula():
+        import math
+        expected = 20**2 * math.sin(math.radians(60)) / 9.8
+        assert abs(landing_distance(20, 30) - expected) < 1e-6, "From ground level at 20 m/s and 30 degrees, the range formula gives about 35.35 m."
+
+    def test_horizontal_throw_from_a_height():
+        assert abs(landing_distance(10, 0, 4.9) - 10) < 1e-6, "Thrown level at 10 m/s from 4.9 m up, the ball falls for exactly 1 s and lands 10 m away."
+
+    def test_straight_up_comes_straight_down():
+        assert abs(landing_distance(15, 90, 2)) < 1e-6, "Thrown straight up, the ball lands where it started."
+
+    def test_higher_goes_further():
+        assert landing_distance(20, 45, 10) > landing_distance(20, 45, 0) + 5, "From 10 m up the same throw should land several metres further away."
+  hints:
+    - "Rearranged, the equation is $\\tfrac{1}{2}Gt^2 - v_y t - \\text{height} = 0$."
+    - "The quadratic formula gives $t = \\dfrac{v_y + \\sqrt{v_y^2 + 2G \\cdot \\text{height}}}{G}$."
+    - "`time = (vy + math.sqrt(vy**2 + 2 * G * height)) / G`"
+  solution: |
+    The positive root of the quadratic:
+
+    `time = (vy + math.sqrt(vy**2 + 2 * G * height)) / G`
+
+    From the ground the best angle is 45 degrees, as the formula promised. From 10 m up it drops to 39 degrees, and from 20 m to 35. With height in hand, the ball has extra time in the air anyway, so it pays to spend more of the throw on horizontal speed.
+
+- id: mech.proj.complementary
+  type: multiple-choice
+  concepts: [projectile-motion]
+  prompt: "A ball launched from level ground at 30° lands at a certain spot. Launched at the same speed, which other angle makes it land in the same spot?"
+  choices:
+    - id: sixty
+      text: "60°"
+      correct: true
+    - id: forty-five
+      text: "45°"
+      feedback: "45° gives the longest range of all, further than 30°."
+    - id: fifteen
+      text: "15°"
+      feedback: "Lower and flatter, 15° falls well short: $\\sin 30°$ is smaller than $\\sin 60°$."
+    - id: none
+      text: "No other angle"
+      feedback: "There is one. Look at how the range depends on the angle: through $\\sin 2\\theta$."
+  hints:
+    - "The range depends on $\\sin 2\\theta$. Which other angle gives the same value as $\\sin 60°$?"
+  solution: |
+    The range is $\frac{v^2 \sin 2\theta}{g}$. For 30° that involves $\sin 60°$, and for 60° it involves $\sin 120°$, which is the same number. Any two angles that add up to 90° give the same range.
+
+- id: mech.proj.top
+  type: multiple-choice
+  concepts: [projectile-motion, velocity, acceleration]
+  prompt: "A ball is thrown at an angle. At the very top of its path, which statement is true? (Ignore the air.)"
+  choices:
+    - id: horizontal
+      text: "It is moving horizontally, and accelerating downwards at $g$"
+      correct: true
+    - id: stopped
+      text: "It is momentarily at rest, and accelerating downwards at $g$"
+      feedback: "Only its vertical velocity is zero. It still has all of its horizontal velocity."
+    - id: no-acceleration
+      text: "It is moving horizontally, and its acceleration is zero"
+      feedback: "Gravity never switches off. The acceleration is $g$ downwards for the whole flight."
+    - id: both-zero
+      text: "Its velocity and its acceleration are both zero"
+      feedback: "If that were true it would hang in the air. It keeps its horizontal velocity, and gravity keeps acting."
+  hints:
+    - "Consider the horizontal and vertical components of the velocity separately."
+  solution: |
+    At the top the vertical component of velocity is zero, but the horizontal component is what it has been all along, $v\cos\theta$. So the ball is moving horizontally. Its acceleration is $g$ downwards, as it is at every point of the flight.
+
+- id: mech.proj.constant
+  type: multiple-choice
+  multiple: true
+  concepts: [projectile-motion]
+  prompt: "Which of these stay the same throughout a projectile's flight, ignoring the air? Select all that apply."
+  choices:
+    - id: vx
+      text: "The horizontal component of its velocity"
+      correct: true
+    - id: acceleration
+      text: "Its acceleration"
+      correct: true
+    - id: vy
+      text: "The vertical component of its velocity"
+      feedback: "This changes steadily, by 9.8 m/s every second: positive on the way up, zero at the top, negative on the way down."
+    - id: speed
+      text: "Its speed"
+      feedback: "The speed combines both components, and the vertical one changes. The ball is slowest at the top."
+  hints:
+    - "Gravity is the only thing acting. In which direction does it act, and is it constant?"
+  solution: |
+    Gravity acts straight down and never changes, so the acceleration is constant and nothing alters the horizontal velocity. The vertical velocity changes all the time, and with it the speed.
+
+- id: mech.proj.explain
+  type: self-check
+  concepts: [projectile-motion]
+  prompt: "A friend insists that a bullet fired horizontally from a rifle stays in the air much longer than one dropped from the same height, because it is going so fast. Explain why they hit level ground at the same time."
+  rubric:
+    - "You said the horizontal and vertical parts of the motion are independent."
+    - "You said both bullets start with zero vertical velocity and have the same downward acceleration, $g$."
+    - "You said the fired bullet's speed only decides how far away it lands, not how long it takes to fall."
+  solution: |
+    Gravity acts vertically, so it changes only the vertical part of the motion, and it does so identically for both bullets: each starts with no vertical velocity and falls the same height with acceleration $g$. They take the same time to reach the ground.
+
+    The rifle bullet's speed is entirely horizontal. It uses that fall time to travel a long way sideways, but it does not get any extra time.

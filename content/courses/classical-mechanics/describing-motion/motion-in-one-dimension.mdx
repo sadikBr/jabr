@@ -1,0 +1,180 @@
+---
+id: motion-in-one-dimension
+title: "Motion in one dimension"
+summary: "Constant acceleration, and the handful of equations that describe everything from braking cars to falling stones."
+teaches: [constant-acceleration, free-fall]
+requires: [velocity, acceleration]
+estimatedMinutes: 20
+---
+
+<Step kind="see" title="How far does it take to stop?">
+
+You are driving along a country road when a tree comes down ahead of you. Two
+things happen before you stop. First, for about a second, nothing: that is how
+long it takes you to notice and get your foot to the brake. Then the car slows
+down at a steady rate until it is at rest.
+
+How fast can you be going and still stop in time? Make a guess, then find out.
+
+<Interactive
+  id="braking-distance"
+  title="Stop before the tree"
+  props={{ speed: 50, obstacle: 60, goal: true }}
+/>
+
+Try 40 km/h and then 80 km/h, and compare the two distances underneath.
+Doubling the speed doubles the **thinking distance**, as you would expect. But
+it makes the **braking distance** four times as long. To see why, you need to
+describe the motion precisely.
+
+While the driver reacts, the velocity is constant, and distance is simply
+velocity × time. While the car brakes, the _acceleration_ is constant. That is
+the next simplest kind of motion, and it has its own small set of equations.
+
+On a velocity–time graph, constant acceleration is a straight line. If the
+velocity starts at $u$ and changes at a steady rate $a$, then after a time $t$
+it is
+
+$$
+v = u + at
+$$
+
+The distance covered is the area under that line: you saw it shaded in the
+graph above. The area of that shape is its average height times its width, and
+the average of a straight line is halfway between its ends:
+
+$$
+s = \frac{u + v}{2}\,t = ut + \tfrac{1}{2}at^2
+$$
+
+<Callout kind="definition" title="Equations for constant acceleration">
+
+For motion in a straight line with constant acceleration $a$, starting at
+velocity $u$:
+
+$$
+v = u + at \qquad\quad s = ut + \tfrac{1}{2}at^2 \qquad\quad v^2 = u^2 + 2as
+$$
+
+Here $v$ is the velocity after time $t$, and $s$ is the displacement in that
+time. The third equation comes from the first two by eliminating $t$. It is
+the one to reach for when time is not mentioned.
+
+</Callout>
+
+These agree with what you know from calculus. Differentiate
+$s = ut + \tfrac{1}{2}at^2$ with respect to $t$ and you get $u + at$, the
+velocity. Differentiate again and you get $a$.
+
+<WorkedExample title="An emergency stop, in numbers">
+
+A car is travelling at $20$ m/s (72 km/h). The driver takes $1$ s to react, and
+then the brakes slow the car at $8$ m/s². How far does it travel before it
+stops?
+
+**Thinking.** Constant velocity for one second: $20 \times 1 = 20$ m.
+
+**Braking.** We know $u = 20$, the final velocity $v = 0$, and $a = -8$
+(negative, because the car is slowing down). Time is not mentioned, so use
+$v^2 = u^2 + 2as$:
+
+$$
+0 = 20^2 + 2 \times (-8) \times s \quad\Rightarrow\quad s = \frac{400}{16} = 25 \text{ m}
+$$
+
+**Total.** $20 + 25 = 45$ m.
+
+</WorkedExample>
+
+<Callout kind="insight" title="Why speed is so unforgiving">
+
+Setting $v = 0$ in the third equation gives the braking distance for any
+speed:
+
+$$
+s = \frac{u^2}{2 \times \text{deceleration}}
+$$
+
+The speed is _squared_. Go twice as fast and you need four times the distance.
+Go three times as fast and you need nine.
+
+</Callout>
+
+One constant acceleration is more famous than all the others. Near the Earth's
+surface, anything falling freely (with air resistance small enough to ignore)
+speeds up at the same rate, whatever it is made of and however heavy it is.
+
+<Callout kind="definition" title="Free fall">
+
+An object moving under gravity alone is in **free fall**. Its acceleration is
+$g \approx 9.8$ m/s², directed downwards.
+
+That is true on the way up as well as on the way down. With upwards as
+positive, a ball thrown upwards at speed $u$ has
+
+$$
+v = u - gt \qquad\qquad y = ut - \tfrac{1}{2}gt^2
+$$
+
+</Callout>
+
+Why $g$ is the same for a hammer and a feather is a question about forces, and
+it gets its own lesson later in this course.
+
+</Step>
+
+<Step kind="do" title="Put the equations to work">
+
+Each of these gives you some of $u$, $v$, $a$, $s$ and $t$ and asks for
+another. Start by writing down what you know.
+
+<Question id="mech.kin.final-velocity" />
+
+<Question id="mech.kin.distance" />
+
+<Question id="mech.kin.braking" />
+
+<Question id="mech.kin.double-speed" />
+
+Now some free fall. The same equations, with $a = g$.
+
+<Question id="mech.kin.well" />
+
+<Question id="mech.kin.catch" />
+
+A formula is easiest to trust once you have made it produce a whole table.
+Write the stopping distance as a function and see how it grows.
+
+<CodeLab id="mech.kin.code-stopping" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="mech.kin.which-equation" />
+
+<Question id="mech.kin.graph" />
+
+<Question id="mech.kin.when-valid" />
+
+<Question id="mech.kin.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Everything here happened along a single straight line. Most real motion does
+not: a ball thrown across a field moves sideways and up and down at the same
+time. The trick is to treat each direction separately, and for that you need
+**vectors**.
+
+And there is a bigger question underneath all of this. These equations
+_describe_ motion with constant acceleration. They do not say what causes an
+acceleration, or how big it will be. That is the business of **forces**.
+
+<ConnectIt
+  concepts={["vectors", "projectile-motion", "newtons-second-law"]}
+  explainers={["why-do-a-hammer-and-a-feather-fall-at-the-same-rate"]}
+/>
+
+</Step>

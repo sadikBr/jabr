@@ -1,0 +1,163 @@
+---
+id: free-body-diagrams
+title: "Free-body diagrams"
+summary: "Draw one object and every force on it, add the arrows, and the motion follows."
+teaches: [net-force, normal-force, free-body-diagram]
+requires: [newtons-second-law, vector-components]
+estimatedMinutes: 20
+---
+
+<Step kind="see" title="One object, every force">
+
+The second law needs the **net** force on an object. Finding it is where most
+mistakes in mechanics are made: a force gets forgotten, or one is invented
+that is not really there.
+
+The cure is a drawing. Pick one object, sketch it on its own, and draw an
+arrow for every force acting **on it**. Nothing else goes in the picture. This
+is called a **free-body diagram**.
+
+Try it. For each situation, tick the forces you think belong, then check.
+Watch out for the last option in the list.
+
+<Interactive id="free-body-builder" title="Build the diagram" />
+
+Every correct diagram here was made from the same short list of questions.
+
+<Callout kind="definition" title="How to draw a free-body diagram">
+
+1. **Choose one object** and draw it alone.
+2. **Gravity:** draw its weight, straight down. It is always there.
+3. **Contact:** go round everything touching the object. A surface gives a
+   push at right angles to itself (and friction along itself, if it is
+   rough). A taut rope pulls along its length. Air or water pushes back
+   against motion through it.
+4. **Stop.** If nothing is touching it and it is not gravity, it is not a
+   force on this object.
+
+</Callout>
+
+Two of those forces deserve a closer look.
+
+<Callout kind="definition" title="The normal force">
+
+A surface pushes back on anything pressed against it. This push is always
+**at right angles to the surface** ("normal" is the mathematical word for
+perpendicular), and it is exactly as big as it needs to be to stop the object
+sinking in.
+
+It is _not_ always equal to the object's weight. On a slope it is smaller. In
+a lift that is speeding up, it is larger.
+
+</Callout>
+
+<Callout kind="definition" title="Net force">
+
+The **net force** is the vector sum of every force in the diagram. It is the
+only thing the second law cares about:
+
+$$
+\vec{F}_{\text{net}} = \vec{F}_1 + \vec{F}_2 + \dots = m\,\vec{a}
+$$
+
+If the arrows cancel, the net force is zero and the velocity does not change.
+If they do not, the object accelerates in the direction of what is left over.
+
+</Callout>
+
+<Callout kind="warning" title="There is no force of motion">
+
+It is very tempting to draw an arrow in the direction something is moving,
+"to keep it going". Do not. The first law says moving things keep moving on
+their own. If you cannot name the object that is doing the pushing or
+pulling, the force does not exist.
+
+</Callout>
+
+Once the diagram is right, the rest is vector addition. When forces point in
+awkward directions, split them into components along two perpendicular axes,
+and choose the axes to make life easy.
+
+<WorkedExample title="A block on a smooth ramp">
+
+A block of mass $m$ slides down a frictionless ramp tilted at an angle
+$\theta$. What is its acceleration?
+
+**The diagram.** Two forces: the weight $mg$, straight down, and the normal
+force $N$, at right angles to the ramp.
+
+**The axes.** The block can only move along the ramp, so take one axis along
+the slope and one at right angles to it. The normal force already lies along
+the second axis. Only the weight needs splitting:
+
+- along the slope: $mg\sin\theta$
+- into the slope: $mg\cos\theta$
+
+**At right angles to the slope** the block does not accelerate, so the forces
+balance: $N = mg\cos\theta$.
+
+**Along the slope** only one component acts, so the second law gives
+
+$$
+mg\sin\theta = ma \quad\Rightarrow\quad a = g\sin\theta
+$$
+
+The mass has cancelled. On a 30° ramp, everything slides with an acceleration
+of $9.8 \times \sin 30° = 4.9$ m/s², half of free fall. A flat ramp gives
+zero, and a vertical one gives $g$, as they should.
+
+</WorkedExample>
+
+</Step>
+
+<Step kind="do" title="From diagram to acceleration">
+
+For each of these, picture the diagram first. In the first two there are just
+two forces, one up and one down.
+
+<Question id="mech.fbd.lift" />
+
+<Question id="mech.fbd.scales" />
+
+Now the ramp, where the forces are not along the same line.
+
+<Question id="mech.fbd.ramp-acceleration" />
+
+<Question id="mech.fbd.ramp-normal" />
+
+<Question id="mech.fbd.two-pulls" />
+
+<Question id="mech.fbd.puck" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="mech.fbd.normal-vs-weight" />
+
+<Question id="mech.fbd.belongs" />
+
+<Question id="mech.fbd.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+You now have the complete method of classical mechanics:
+
+1. draw the free-body diagram,
+2. add the forces to get the net force,
+3. divide by the mass to get the acceleration,
+4. follow the motion from there.
+
+The remaining lessons in this module look at two particular forces that turn
+up in almost every diagram: the weight, and the drag of the air. Put those
+two together with the thrust of an engine and you have every force on a
+rocket.
+
+<ConnectIt
+  concepts={["gravity-and-weight", "air-drag", "terminal-velocity"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Step>

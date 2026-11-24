@@ -12,42 +12,120 @@
   prerequisites: [velocity]
   lesson: calculus-essentials/derivatives/derivatives-in-motion
 
-- id: mass
-  title: Mass and inertia
+- id: constant-acceleration
+  title: Motion with constant acceleration
   subject: physics
-  summary: How much an object resists having its motion changed. More mass needs more force for the same acceleration.
+  summary: When acceleration never changes, a few short equations link position, velocity and time.
+  prerequisites: [velocity, acceleration]
+  lesson: classical-mechanics/describing-motion/motion-in-one-dimension
+
+- id: free-fall
+  title: Free fall
+  subject: physics
+  summary: Motion under gravity alone. Every object in free fall has the same acceleration, g.
+  prerequisites: [constant-acceleration]
+  lesson: classical-mechanics/describing-motion/motion-in-one-dimension
+
+- id: projectile-motion
+  title: Projectile motion
+  subject: physics
+  summary: Motion in two dimensions under gravity alone. Sideways the speed stays constant while vertically the object is in free fall, and together they trace a parabola.
+  prerequisites: [vector-components, free-fall]
+  lesson: classical-mechanics/describing-motion/projectile-motion
 
 - id: force
   title: Force
   subject: physics
-  summary: A push or a pull — the thing that changes an object's motion.
+  summary: A push or a pull — the thing that changes an object's motion. It has a size and a direction.
+  prerequisites: [vectors]
+  lesson: classical-mechanics/forces/newtons-laws
+
+- id: mass
+  title: Mass and inertia
+  subject: physics
+  summary: How much an object resists having its motion changed. More mass needs more force for the same acceleration.
+  lesson: classical-mechanics/forces/newtons-laws
+
+- id: newtons-first-law
+  title: Newton's first law
+  subject: physics
+  summary: With no net force on it, an object keeps doing what it was doing — staying at rest, or moving in a straight line at a steady speed.
+  prerequisites: [force, velocity]
+  lesson: classical-mechanics/forces/newtons-laws
 
 - id: newtons-second-law
   title: Newton's second law
   subject: physics
   summary: Net force equals mass times acceleration, F = m·a.
   prerequisites: [force, mass, acceleration]
+  lesson: classical-mechanics/forces/newtons-laws
+
+- id: newtons-third-law
+  title: Newton's third law
+  subject: physics
+  summary: Forces come in pairs. If A pushes on B, then B pushes back on A just as hard, in the opposite direction.
+  prerequisites: [force]
+  lesson: classical-mechanics/forces/newtons-laws
+
+- id: net-force
+  title: Net force
+  subject: physics
+  summary: The single force that has the same effect as all the forces on an object, added together as vectors.
+  prerequisites: [force, vector-components]
+  lesson: classical-mechanics/forces/free-body-diagrams
+
+- id: normal-force
+  title: Normal force
+  subject: physics
+  summary: The push a surface gives back, at right angles to itself, with whatever strength is needed to stop things sinking into it.
+  prerequisites: [force, newtons-third-law]
+  lesson: classical-mechanics/forces/free-body-diagrams
+
+- id: free-body-diagram
+  title: Free-body diagrams
+  subject: physics
+  summary: A sketch of one object and every force acting on it — the first step in solving almost any mechanics problem.
+  prerequisites: [net-force, newtons-second-law]
+  lesson: classical-mechanics/forces/free-body-diagrams
 
 - id: gravity-and-weight
   title: Gravity and weight
   subject: physics
   summary: Weight is the force of gravity on an object, m·g — proportional to its mass.
-  prerequisites: [newtons-second-law]
-
-- id: free-fall
-  title: Free fall
-  subject: physics
-  summary: Motion under gravity alone. Every object in free fall has the same acceleration, g.
-  prerequisites: [gravity-and-weight]
+  prerequisites: [newtons-second-law, free-fall]
+  lesson: classical-mechanics/forces/gravity-and-weight
 
 - id: air-drag
   title: Air drag
   subject: physics
   summary: The force of air pushing back on a moving object. It grows with speed and depends on shape, not mass.
   prerequisites: [force, velocity]
+  lesson: classical-mechanics/forces/drag
 
-- id: projectile-motion
-  title: Projectile motion
+- id: terminal-velocity
+  title: Terminal velocity
   subject: physics
-  summary: Motion in two dimensions under gravity alone. Sideways the speed stays constant while vertically the object is in free fall, and together they trace a parabola.
-  prerequisites: [velocity, free-fall]
+  summary: The steady speed a falling object settles at, once drag has grown to balance its weight.
+  prerequisites: [air-drag, gravity-and-weight, net-force]
+  lesson: classical-mechanics/forces/drag
+
+- id: work-and-kinetic-energy
+  title: Work and kinetic energy
+  subject: physics
+  summary: A force acting over a distance does work, and the work done on an object changes its energy of motion, ½·m·v².
+  prerequisites: [newtons-second-law, constant-acceleration]
+  lesson: classical-mechanics/energy-and-momentum/work-and-energy
+
+- id: conservation-of-energy
+  title: Conservation of energy
+  subject: physics
+  summary: Energy changes form but the total never changes — which often answers a question about speed or height without following the motion at all.
+  prerequisites: [work-and-kinetic-energy, gravity-and-weight]
+  lesson: classical-mechanics/energy-and-momentum/conservation-of-energy
+
+- id: momentum
+  title: Momentum
+  subject: physics
+  summary: Mass times velocity. Forces change it, and in a collision the total is conserved.
+  prerequisites: [newtons-second-law, newtons-third-law, vectors]
+  lesson: classical-mechanics/energy-and-momentum/momentum

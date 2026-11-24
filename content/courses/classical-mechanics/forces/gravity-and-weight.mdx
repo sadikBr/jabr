@@ -1,0 +1,137 @@
+---
+id: gravity-and-weight
+title: "Gravity and weight"
+summary: "Why heavy things do not fall faster, and what a set of scales really measures."
+teaches: [gravity-and-weight]
+requires: [newtons-second-law, free-fall]
+estimatedMinutes: 15
+---
+
+<Step kind="see" title="Why don't heavy things fall faster?">
+
+In 1971 the astronaut David Scott stood on the Moon, held up a geological
+hammer and a falcon's feather, and let go of both. Which landed first? Decide,
+then try it.
+
+<Interactive
+  id="drop-test"
+  title="Scott's experiment"
+  props={{ place: "moon" }}
+/>
+
+They land together. The hammer is more than forty times heavier, so gravity
+really does pull on it more than forty times as hard. And yet
+it falls no faster. You now have the tools to see exactly why.
+
+<Callout kind="definition" title="Weight">
+
+An object's **weight** is the force of gravity on it. Near the surface of a
+planet it is
+
+$$
+W = mg
+$$
+
+pointing straight down, where $g$ is the strength of gravity there: about
+9.8 N for every kilogram on Earth.
+
+</Callout>
+
+Now put the weight into Newton's second law. For an object with nothing else
+acting on it, the net force _is_ its weight:
+
+$$
+a = \frac{F_{\text{net}}}{m} = \frac{mg}{m} = g
+$$
+
+The mass cancels. A heavier object is pulled harder, in exact proportion to
+its mass. But it is also harder to accelerate, in exact proportion to its
+mass. The two effects cancel perfectly, every time, for every object.
+
+That is why "$g$" appears with two different units that turn out to be the
+same thing: 9.8 newtons per kilogram, the pull on each kilogram, and
+9.8 m/s², the acceleration of anything in free fall.
+
+<Callout kind="insight" title="Mass is yours; weight depends on where you are">
+
+**Mass** measures how much matter an object has and how hard it is to
+accelerate. It is the same everywhere. **Weight** is a force, and it changes
+with the local gravity.
+
+| World   | $g$ (m/s²) |
+| ------- | ---------- |
+| Earth   | 9.8        |
+| Moon    | 1.6        |
+| Mars    | 3.7        |
+| Jupiter | 24.8       |
+
+A 70 kg astronaut weighs about 690 N on Earth and about 110 N on the Moon.
+She is still 70 kg, and just as hard to push sideways.
+
+</Callout>
+
+So what do bathroom scales measure? Not your weight directly. They measure how
+hard they are pushing up on you: the normal force. Standing still, that equals
+your weight. But take the scales into a lift whose cable has snapped, and both
+you and the scales fall together with acceleration $g$. Nothing needs to hold
+you up, so the scales read zero.
+
+That is what "weightless" means. Astronauts in orbit are not beyond the reach
+of gravity. At the height of the International Space Station, gravity is still
+about 90% as strong as on the ground. They float because they, and the station
+around them, are in continuous free fall.
+
+</Step>
+
+<Step kind="do" title="Weigh things here and elsewhere">
+
+<Question id="mech.grav.weight" />
+
+<Question id="mech.grav.elsewhere" />
+
+<Question id="mech.grav.mass" />
+
+<Question id="mech.grav.vacuum" />
+
+Weaker gravity changes more than what the scales say. Every free-fall
+calculation changes with it.
+
+<Question id="mech.grav.moon-jump" />
+
+A short program makes it easy to compare worlds. Fill in the two functions,
+then run it for a tour of the solar system.
+
+<CodeLab id="mech.grav.code-worlds" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="mech.grav.mass-or-weight" />
+
+<Question id="mech.grav.scales" />
+
+<Question id="mech.grav.orbit" />
+
+<Question id="mech.grav.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+On the Moon the hammer and the feather tie. On Earth they obviously do not,
+and the difference is not gravity. It is the air. Switch the drop test at the
+top of this page to Earth and you can watch the feather fall behind.
+
+Air resistance is the last force this module covers, and the one that makes
+real falling so different from the tidy free fall of the equations.
+
+<ConnectIt
+  concepts={["air-drag", "terminal-velocity", "free-fall"]}
+  explainers={[
+    "why-do-a-hammer-and-a-feather-fall-at-the-same-rate",
+    "how-does-a-rocket-reach-orbit",
+  ]}
+/>
+
+</Step>

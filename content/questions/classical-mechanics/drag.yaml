@@ -1,0 +1,236 @@
+- id: mech.drag.force
+  type: parametrised
+  concepts: [air-drag]
+  params:
+    k: { choices: [0.2, 0.25, 0.3] }
+    v: { choices: [10, 20, 30, 40] }
+  derived:
+    squared: "v^2"
+  prompt: "For a skydiver falling spread-eagled, the drag constant is $k = {k}$ kg/m. How big is the drag force on her when she is falling at {v} m/s?"
+  answer: "k * v^2"
+  tolerance: { relative: 0.005 }
+  unit: N
+  commonMistakes:
+    - answer: "k * v"
+      feedback: "Drag grows with the square of the speed: $kv^2$, not $kv$."
+  hints:
+    - "$F_{\\text{drag}} = kv^2$."
+  solution: |
+    $$F_{\text{drag}} = kv^2 = {k} \times {v}^2 = {k} \times {squared} \text{ N}$$
+
+- id: mech.drag.acceleration
+  type: parametrised
+  concepts: [air-drag, net-force, newtons-second-law]
+  params:
+    mass: { choices: [60, 80, 100] }
+    v: { choices: [10, 20, 30, 40] }
+  derived:
+    drag: "0.25 * v^2"
+    weight: "mass * 9.8"
+    net: "mass * 9.8 - 0.25 * v^2"
+  prompt: "A skydiver of mass {mass} kg, with drag constant $k = 0.25$ kg/m, is falling at {v} m/s. What is her acceleration at that moment? (Use $g = 9.8$ m/s² and take downwards as positive.)"
+  answer: "(mass * 9.8 - 0.25 * v^2) / mass"
+  tolerance: { absolute: 0.02 }
+  unit: "m/s²"
+  commonMistakes:
+    - answer: "9.8"
+      feedback: "That would be free fall, with no air. Drag pushes upwards and reduces the net force."
+    - answer: "mass * 9.8 - 0.25 * v^2"
+      feedback: "That is the net force, in newtons. Divide by her mass to get the acceleration."
+    - answer: "9.8 - 0.25 * v^2"
+      feedback: "The drag force has to be divided by the mass as well: $a = g - \\dfrac{kv^2}{m}$."
+  hints:
+    - "Draw the diagram: weight down, drag up. Find the net force."
+    - "Her weight is {weight} N and the drag is $0.25 \\times {v}^2 = {drag}$ N."
+  solution: |
+    Weight: ${mass} \times 9.8 = {weight}$ N downwards. Drag: $0.25 \times {v}^2 = {drag}$ N upwards. Net force: {net} N downwards.
+
+    $$a = \frac{{net}}{{mass}} \text{ m/s}^2$$
+
+    Less than $g$, and it will keep shrinking as she speeds up.
+
+- id: mech.drag.terminal
+  type: parametrised
+  concepts: [terminal-velocity]
+  params:
+    mass: { choices: [60, 70, 80, 90] }
+    k: { choices: [0.2, 0.25, 0.3] }
+  derived:
+    weight: "mass * 9.8"
+  prompt: "What is the terminal velocity of a {mass} kg skydiver whose drag constant is $k = {k}$ kg/m? (Use $g = 9.8$ m/s².)"
+  answer: "sqrt(mass * 9.8 / k)"
+  tolerance: { relative: 0.01 }
+  unit: m/s
+  commonMistakes:
+    - answer: "mass * 9.8 / k"
+      feedback: "That is $v_t^2$. Take the square root."
+  hints:
+    - "At terminal velocity the drag equals the weight: $kv_t^2 = mg$."
+    - "The weight is {weight} N, so $v_t^2 = \\dfrac{{weight}}{{k}}$."
+  solution: |
+    Drag balances weight: $k v_t^2 = mg$, so
+
+    $$v_t = \sqrt{mg / k} = \sqrt{\frac{{weight}}{{k}}} \text{ m/s}$$
+
+- id: mech.drag.heavier
+  type: multiple-choice
+  concepts: [terminal-velocity, air-drag]
+  prompt: "Two balls are the same size and shape. One is solid steel and the other is hollow plastic. Dropped from a great height through air, which reaches the higher terminal velocity?"
+  choices:
+    - id: steel
+      text: "The steel ball"
+      correct: true
+    - id: plastic
+      text: "The plastic ball"
+      feedback: "The lighter ball needs less drag to balance its weight, and it gets that at a lower speed."
+    - id: same
+      text: "Neither: all objects fall at the same rate"
+      feedback: "That is true only when air does not matter. Here the same shape means the same drag at any given speed, but the weights are very different."
+    - id: unknown
+      text: "It depends on the height they are dropped from"
+      feedback: "Terminal velocity depends on the object and the air, not on where the fall started."
+  hints:
+    - "Same size and shape means the same $k$. What does $v_t = \\sqrt{\\dfrac{mg}{k}}$ say about the heavier ball?"
+  solution: |
+    Both have the same $k$, so at any given speed they feel the same drag. The steel ball weighs more, so it has to go faster before drag grows large enough to balance its weight: $v_t = \sqrt{\frac{mg}{k}}$ rises with $m$.
+
+    This is the hammer and the feather again. In air, heavier things of the same shape really do fall faster.
+
+- id: mech.drag.code-skydiver
+  type: code
+  concepts: [air-drag, terminal-velocity, eulers-method]
+  prompt: "Complete `fall_with_drag` so it follows a skydiver's speed from rest, one Euler step at a time. The only missing line is the acceleration: weight pulls down, drag pushes back, and the second law does the rest. Then run it and compare the result with the formula for terminal velocity."
+  starter: |
+    import math
+    import matplotlib.pyplot as plt
+
+    G = 9.8
+
+    def fall_with_drag(mass, k, total_time=20.0, dt=0.01):
+        """The falling speed at every step, starting from rest."""
+        speed = 0.0
+        speeds = [speed]
+        for _ in range(round(total_time / dt)):
+            # Replace the next line: include the drag, k * speed**2.
+            acceleration = G
+            speed += acceleration * dt
+            speeds.append(speed)
+        return speeds
+
+    mass, k = 80, 0.25
+    speeds = fall_with_drag(mass, k)
+    print(f"Speed after 20 s: {speeds[-1]:.1f} m/s")
+    print(f"Terminal velocity from the formula: {math.sqrt(mass * G / k):.1f} m/s")
+
+    times = [i * 0.01 for i in range(len(speeds))]
+    plt.plot(times, speeds)
+    plt.xlabel("time (s)")
+    plt.ylabel("speed (m/s)")
+    plt.show()
+  tests: |
+    def test_without_air_it_is_free_fall():
+        speeds = fall_with_drag(80, 0, total_time=2)
+        assert abs(speeds[-1] - 19.6) < 1e-6, "With k = 0 there is no drag: after 2 s the speed should be 9.8 × 2 = 19.6 m/s."
+
+    def test_one_value_per_step():
+        assert len(fall_with_drag(80, 0.25, total_time=1, dt=0.1)) == 11, "Ten steps should give eleven speeds, counting the start."
+
+    def test_settles_at_terminal_velocity():
+        speeds = fall_with_drag(80, 0.25, total_time=60)
+        assert abs(speeds[-1] - 56) < 0.01, "An 80 kg skydiver with k = 0.25 should settle at 56 m/s."
+        assert max(speeds) < 56.01, "The speed should approach 56 m/s from below and never overshoot it."
+
+    def test_heavier_falls_faster():
+        speeds = fall_with_drag(160, 0.25, total_time=60)
+        assert abs(speeds[-1] - 79.196) < 0.01, "Twice the mass with the same k should settle at about 79.2 m/s."
+  hints:
+    - "The net force is `mass * G - k * speed**2`, taking downwards as positive."
+    - "`acceleration = G - (k / mass) * speed**2`"
+  solution: |
+    The second law, with weight down and drag up:
+
+    `acceleration = G - (k / mass) * speed**2`
+
+    After 20 s the simulation gives 55.9 m/s, already within a whisker of the 56.0 m/s the formula predicts. The plot shows the whole story: a straight line at first (nearly free fall), bending over as drag builds, and flattening out at terminal velocity.
+
+- id: mech.drag.double
+  type: multiple-choice
+  concepts: [air-drag]
+  prompt: "A cyclist doubles her speed. What happens to the drag force on her?"
+  choices:
+    - id: four
+      text: "It becomes four times as large"
+      correct: true
+    - id: two
+      text: "It doubles"
+      feedback: "Drag depends on the speed squared: twice the speed gives $2^2 = 4$ times the force."
+    - id: same
+      text: "It stays the same"
+      feedback: "The faster you move through the air, the harder it pushes back."
+    - id: half
+      text: "It halves"
+      feedback: "Drag grows with speed. It never falls as you go faster."
+  hints:
+    - "$F_{\\text{drag}} = kv^2$. Replace $v$ with $2v$."
+  solution: |
+    $k(2v)^2 = 4kv^2$: four times the drag. This is why cycling into the wind is so tiring, and why cars use far more fuel at high speed.
+
+- id: mech.drag.at-terminal
+  type: multiple-choice
+  concepts: [terminal-velocity, newtons-first-law]
+  prompt: "A skydiver has reached terminal velocity. Which statement is true?"
+  choices:
+    - id: balanced
+      text: "The drag on her equals her weight, and her acceleration is zero"
+      correct: true
+    - id: no-gravity
+      text: "Gravity is no longer acting on her"
+      feedback: "Gravity never stops. Her weight is exactly as large as when she jumped."
+    - id: bigger
+      text: "The drag on her is greater than her weight"
+      feedback: "Then the net force would point upwards and she would slow down. At terminal velocity the two are equal."
+    - id: stopped
+      text: "She has stopped moving"
+      feedback: "She is moving fast. It is her speed that has stopped changing."
+  hints:
+    - "Terminal velocity means a steady speed. What does the first law say about the net force?"
+  solution: |
+    Her speed is constant, so her acceleration is zero and the net force on her is zero: drag upwards exactly balances weight downwards. She is still falling, at a steady speed.
+
+- id: mech.drag.parachute
+  type: parametrised
+  concepts: [terminal-velocity]
+  params:
+    v: { choices: [50, 55, 60] }
+    n: { choices: [4, 25, 100] }
+  derived:
+    root: "sqrt(n)"
+  prompt: "A skydiver is falling at a terminal velocity of {v} m/s. Opening a small drogue parachute makes the drag constant $k$ exactly {n} times larger. What is the new terminal velocity?"
+  answer: "v / sqrt(n)"
+  tolerance: { relative: 0.01 }
+  unit: m/s
+  commonMistakes:
+    - answer: "v / n"
+      feedback: "The terminal velocity depends on the square root of $k$. Making $k$ {n} times larger divides $v_t$ by $\\sqrt{{n}} = {root}$, not by {n}."
+  hints:
+    - "$v_t = \\sqrt{\\dfrac{mg}{k}}$. What happens to it when $k$ is multiplied by {n}?"
+    - "It is divided by $\\sqrt{{n}} = {root}$."
+  solution: |
+    Since $v_t = \sqrt{\dfrac{mg}{k}}$, multiplying $k$ by {n} divides the terminal velocity by $\sqrt{{n}} = {root}$:
+
+    $$v_t = \frac{{v}}{{root}} \text{ m/s}$$
+
+- id: mech.drag.explain
+  type: self-check
+  concepts: [air-drag, terminal-velocity, net-force]
+  prompt: "Describe a parachute jump from the moment the skydiver leaves the plane to just before landing, in terms of the forces on her. There are at least four stages."
+  rubric:
+    - "Just after jumping: little drag, so the net force is nearly her whole weight and she accelerates at nearly $g$."
+    - "Speeding up: drag grows with speed, the net force shrinks, and she gains speed more and more slowly until drag equals weight (terminal velocity)."
+    - "Parachute opens: drag is suddenly much larger than her weight, the net force points upwards, and she slows down."
+    - "Finally: as she slows, drag falls until it balances her weight again, at a new, much lower terminal velocity."
+  solution: |
+    1. **Leaving the plane.** She is moving slowly downwards, so drag is small. The net force is almost her full weight and she accelerates at nearly $g$.
+    2. **Building speed.** Drag grows with the square of her speed. The net force shrinks, her acceleration falls, and at about 56 m/s drag equals weight: terminal velocity.
+    3. **The parachute opens.** $k$ jumps up, so at that speed drag is far bigger than her weight. The net force is upwards: she is still moving down, but slowing sharply.
+    4. **Under the canopy.** As she slows, drag drops until it once again equals her weight, now at about 5 m/s. She descends steadily at this second terminal velocity until she lands.

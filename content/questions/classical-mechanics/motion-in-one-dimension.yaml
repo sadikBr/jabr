@@ -1,0 +1,271 @@
+- id: mech.kin.final-velocity
+  type: parametrised
+  concepts: [constant-acceleration]
+  params:
+    u: { min: 4, max: 12, step: 2 }
+    a: { choices: [1.5, 2, 2.5, 3] }
+    t: { min: 3, max: 6, step: 1 }
+  derived:
+    gain: "a * t"
+  prompt: "A train is moving at {u} m/s when it starts to speed up at a steady {a} m/s². How fast is it going {t} s later?"
+  answer: "u + a * t"
+  tolerance: { absolute: 0.01 }
+  unit: m/s
+  commonMistakes:
+    - answer: "a * t"
+      feedback: "That is how much the velocity changed. Add it to the velocity the train started with."
+  hints:
+    - "You know $u$, $a$ and $t$ and want $v$. Which equation has exactly those four?"
+    - "$v = u + at$."
+  solution: |
+    Using $v = u + at$: the velocity rises by ${a} \times {t} = {gain}$ m/s, so
+
+    $$v = {u} + {gain} \text{ m/s}$$
+
+- id: mech.kin.distance
+  type: parametrised
+  concepts: [constant-acceleration]
+  params:
+    u: { min: 4, max: 10, step: 2 }
+    a: { choices: [2, 3, 4] }
+    t: { choices: [2, 3, 4] }
+  derived:
+    steady: "u * t"
+    extra: "0.5 * a * t^2"
+  prompt: "A cyclist moving at {u} m/s accelerates at {a} m/s² for {t} s. How far does she travel in that time?"
+  answer: "u * t + 0.5 * a * t^2"
+  tolerance: { absolute: 0.01 }
+  unit: m
+  commonMistakes:
+    - answer: "u * t"
+      feedback: "That is how far she would go without speeding up. The acceleration adds $\\tfrac{1}{2}at^2$ on top."
+    - answer: "u * t + a * t^2"
+      feedback: "Check the second term: it is $\\tfrac{1}{2}at^2$, with a half."
+    - answer: "0.5 * a * t^2"
+      feedback: "That would be right if she started from rest. She was already moving at {u} m/s."
+  hints:
+    - "You know $u$, $a$ and $t$ and want $s$."
+    - "$s = ut + \\tfrac{1}{2}at^2$."
+  solution: |
+    Using $s = ut + \tfrac{1}{2}at^2$:
+
+    $$s = {u} \times {t} + \tfrac{1}{2} \times {a} \times {t}^2 = {steady} + {extra} \text{ m}$$
+
+- id: mech.kin.braking
+  type: parametrised
+  concepts: [constant-acceleration]
+  params:
+    v: { choices: [10, 15, 20, 25, 30] }
+    a: { choices: [5, 6, 8] }
+  derived:
+    squared: "v^2"
+    double: "2 * a"
+  prompt: "A car travelling at {v} m/s brakes, slowing down at a steady {a} m/s². How far does it travel while braking?"
+  answer: "v^2 / (2 * a)"
+  tolerance: { relative: 0.01 }
+  unit: m
+  commonMistakes:
+    - answer: "v^2 / a"
+      feedback: "Nearly: $v^2 = u^2 + 2as$ has a 2 in it. Divide by $2 \\times {a}$."
+    - answer: "v / a"
+      feedback: "That is the time it takes to stop, in seconds. The question asks for the distance."
+  hints:
+    - "Time is not mentioned, so use $v^2 = u^2 + 2as$ with a final velocity of $0$."
+    - "The acceleration is $-{a}$ m/s², because the car is slowing down."
+  solution: |
+    With $u = {v}$, $v = 0$ and $a = -{a}$ in $v^2 = u^2 + 2as$:
+
+    $$0 = {squared} - {double}\,s \quad\Rightarrow\quad s = \frac{{squared}}{{double}} \text{ m}$$
+
+- id: mech.kin.double-speed
+  type: multiple-choice
+  concepts: [constant-acceleration]
+  prompt: "On a certain road a car's braking distance from 40 km/h is 10 m. What is its braking distance from 80 km/h on the same road?"
+  choices:
+    - id: forty
+      text: "40 m"
+      correct: true
+    - id: twenty
+      text: "20 m"
+      feedback: "Braking distance does not simply double with speed. It depends on the speed squared."
+    - id: eighty
+      text: "80 m"
+      feedback: "Too far. Twice the speed means $2^2 = 4$ times the distance."
+    - id: ten
+      text: "10 m"
+      feedback: "A faster car certainly needs more room to stop."
+  hints:
+    - "Braking distance is $\\dfrac{u^2}{2 \\times \\text{deceleration}}$. What happens to $u^2$ when $u$ doubles?"
+  solution: |
+    Braking distance is proportional to the speed squared. Doubling the speed multiplies it by $2^2 = 4$, so $10$ m becomes $40$ m.
+
+- id: mech.kin.well
+  type: parametrised
+  concepts: [free-fall]
+  params:
+    t: { choices: [1.5, 2, 2.5, 3] }
+  derived:
+    squared: "t^2"
+  prompt: "You drop a stone into a well and hear the splash {t} s later. Roughly how deep is the well? (Use $g = 9.8$ m/s² and ignore the time the sound takes to come back up.)"
+  answer: "4.9 * t^2"
+  tolerance: { relative: 0.01 }
+  unit: m
+  commonMistakes:
+    - answer: "9.8 * t^2"
+      feedback: "Do not forget the half: the distance fallen from rest is $\\tfrac{1}{2}gt^2$."
+    - answer: "9.8 * t"
+      feedback: "That is the stone's speed when it hits the water. The depth is the distance it fell."
+  hints:
+    - "Dropped means it starts from rest: $u = 0$."
+    - "$s = ut + \\tfrac{1}{2}at^2$ becomes $s = \\tfrac{1}{2}gt^2$."
+  solution: |
+    The stone starts from rest and accelerates at $g$, so
+
+    $$s = \tfrac{1}{2}gt^2 = 4.9 \times {t}^2 = 4.9 \times {squared} \text{ m}$$
+
+- id: mech.kin.catch
+  type: parametrised
+  concepts: [free-fall]
+  params:
+    u: { min: 6, max: 15, step: 1 }
+  prompt: "You throw a ball straight up at {u} m/s and catch it again at the same height. How long is it in the air? (Use $g = 9.8$ m/s².)"
+  answer: "2 * u / 9.8"
+  tolerance: { relative: 0.01 }
+  unit: s
+  commonMistakes:
+    - answer: "u / 9.8"
+      feedback: "That is the time to reach the top. It then takes just as long to come back down."
+  hints:
+    - "One way: find when it reaches the top, where $v = 0$, and double it."
+    - "Another: back at the start its displacement is zero, so solve $0 = ut - \\tfrac{1}{2}gt^2$."
+  solution: |
+    Back in your hand the ball's displacement is zero:
+
+    $$0 = {u}t - 4.9t^2 = t\,({u} - 4.9t)$$
+
+    One solution is $t = 0$, the moment of the throw. The other is
+
+    $$t = \frac{{u}}{4.9} \text{ s}$$
+
+- id: mech.kin.code-stopping
+  type: code
+  concepts: [constant-acceleration]
+  prompt: "Complete `stopping_distance`. It is given a speed in km/h, a reaction time in seconds and a deceleration in m/s², and must return the total stopping distance in metres: the thinking distance plus the braking distance. Then run it for a table of speeds."
+  starter: |
+    def stopping_distance(speed_kmh, reaction_time=1.0, deceleration=7.0):
+        """Thinking distance plus braking distance, in metres."""
+        speed = speed_kmh / 3.6  # metres per second
+        # Replace the next two lines.
+        thinking = 0
+        braking = 0
+        return thinking + braking
+
+    print("speed    stopping distance")
+    for speed_kmh in range(30, 140, 10):
+        print(f"{speed_kmh:>3} km/h  {stopping_distance(speed_kmh):6.1f} m")
+  tests: |
+    def test_the_worked_example():
+        assert abs(stopping_distance(72, 1.0, 8.0) - 45) < 1e-6, "72 km/h is 20 m/s. With 1 s to react and 8 m/s² of braking, the lesson found 45 m."
+
+    def test_with_no_reaction_time():
+        assert abs(stopping_distance(36, 0, 5.0) - 10) < 1e-6, "36 km/h is 10 m/s. With no reaction time the answer is just the braking distance: 10² / (2 × 5) = 10 m."
+
+    def test_thinking_distance_alone():
+        gentle = stopping_distance(36, 2.0, 5.0) - stopping_distance(36, 0, 5.0)
+        assert abs(gentle - 20) < 1e-6, "Two seconds of thinking at 10 m/s should add 20 m."
+
+    def test_braking_grows_with_speed_squared():
+        slow = stopping_distance(40, 0, 7.0)
+        fast = stopping_distance(80, 0, 7.0)
+        assert abs(fast - 4 * slow) < 1e-6, "With no thinking time, doubling the speed should give four times the distance."
+  hints:
+    - "The thinking distance is constant velocity: `speed * reaction_time`."
+    - "The braking distance comes from $v^2 = u^2 + 2as$: `speed**2 / (2 * deceleration)`."
+  solution: |
+    Two lines, one for each stage:
+
+    `thinking = speed * reaction_time`
+    `braking = speed**2 / (2 * deceleration)`
+
+    The table shows what the formula means on the road: about 28 m to stop from 50 km/h, but 97 m from 110 km/h. That is three and a half times the distance for a little over twice the speed.
+
+- id: mech.kin.which-equation
+  type: multiple-choice
+  concepts: [constant-acceleration]
+  prompt: "You know how fast something starts, its constant acceleration, and how far it travels. You want its final velocity, and you are not told the time. Which equation gets you there in one step?"
+  choices:
+    - id: squares
+      text: "$v^2 = u^2 + 2as$"
+      correct: true
+    - id: velocity
+      text: "$v = u + at$"
+      feedback: "This needs the time $t$, which you do not have."
+    - id: distance
+      text: "$s = ut + \\tfrac{1}{2}at^2$"
+      feedback: "This has $t$ in it and does not contain $v$ at all. You could solve it for $t$ first, but that is two steps."
+    - id: average
+      text: "$s = vt$"
+      feedback: "That only holds when the velocity is constant."
+  hints:
+    - "List what you know and what you want: $u$, $a$, $s$ and $v$. Which equation has those four and nothing else?"
+  solution: |
+    $v^2 = u^2 + 2as$ links $u$, $a$, $s$ and $v$ without mentioning $t$. Choosing the equation by what is _missing_ is half the skill.
+
+- id: mech.kin.graph
+  type: multiple-choice
+  multiple: true
+  concepts: [constant-acceleration, velocity, acceleration]
+  prompt: "Which of these can you read from a velocity–time graph? Select all that apply."
+  choices:
+    - id: slope
+      text: "The acceleration, from its slope"
+      correct: true
+    - id: area
+      text: "The distance travelled, from the area under it"
+      correct: true
+    - id: start
+      text: "Where the object was at the start"
+      feedback: "A velocity–time graph says how position changes, not where the object began. Two cars a kilometre apart can have identical graphs."
+    - id: mass
+      text: "The object's mass"
+      feedback: "Nothing about the motion alone reveals the mass."
+  hints:
+    - "Acceleration is the rate of change of velocity. What feature of a graph shows a rate of change?"
+    - "Think back to the shaded areas in the braking simulation."
+  solution: |
+    The slope of a velocity–time graph is the acceleration, and the area under it is the distance travelled (strictly, the displacement). It cannot tell you the starting position, which is a separate fact about the object.
+
+- id: mech.kin.when-valid
+  type: multiple-choice
+  concepts: [constant-acceleration]
+  prompt: "When can you use $v = u + at$ and its two companions?"
+  choices:
+    - id: constant-a
+      text: "Only when the acceleration is constant"
+      correct: true
+    - id: constant-v
+      text: "Only when the velocity is constant"
+      feedback: "Constant velocity is the special case $a = 0$. The equations handle changing velocity too, as long as it changes at a steady rate."
+    - id: always
+      text: "For any motion in a straight line"
+      feedback: "If the acceleration itself changes, as it does for a skydiver or a rocket, these equations give wrong answers."
+    - id: falling
+      text: "Only for falling objects"
+      feedback: "Free fall is one example. Braking cars and accelerating trains are others."
+  hints:
+    - "Look at how $v = u + at$ was built: from a straight line on a velocity–time graph."
+  solution: |
+    They were derived from a straight-line velocity–time graph, which means a constant acceleration. When the acceleration changes during the motion you need calculus, or a step-by-step method such as Euler's.
+
+- id: mech.kin.explain
+  type: self-check
+  concepts: [constant-acceleration]
+  prompt: "A town lowers its speed limit from 60 km/h to 30 km/h. Explain what happens to a car's thinking distance, its braking distance, and why the two change by different amounts."
+  rubric:
+    - "You said the thinking distance halves, because it is speed × reaction time."
+    - "You said the braking distance falls to a quarter, because it depends on the speed squared."
+    - "You gave the reason for the difference: constant velocity while thinking, constant deceleration while braking."
+  solution: |
+    While the driver reacts the car moves at constant velocity, so the thinking distance is speed × time: half the speed, half the distance.
+
+    While braking the car loses speed at a steady rate, and the distance that takes is $\frac{u^2}{2 \times \text{deceleration}}$: half the speed, a quarter of the distance. Slowing down helps far more than it seems to.

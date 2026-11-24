@@ -59,24 +59,46 @@
   },
   "explore": {
     "title": "Explore",
-    "lead": "Question-led explainers, from first intuition to the real maths.",
-    "emptyTitle": "Explainers are on the way",
-    "emptyBody": "The first ones cover rockets, falling feathers and how video games fake physics."
+    "lead": "Start from a question. Stop at the intuition, or keep going down to the real maths.",
+    "all": "All",
+    "filterLabel": "Filter by subject",
+    "depthsLabel": "{count, plural, one {# layer} other {# layers}} deep",
+    "none": "Nothing here yet for this subject."
   },
   "courses": {
     "title": "Courses",
     "lead": "Structured courses where every lesson has something to do.",
-    "emptyTitle": "Courses are on the way",
-    "emptyBody": "Calculus essentials, Classical mechanics and Python for scientists come first."
+    "lessons": "{count, plural, one {# lesson} other {# lessons}}",
+    "concepts": "{count, plural, one {# concept} other {# concepts}}",
+    "available": "{ready} of {total} lessons available",
+    "start": "Start the course",
+    "startLesson": "Start with “{title}”",
+    "back": "All courses",
+    "modules": "What you'll learn",
+    "module": "Module {number}",
+    "miniProject": "Mini project",
+    "capstone": "Capstone project",
+    "capstoneLead": "Everything in this course builds towards it."
   },
   "projects": {
     "title": "Projects",
     "lead": "Build real things and learn the concepts they need.",
-    "emptyTitle": "Projects are on the way",
-    "emptyBody": "The first capstone is a rocket flight simulator you build milestone by milestone."
+    "kinds": {
+      "capstone": "Capstone",
+      "mini": "Mini project"
+    },
+    "uses": "You'll use",
+    "note": "Projects open once code labs are ready. The plans are below."
   },
   "common": {
-    "backHome": "Back to home"
+    "backHome": "Back to home",
+    "comingSoon": "Coming soon",
+    "soon": "Soon",
+    "minutes": "{count} min",
+    "concept": "Concept",
+    "lesson": "Lesson",
+    "explainer": "Explainer",
+    "project": "Project"
   },
   "notFound": {
     "title": "Page not found",
@@ -84,5 +106,124 @@
   },
   "footer": {
     "tagline": "Learn by doing."
+  },
+  "subjects": {
+    "maths": "Maths",
+    "physics": "Physics",
+    "computing": "Computing",
+    "engineering": "Engineering",
+    "biology": "Biology"
+  },
+  "levels": {
+    "foundations": "Foundations",
+    "university-year-1": "University, year 1"
+  },
+  "explainer": {
+    "back": "All explainers",
+    "depthLabel": "How deep do you want to go?",
+    "depths": {
+      "intuition": {
+        "name": "Intuition",
+        "hint": "The idea, no maths"
+      },
+      "mechanism": {
+        "name": "Mechanism",
+        "hint": "How it works, step by step"
+      },
+      "maths": {
+        "name": "Maths & science",
+        "hint": "The real equations"
+      },
+      "build": {
+        "name": "Build it",
+        "hint": "Make it yourself"
+      }
+    },
+    "layerOf": "Layer {current} of {total}",
+    "goDeeper": "Go deeper",
+    "goDeeperTo": "Next: {name}",
+    "reachedEnd": "You've reached the bottom. Nicely done.",
+    "concepts": "Concepts in this explainer",
+    "related": "You might also wonder…",
+    "comingSoonTitle": "This explainer is being written",
+    "comingSoonBody": "It will arrive with all four layers, from intuition to building it yourself."
+  },
+  "lesson": {
+    "steps": {
+      "see": "See it",
+      "do": "Do it",
+      "check": "Check it",
+      "connect": "Connect it"
+    },
+    "stepOf": "Step {current} of {total}",
+    "progress": "Lesson steps",
+    "back": "Back",
+    "continue": "Continue",
+    "finish": "Finish lesson",
+    "youWillLearn": "You'll learn",
+    "youWillUse": "You'll use",
+    "keyboardHint": "Tip: use ← and → to move between steps.",
+    "completeTitle": "That's the lesson!",
+    "completeBody": "You zoomed, computed and checked. The idea is yours now.",
+    "nextLesson": "Next lesson",
+    "backToCourse": "Back to the course",
+    "reviewAgain": "Go through it again",
+    "comingSoonTitle": "This lesson is being written",
+    "comingSoonBody": "Here is what it will cover. In the meantime, its concepts are already on the map.",
+    "previous": "Previous"
+  },
+  "concept": {
+    "prerequisites": "Builds on",
+    "prerequisitesNone": "This is a starting point: it has no prerequisites.",
+    "buildsToward": "Leads to",
+    "learnIt": "Learn it",
+    "learnItNone": "No lesson teaches this yet.",
+    "usedIn": "Where it's used",
+    "back": "Back"
+  },
+  "blocks": {
+    "callout": {
+      "note": "Note",
+      "tip": "Tip",
+      "insight": "Insight",
+      "definition": "Definition",
+      "warning": "Watch out"
+    },
+    "workedExample": "Worked example",
+    "showSolution": "Show the working",
+    "hideSolution": "Hide the working",
+    "tryFirst": "Try it yourself first, then check.",
+    "connectTitle": "This connects to",
+    "question": {
+      "label": "Practice",
+      "types": {
+        "multiple-choice": "Multiple choice",
+        "numeric": "Number",
+        "expression": "Expression",
+        "parametrised": "Number",
+        "code": "Code",
+        "self-check": "In your own words"
+      },
+      "soon": "Answering and feedback arrive in the next update."
+    },
+    "interactive": {
+      "label": "Try it"
+    }
+  },
+  "interactives": {
+    "tangentZoom": {
+      "description": "A graph of f(x) = {fn} around the point x = {x0}. A secant line runs from that point to the right edge of the window. Zooming in shrinks the window; the curve looks straighter and the secant's slope approaches the derivative.",
+      "zoom": "Zoom",
+      "zoomValue": "{value}×",
+      "point": "Point x",
+      "zoomIn": "Zoom in ×10",
+      "reset": "Reset",
+      "windowLabel": "Window width h",
+      "slopeLabel": "Slope of the secant",
+      "live": "Zoom {zoom} times. Window width h = {h}. Secant slope {slope}.",
+      "curve": "curve",
+      "secant": "secant",
+      "straight": "At this zoom the curve and the line are almost indistinguishable. That line is the tangent."
+    }
   }
 }

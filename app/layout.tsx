@@ -10,6 +10,7 @@ import { appleStartupImages } from "@/lib/pwa";
 import { site } from "@/lib/site";
 import { themeInitScript } from "@/lib/theme";
 
+import "katex/dist/katex.min.css";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });

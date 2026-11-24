@@ -16,6 +16,7 @@ const emptyRefs: MdxRefs = {
   layers: [],
   interactives: [],
   questions: [],
+  codeLabs: [],
   connections: [],
 };
 
@@ -61,7 +62,11 @@ function explainer(id: string, overrides: Partial<Explainer> = {}): Explainer {
     related: [],
     status: "ready",
     body: "",
-    refs: { ...emptyRefs, layers: ["intuition", "mechanism"] },
+    refs: {
+      ...emptyRefs,
+      layers: ["intuition", "mechanism"],
+      interactives: [{ id: "tangent-zoom", props: {} }],
+    },
     ...overrides,
   };
 }
@@ -73,6 +78,7 @@ const numericQuestion: Question = {
   prompt: "2 + 2?",
   answer: 4,
   tolerance: { absolute: 0 },
+  commonMistakes: [],
   hints: ["Count."],
 };
 
@@ -95,7 +101,11 @@ function validBundle(): ContentBundle {
     ],
     lessons: [
       lesson("intro", { refs: { questions: ["q.numeric"] } }),
-      lesson("next", { teaches: ["derivative"], requires: ["slope"] }),
+      lesson("next", {
+        teaches: ["derivative"],
+        requires: ["slope"],
+        refs: { interactives: [{ id: "tangent-zoom", props: {} }] },
+      }),
     ],
     explainers: [explainer("why")],
     projects: [
@@ -453,6 +463,7 @@ describe("validateContent", () => {
       params: { a: { min: 0, max: 2, step: 1 } },
       answer,
       tolerance: { relative: 0.01 },
+      commonMistakes: [],
     });
 
     it("rejects a parametrised answer that fails for some parameters", () => {
@@ -480,12 +491,81 @@ describe("validateContent", () => {
       ).toBeUndefined();
     });
 
+    it("rejects a common mistake whose formula fails", () => {
+      const issue = issueAfter("parametrised-answer-error", (c) => {
+        c.questions = [
+          {
+            ...parametrised("2 * a"),
+            commonMistakes: [{ answer: "a / zzz", feedback: "No." }],
+          } as Question,
+        ];
+      });
+      expect(issue?.message).toContain("common mistake");
+    });
+
+    const codeQuestion = (tests?: string): Question => ({
+      id: "q.numeric",
+      type: "code",
+      concepts: ["slope"],
+      prompt: "Code it",
+      hints: tests ? ["Try a loop."] : [],
+      starter: "x = 1",
+      tests,
+    });
+
+    it("accepts a code playground with no tests and no hints", () => {
+      const content = validBundle();
+      content.questions = [codeQuestion()];
+      expect(validateContent(content)).toEqual([]);
+    });
+
+    it("rejects code tests that define no test functions", () => {
+      expect(
+        issueAfter("code-without-tests", (c) => {
+          c.questions = [codeQuestion("assert x == 1")];
+        }),
+      ).toMatchObject({ level: "error" });
+      expect(
+        issueAfter("code-without-tests", (c) => {
+          c.questions = [codeQuestion("def test_x():\n    assert x == 1")];
+        }),
+      ).toBeUndefined();
+    });
+
+    it("rejects <CodeLab> pointing at a question that is not code", () => {
+      expect(
+        issueAfter("codelab-not-code", (c) => {
+          c.lessons[0]!.refs.codeLabs = ["q.numeric"];
+        }),
+      ).toMatchObject({ level: "error" });
+    });
+
     it("warns about questions no lesson uses", () => {
       expect(
         issueAfter("question-unused", (c) => {
           c.lessons[0]!.refs.questions = [];
         }),
       ).toMatchObject({ level: "warning" });
+    });
+  });
+
+  describe("learning by doing", () => {
+    it("warns when a lesson has nothing to manipulate", () => {
+      const content = validBundle();
+      expect(codes(content)).not.toContain("nothing-to-do");
+      content.lessons[0]!.refs.questions = [];
+      content.questions = [];
+      expect(
+        validateContent(content).find((i) => i.code === "nothing-to-do"),
+      ).toMatchObject({ level: "warning", source: "lesson calc/m1/intro" });
+    });
+
+    it("warns when an explainer is reading only", () => {
+      expect(
+        issueAfter("nothing-to-do", (c) => {
+          c.explainers[0]!.refs.interactives = [];
+        }),
+      ).toMatchObject({ level: "warning", source: "explainer why" });
     });
   });
 
@@ -505,6 +585,9 @@ describe("validateContent", () => {
       const content = validBundle();
       content.questions = [];
       content.lessons[0]!.refs.questions = [];
+      content.lessons[0]!.refs.interactives = [
+        { id: "tangent-zoom", props: {} },
+      ];
       const issues = validateContent(content, before);
       expect(issues).toEqual([
         expect.objectContaining({

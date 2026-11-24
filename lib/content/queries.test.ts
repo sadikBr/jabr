@@ -15,6 +15,7 @@ const refs = {
   layers: [],
   interactives: [],
   questions: [],
+  codeLabs: [],
   connections: [],
 };
 

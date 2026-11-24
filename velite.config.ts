@@ -184,6 +184,9 @@ const questions = defineCollection({
       answer: s.number(),
       tolerance,
       unit: s.string().optional(),
+      commonMistakes: s
+        .array(s.object({ answer: s.number(), feedback: s.string() }))
+        .default([]),
     }),
     s.object({
       ...questionBase,
@@ -199,13 +202,17 @@ const questions = defineCollection({
       answer: s.string(),
       tolerance,
       unit: s.string().optional(),
+      /** Known wrong answers, as formulas of the params, with targeted feedback. */
+      commonMistakes: s
+        .array(s.object({ answer: s.string(), feedback: s.string() }))
+        .default([]),
     }),
     s.object({
       ...questionBase,
       type: s.literal("code"),
       starter: s.string(),
-      /** Python test code run in the Pyodide worker. */
-      tests: s.string(),
+      /** Python `test_*` functions run in the Pyodide worker. Omit for a free playground. */
+      tests: s.string().optional(),
     }),
     s.object({
       ...questionBase,
@@ -237,6 +244,9 @@ export default defineConfig({
           theme: { light: "github-light", dark: "github-dark-dimmed" },
           keepBackground: false,
           defaultLang: "plaintext",
+          // Inline `code` keeps its simple pill style; only fenced blocks
+          // are highlighted.
+          bypassInlineCode: true,
         },
       ],
     ],

@@ -18,6 +18,8 @@ export interface MdxRefs {
   layers: string[];
   interactives: { id: string | null; props: unknown }[];
   questions: string[];
+  /** Ids used with <CodeLab>, which must be code questions. */
+  codeLabs: string[];
   connections: {
     concepts: string[];
     explainers: string[];
@@ -72,6 +74,7 @@ export function extractMdxRefs(source: string): MdxRefs {
     layers: [],
     interactives: [],
     questions: [],
+    codeLabs: [],
     connections: [],
   };
   const components = new Set<string>();
@@ -103,9 +106,11 @@ export function extractMdxRefs(source: string): MdxRefs {
         });
         break;
       }
+      case "CodeLab":
       case "Question": {
         const id = asString(readAttribute(element, "id"));
         if (id) refs.questions.push(id);
+        if (id && name === "CodeLab") refs.codeLabs.push(id);
         break;
       }
       case "ConnectIt":

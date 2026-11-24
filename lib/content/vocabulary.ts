@@ -32,6 +32,7 @@ export const mdxComponentNames = [
   "ConnectIt",
   "Interactive",
   "Question",
+  "CodeLab",
   "Figure",
 ] as const;
 

@@ -1,6 +1,8 @@
 import { findPrerequisiteCycle } from "./graph";
 import { checkInteractiveProps, isInteractiveId } from "./interactive-specs";
 import type { MdxRefs } from "./mdx-refs";
+import { testNames } from "@/lib/grading/grade";
+
 import { evaluateAnswer, paramCombinations } from "./parametrised";
 import type { ContentBundle, Lesson, Question } from "./types";
 import { depths, mdxComponentNames, stepKinds } from "./vocabulary";
@@ -26,6 +28,9 @@ export type IssueCode =
   | "question-invalid-choices"
   | "parametrised-answer-error"
   | "question-unused"
+  | "code-without-tests"
+  | "codelab-not-code"
+  | "nothing-to-do"
   | "concept-never-taught"
   | "removed-id";
 
@@ -64,6 +69,7 @@ function duplicates(ids: string[]): string[] {
 
 /** Questions where a learner could reasonably get stuck need at least one hint. */
 function needsHints(question: Question): boolean {
+  if (question.type === "code") return question.tests !== undefined;
   return question.type !== "multiple-choice" && question.type !== "self-check";
 }
 
@@ -94,6 +100,11 @@ export function validateContent(
   const explainerIds = new Set(content.explainers.map((e) => e.id));
   const projectIds = new Set(content.projects.map((p) => p.id));
   const questionIds = new Set(content.questions.map((q) => q.id));
+  const questionsById = new Map(content.questions.map((q) => [q.id, q]));
+
+  /** True when a document gives the learner something to do, not just read. */
+  const isHandsOn = (refs: MdxRefs) =>
+    refs.interactives.length > 0 || refs.questions.length > 0;
 
   // --- Duplicate ids -------------------------------------------------------
   const idGroups: [string, string[]][] = [
@@ -164,6 +175,16 @@ export function validateContent(
           "missing-question",
           source,
           `<Question id="${id}"> does not exist.`,
+        );
+      }
+    }
+    for (const id of refs.codeLabs) {
+      const target = questionsById.get(id);
+      if (target && target.type !== "code") {
+        error(
+          "codelab-not-code",
+          source,
+          `<CodeLab id="${id}"> points at a ${target.type} question; it needs a code question.`,
         );
       }
     }
@@ -308,6 +329,13 @@ export function validateContent(
         `Steps must follow the rhythm ${stepKinds.join(" → ")}, each <Step> with a valid "kind". Found: ${kinds.join(", ") || "none"}.`,
       );
     }
+    if (!isHandsOn(lesson.refs)) {
+      warning(
+        "nothing-to-do",
+        source,
+        "This lesson has no interactive, question or code lab. Reading alone is never the whole lesson.",
+      );
+    }
     const titles = lesson.refs.steps.map((step) => step.title ?? "");
     if (titles.some((title) => !title) || duplicates(titles).length > 0) {
       error(
@@ -334,6 +362,16 @@ export function validateContent(
     checkRefs(explainer.refs, source);
     if (explainer.status !== "ready") continue;
 
+    if (
+      explainer.refs.interactives.length === 0 &&
+      explainer.refs.codeLabs.length === 0
+    ) {
+      warning(
+        "nothing-to-do",
+        source,
+        "This explainer has no interactive or code lab. Give the reader something to try.",
+      );
+    }
     const { layers } = explainer.refs;
     const valid =
       layers.length > 0 &&
@@ -357,7 +395,9 @@ export function validateContent(
 
   // --- Questions -----------------------------------------------------------
   const usedQuestionIds = new Set(
-    content.lessons.flatMap((lesson) => lesson.refs.questions),
+    [...content.lessons, ...content.explainers].flatMap(
+      (document) => document.refs.questions,
+    ),
   );
   for (const question of content.questions) {
     const source = `question ${question.id}`;
@@ -418,6 +458,30 @@ export function validateContent(
           `The answer formula fails for ${failures.length} parameter combination(s), e.g. ${failures[0]}.`,
         );
       }
+      const [firstValues] = paramCombinations(question.params);
+      for (const mistake of question.commonMistakes) {
+        try {
+          evaluateAnswer(mistake.answer, firstValues ?? {});
+        } catch (cause) {
+          error(
+            "parametrised-answer-error",
+            source,
+            `The common mistake "${mistake.answer}" is not a valid formula: ${cause instanceof Error ? cause.message : String(cause)}.`,
+          );
+        }
+      }
+    }
+
+    if (
+      question.type === "code" &&
+      question.tests !== undefined &&
+      testNames(question.tests).length === 0
+    ) {
+      error(
+        "code-without-tests",
+        source,
+        'The tests define no "def test_…():" functions, so nothing would be checked.',
+      );
     }
   }
 

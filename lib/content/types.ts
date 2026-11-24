@@ -87,11 +87,18 @@ export interface MultipleChoiceQuestion extends QuestionBase {
   multiple: boolean;
   choices: { id: string; text: string; correct: boolean; feedback?: string }[];
 }
+/** A known wrong answer and what to tell a learner who gives it. */
+export interface CommonMistake<Answer> {
+  answer: Answer;
+  feedback: string;
+}
+
 export interface NumericQuestion extends QuestionBase {
   type: "numeric";
   answer: number;
   tolerance: Tolerance;
   unit?: string;
+  commonMistakes: CommonMistake<number>[];
 }
 export interface ExpressionQuestion extends QuestionBase {
   type: "expression";
@@ -104,11 +111,14 @@ export interface ParametrisedQuestion extends QuestionBase {
   answer: string;
   tolerance: Tolerance;
   unit?: string;
+  /** Wrong answers as formulas of the params, like `answer`. */
+  commonMistakes: CommonMistake<string>[];
 }
 export interface CodeQuestion extends QuestionBase {
   type: "code";
   starter: string;
-  tests: string;
+  /** Python `test_*` functions. Without tests the lab is a free playground. */
+  tests?: string;
 }
 export interface SelfCheckQuestion extends QuestionBase {
   type: "self-check";

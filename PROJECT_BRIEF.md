@@ -394,7 +394,7 @@ model MilestoneProgress {
 }
 ```
 
-Guests: keep progress in `localStorage` (wrapped in try/catch) and merge it into the account on first sign-in.
+Until accounts exist, every learner is a guest: progress is kept in `localStorage` (wrapped in try/catch). When accounts arrive it is merged into the account on first sign-in.
 
 ---
 
@@ -465,9 +465,11 @@ Content layer, Zod schemas, MDX components (Step, Callout, WorkedExample, Connec
 Interactive registry plus `tangent-zoom`, `projectile-sim` and `euler-stepper`; the Question block with server-side grading for all MVP types; the hint ladder and worked solutions; CodeLab with the Pyodide worker, tests and output panel (including matplotlib plots).
 ✅ Unit tests cover every grader, including edge cases (equivalent expressions, tolerance borders, unit hints). Answers never appear in the client bundle or the network payloads (add a test). A service worker caches the app shell, visited lessons and the Pyodide runtime, so reading, simulations and code labs work offline after first load; questions show "reconnect to check your answer" when offline.
 
-**Phase 3: Accounts and progress**
-Auth.js, persisting attempts and lesson progress, the mastery engine, the dashboard, guest progress plus merge on sign-in.
-✅ An e2e test covers: guest answers questions → signs in → progress is preserved → mastery is updated.
+**Phase 3: Progress on this device**
+The mastery engine, lesson progress, "continue where you left off" and the dashboard, all saved in the browser with no account. Export, import and reset, because the data lives on one device.
+✅ An e2e test covers: answer questions → mastery is updated and shown → reload → progress is still there; a lesson is resumed and finished; progress is exported, erased and imported again.
+
+_Accounts were moved out of this phase at the owner's request: see "Later: accounts and sync" below._
 
 **Phase 4: Knowledge graph and review**
 Graph builder from content, concept chips with mastery, the prerequisite "You'll use" panel, the `/map` page, recommendations, FSRS review sessions.
@@ -480,6 +482,10 @@ Project and milestone pages, readiness, milestone checks, progress, the capstone
 **Phase 6: Content**
 Each earlier phase writes the real content it needs to prove its features (so schema problems surface early); this phase writes the rest of the ✅ content from section 12 plus the remaining interactives.
 ✅ `content:check` passes with no warnings; every code sample and parametrised answer is verified by a script; I can read a lesson start to finish and it teaches well.
+
+**Later: accounts and sync**
+Auth.js sign-in, saving attempts, mastery and lesson progress to the database, and merging the device's progress into the account on first sign-in. Not scheduled; to be done before progress needs to follow a learner between devices. The on-device progress (`lib/progress/schema.ts`) mirrors the database models so the merge needs no translation, and the mastery rules are reused unchanged.
+✅ An e2e test covers: guest answers questions → signs in → progress is preserved → mastery is updated.
 
 **Phase 7 (optional, behind `FEATURE_AI_TUTOR`): AI tutor**
 An "Ask why" panel on lessons and milestones using the Anthropic API, grounded only in the current lesson, its concepts and its prerequisites. It is hint-first: it never gives the final answer to a question the learner hasn't attempted, and it tells the learner when something is outside the lesson's scope. It is rate-limited, and the API key stays server-side only.

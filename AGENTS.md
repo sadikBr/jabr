@@ -14,8 +14,9 @@ A learning-by-doing platform for maths, physics, engineering and software.
 `PROJECT_BRIEF.md` is the source of truth for product decisions and the phase
 plan. This file records how the repo works. Keep it current.
 
-**Status:** Phases 0 (foundations), 1 (content pipeline and reading) and 2
-(interactivity and grading) are done. Phase 3 (accounts and progress) is next.
+**Status:** Phases 0 (foundations), 1 (content pipeline and reading), 2
+(interactivity and grading) and 3 (progress on this device) are done. Phase 4
+(knowledge map and review) is next. Accounts are deferred: see the brief.
 
 ## Commands
 
@@ -143,6 +144,33 @@ Writing content:
 - Python cannot be interrupted from outside, so Stop and the 30-second
   timeout terminate the worker; the next run starts a new one.
 
+## Progress and mastery
+
+- There are no accounts yet. A learner's progress is one JSON value in
+  `localStorage` (`jabr:progress`), described by `lib/progress/schema.ts`.
+  Its shapes mirror `prisma/schema.prisma` on purpose, for the later merge.
+- `lib/mastery/` holds the rules (pure, tested) and every tunable number
+  (`constants.ts`). Statuses: new (no data), learning (< 0.3), practicing
+  (< 0.8), mastered.
+- `lib/progress/reduce.ts` holds every change to progress as a pure function
+  (`applyAttempt`, `applyReveal`, `applyLessonStep`, `applyLessonCompleted`,
+  `applyGoal`). `store.ts` is the thin layer over `localStorage`; components
+  read with `useProgress()` and write with the `record…` functions.
+- `useProgress()` is empty on the server and during hydration, then fills in.
+  Anything that depends on progress must be a client component and must look
+  right when empty. Never read the clock or storage during render; see
+  `DaysAgo` in `components/progress/dashboard-view.tsx` for the pattern.
+- The server grades; the browser records. `QuestionCard` and `CodeLab` call
+  `recordAttempt` with the result. A revealed solution counts as a miss. A
+  failed code run is not recorded, only passing every test is.
+- Client views that need to know about the content get a small
+  `ProgressCatalog` built on the server (`lib/progress/catalog.server.ts`).
+- Mastery colours come from `data-mastery="…"`, which sets the tone like
+  `data-subject` does. Always pair them with `MasteryIcon` and the status as
+  text: colour is never the only signal.
+- Changing the stored shape means bumping `PROGRESS_VERSION` and writing a
+  migration in `parseProgress`; unreadable data is ignored, never guessed at.
+
 ## Offline
 
 - `public/sw.js` is hand-written and small. Pages are network-first with a
@@ -194,6 +222,11 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 - Business logic lives in `lib/` as pure, unit-tested functions, not in
   components.
 - New pages get at least a smoke e2e test; new logic gets unit tests.
+- e2e specs import `test` and `expect` from `tests/e2e/fixtures.ts`, not from
+  Playwright directly. Its `page.goto` and `page.reload` wait for the
+  `data-hydrated` marker, so clicks never race the page's scripts.
+- Save state in the event handler that causes it, not in a later effect: an
+  effect can be skipped if the learner leaves the page at once.
 - Add `not-prose` to any card or widget rendered inside a `prose` container,
   or the article styles (bullets, link colours, widths) leak into it.
 - Headings use the display font automatically (`h1`, `h2`); use
@@ -217,38 +250,47 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 
 ## Decisions
 
-| Date       | Decision                                                                                       | Why                                                                                                                                   |
-| ---------- | ---------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| 2026-11-24 | Bun instead of pnpm                                                                            | The repo was scaffolded with Bun                                                                                                      |
-| 2026-11-24 | Docs live in `AGENTS.md`; `CLAUDE.md` points here                                              | Next.js generates and re-adds the block at the top of `AGENTS.md`                                                                     |
-| 2026-11-24 | Installable web app (PWA) is a core requirement                                                | Must work as a desktop app and on phones without native apps                                                                          |
-| 2026-11-24 | No service worker until Phase 2 (done)                                                         | Install needs only the manifest; offline caching arrives with the content and Pyodide it must cache                                   |
-| 2026-11-24 | Prisma 7 (pinned), `prisma-client` generator, `pg` driver adapter                              | `bun add prisma` resolved to a Prisma 8 release candidate with a different CLI; 7 is the stable line                                  |
-| 2026-11-24 | Generated Prisma client is git-ignored, built on `postinstall`                                 | Keeps generated code out of review                                                                                                    |
-| 2026-11-24 | Status columns are Postgres enums, not free strings                                            | The database rejects invalid states                                                                                                   |
-| 2026-11-24 | Own theme switcher (system / light / dark) instead of `next-themes`                            | Follows the Next 16 flash-prevention guide; about 60 lines, no dependency                                                             |
-| 2026-11-24 | UI primitives are written in shadcn style on the `radix-ui` package                            | Same conventions as the shadcn CLI; `components.json` is set up so the CLI can add more                                               |
-| 2026-11-24 | e2e runs against the production build                                                          | It is what ships, and prerendering and the manifest only behave as deployed there                                                     |
-| 2026-11-24 | Auth providers enable themselves from env vars; demo sign-in behind flag                       | Easy local and preview testing without OAuth apps (Phase 3)                                                                           |
-| 2026-11-24 | Planned: Velite, CodeMirror 6, random-point expression checking                                | See `PROJECT_BRIEF.md` section 6                                                                                                      |
-| 2026-11-24 | Velite checks file shapes; our own pure validator checks everything else                       | Cross-file rules need the whole bundle and must be unit-testable on fixtures                                                          |
-| 2026-11-24 | `<Step>` declares a `kind`; lessons are paged one step at a time                               | Lets the validator enforce the lesson rhythm and gives each step its own identity                                                     |
-| 2026-11-24 | Explainer layers reveal cumulatively; the depth is kept in the URL hash                        | The reader decides where to stop, and a link can point at a depth                                                                     |
-| 2026-11-24 | `tangent-zoom` built in Phase 1 instead of Phase 2                                             | The sample lesson needed a real interactive to be judged                                                                              |
-| 2026-11-24 | Interactives take a named function from a fixed list, not a formula string                     | Keeps mathjs (large) off the client and gives exact derivatives                                                                       |
-| 2026-11-24 | Content builds use `velite build --strict`; unwritten files carry a one-line MDX comment       | Plain builds silently drop invalid entries, and strict mode rejects an empty MDX body                                                 |
-| 2026-11-24 | Pyodide runtime self-hosted from the npm package; packages from jsDelivr                       | Python starts without a third party and the version is pinned by `package.json`; the 20 MB of scientific packages stay off our deploy |
-| 2026-11-24 | Python worker is a static module file in `public/`                                             | Pyodide 314 only runs in module workers, which the bundler would not produce                                                          |
-| 2026-11-24 | Hand-written service worker instead of Serwist                                                 | Three caching rules; easier to reason about than a framework plugin on a new Next.js                                                  |
-| 2026-11-24 | Offline also saves the pages a visited page links to                                           | The next lesson should be there when the connection is not                                                                            |
-| 2026-11-24 | Question text is rendered to HTML on the server (KaTeX)                                        | Keeps KaTeX out of the browser bundle; the content is ours and is escaped                                                             |
-| 2026-11-24 | Solutions are a separate server call                                                           | So Phase 3 can record "gave up" and mastery can treat it differently from solving                                                     |
-| 2026-11-24 | Display font (Bricolage Grotesque) for headings; landing page opens with a playable simulation | Owner asked for a more distinctive, fun and hands-on feel                                                                             |
+| Date       | Decision                                                                                                        | Why                                                                                                                                   |
+| ---------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-11-24 | Bun instead of pnpm                                                                                             | The repo was scaffolded with Bun                                                                                                      |
+| 2026-11-24 | Docs live in `AGENTS.md`; `CLAUDE.md` points here                                                               | Next.js generates and re-adds the block at the top of `AGENTS.md`                                                                     |
+| 2026-11-24 | Installable web app (PWA) is a core requirement                                                                 | Must work as a desktop app and on phones without native apps                                                                          |
+| 2026-11-24 | No service worker until Phase 2 (done)                                                                          | Install needs only the manifest; offline caching arrives with the content and Pyodide it must cache                                   |
+| 2026-11-24 | Prisma 7 (pinned), `prisma-client` generator, `pg` driver adapter                                               | `bun add prisma` resolved to a Prisma 8 release candidate with a different CLI; 7 is the stable line                                  |
+| 2026-11-24 | Generated Prisma client is git-ignored, built on `postinstall`                                                  | Keeps generated code out of review                                                                                                    |
+| 2026-11-24 | Status columns are Postgres enums, not free strings                                                             | The database rejects invalid states                                                                                                   |
+| 2026-11-24 | Own theme switcher (system / light / dark) instead of `next-themes`                                             | Follows the Next 16 flash-prevention guide; about 60 lines, no dependency                                                             |
+| 2026-11-24 | UI primitives are written in shadcn style on the `radix-ui` package                                             | Same conventions as the shadcn CLI; `components.json` is set up so the CLI can add more                                               |
+| 2026-11-24 | e2e runs against the production build                                                                           | It is what ships, and prerendering and the manifest only behave as deployed there                                                     |
+| 2026-11-24 | Auth providers enable themselves from env vars; demo sign-in behind flag                                        | Easy local and preview testing without OAuth apps (Phase 3)                                                                           |
+| 2026-11-24 | Planned: Velite, CodeMirror 6, random-point expression checking                                                 | See `PROJECT_BRIEF.md` section 6                                                                                                      |
+| 2026-11-24 | Velite checks file shapes; our own pure validator checks everything else                                        | Cross-file rules need the whole bundle and must be unit-testable on fixtures                                                          |
+| 2026-11-24 | `<Step>` declares a `kind`; lessons are paged one step at a time                                                | Lets the validator enforce the lesson rhythm and gives each step its own identity                                                     |
+| 2026-11-24 | Explainer layers reveal cumulatively; the depth is kept in the URL hash                                         | The reader decides where to stop, and a link can point at a depth                                                                     |
+| 2026-11-24 | `tangent-zoom` built in Phase 1 instead of Phase 2                                                              | The sample lesson needed a real interactive to be judged                                                                              |
+| 2026-11-24 | Interactives take a named function from a fixed list, not a formula string                                      | Keeps mathjs (large) off the client and gives exact derivatives                                                                       |
+| 2026-11-24 | Content builds use `velite build --strict`; unwritten files carry a one-line MDX comment                        | Plain builds silently drop invalid entries, and strict mode rejects an empty MDX body                                                 |
+| 2026-11-24 | Pyodide runtime self-hosted from the npm package; packages from jsDelivr                                        | Python starts without a third party and the version is pinned by `package.json`; the 20 MB of scientific packages stay off our deploy |
+| 2026-11-24 | Python worker is a static module file in `public/`                                                              | Pyodide 314 only runs in module workers, which the bundler would not produce                                                          |
+| 2026-11-24 | Hand-written service worker instead of Serwist                                                                  | Three caching rules; easier to reason about than a framework plugin on a new Next.js                                                  |
+| 2026-11-24 | Offline also saves the pages a visited page links to                                                            | The next lesson should be there when the connection is not                                                                            |
+| 2026-11-24 | Question text is rendered to HTML on the server (KaTeX)                                                         | Keeps KaTeX out of the browser bundle; the content is ours and is escaped                                                             |
+| 2026-11-24 | Solutions are a separate server call                                                                            | So Phase 3 can record "gave up" and mastery can treat it differently from solving                                                     |
+| 2026-11-24 | Display font (Bricolage Grotesque) for headings; landing page opens with a playable simulation                  | Owner asked for a more distinctive, fun and hands-on feel                                                                             |
+| 2026-11-24 | Accounts deferred; progress is kept on the device                                                               | Owner does not need sign-in yet. The map and review need mastery, so that half of the old Phase 3 was kept                            |
+| 2026-11-24 | Mastery: a correct answer closes 30% of the gap to 1, hints shrink that, repeats of one question count for less | Simple, explainable, and one question cannot be farmed to mastery                                                                     |
+| 2026-11-24 | Export, import and reset on the progress page                                                                   | Device-only data needs a way to be kept safe and moved                                                                                |
+| 2026-11-24 | `/dashboard` is called "Progress" in the UI and sits in the main navigation                                     | It is the learner's home; "dashboard" says nothing to a learner                                                                       |
 
 ## Known limitations
 
-- Nothing is saved to an account yet (Phase 3). Answers are graded but not
-  recorded; code and chosen question numbers are kept in `localStorage` only.
+- There are no accounts. Progress lives in one browser: clearing site data
+  loses it and it does not follow a learner between devices. Export and
+  import on the progress page are the workaround.
+- Mastery is computed in the browser from graded results, so it can be
+  edited by anyone who opens the developer tools. That only fools themselves.
+- Reviews and "what to learn next" are Phase 4; the dashboard shows the
+  lesson to continue, counts, concepts worked on and recent events only.
 - Code lab test results are computed in the browser and reported to the
   server, so a determined learner could fake a pass. Accepted for the MVP.
 - numpy and matplotlib need a connection the first time they are used; after
@@ -266,7 +308,8 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   `noindex` tag but HTTP status 200. That is how Next.js streams `notFound()`
   for dynamic routes with Cache Components on.
 - No in-app install button yet (Phase 8); install from the browser's own menu.
-- The database schema exists and migrates, but no page uses it until Phase 3.
+- The database schema exists and migrates, but no page uses it until accounts
+  are built.
 
 <!-- BEGIN:nextjs-agent-feedback -->
 

@@ -1,0 +1,100 @@
+- id: functions
+  title: Functions
+  subject: maths
+  summary: A rule that turns each input into exactly one output, often drawn as a graph.
+
+- id: slope-of-a-line
+  title: Slope of a line
+  subject: maths
+  summary: How steep a line is — the rise divided by the run between any two of its points.
+
+- id: average-rate-of-change
+  title: Average rate of change
+  subject: maths
+  summary: How much a quantity changes per unit of input over an interval; the slope of the secant line between two points on its graph.
+  prerequisites: [functions, slope-of-a-line]
+  lesson: calculus-essentials/change-and-limits/rates-of-change-from-data
+
+- id: limits-intuition
+  title: Limits, intuitively
+  subject: maths
+  summary: The value a function gets closer and closer to as its input approaches a point, whether or not it ever arrives.
+  prerequisites: [functions]
+  lesson: calculus-essentials/change-and-limits/limits-intuition
+
+- id: continuity
+  title: Continuity
+  subject: maths
+  summary: A function is continuous where its graph has no jumps or holes — where its limit equals its value.
+  prerequisites: [limits-intuition]
+  lesson: calculus-essentials/change-and-limits/continuity
+
+- id: derivative-definition
+  title: The derivative as a rate of change
+  subject: maths
+  summary: The instantaneous rate at which a quantity changes — the limit of average rates of change over shrinking intervals.
+  prerequisites: [limits-intuition, average-rate-of-change]
+  lesson: calculus-essentials/derivatives/what-is-a-derivative
+
+- id: tangent-line
+  title: Tangent line
+  subject: maths
+  summary: The straight line that a smooth curve becomes when you zoom in on one point; its slope is the derivative there.
+  prerequisites: [slope-of-a-line, derivative-definition]
+  lesson: calculus-essentials/derivatives/what-is-a-derivative
+
+- id: power-rule
+  title: Power rule
+  subject: maths
+  summary: The derivative of xⁿ is n·xⁿ⁻¹.
+  prerequisites: [derivative-definition]
+  lesson: calculus-essentials/derivatives/derivative-rules
+
+- id: sum-rule
+  title: Sum rule
+  subject: maths
+  summary: The derivative of a sum is the sum of the derivatives, and constants multiply through.
+  prerequisites: [derivative-definition]
+  lesson: calculus-essentials/derivatives/derivative-rules
+
+- id: product-rule
+  title: Product rule
+  subject: maths
+  summary: The derivative of a product f·g is f′·g + f·g′.
+  prerequisites: [power-rule, sum-rule]
+  lesson: calculus-essentials/derivatives/derivative-rules
+
+- id: chain-rule
+  title: Chain rule
+  subject: maths
+  summary: The derivative of a function inside another function — multiply the outer rate of change by the inner one.
+  prerequisites: [product-rule]
+  lesson: calculus-essentials/derivatives/derivative-rules
+
+- id: integral-as-accumulation
+  title: The integral as accumulation
+  subject: maths
+  summary: Adding up a changing rate over time to get a total — the area under the rate's graph.
+  prerequisites: [average-rate-of-change]
+  lesson: calculus-essentials/integrals/accumulation-and-area
+
+- id: riemann-sum
+  title: Riemann sums
+  subject: maths
+  summary: Approximating the area under a curve with thin rectangles, and getting the exact area as they get thinner.
+  prerequisites: [integral-as-accumulation, limits-intuition]
+  lesson: calculus-essentials/integrals/riemann-sums
+
+- id: fundamental-theorem-of-calculus
+  title: Fundamental theorem of calculus
+  subject: maths
+  summary: Differentiation and integration undo each other, so areas can be computed with antiderivatives.
+  prerequisites: [riemann-sum, derivative-definition]
+  lesson: calculus-essentials/integrals/fundamental-theorem
+
+- id: eulers-method
+  title: Euler's method
+  subject: maths
+  summary: Following a quantity forward in small steps, using its derivative as the direction to move at each step.
+  prerequisites: [derivative-definition, tangent-line]
+  lesson: calculus-essentials/numerical-methods/eulers-method

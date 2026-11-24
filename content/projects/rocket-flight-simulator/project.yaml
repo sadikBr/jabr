@@ -1,0 +1,15 @@
+id: rocket-flight-simulator
+title: Rocket flight simulator
+summary: Build a rocket simulation from scratch in Python — gravity, thrust, burning fuel and air drag — and tune a launch to reach a target altitude.
+subjects: [physics, maths, computing]
+kind: capstone
+concepts:
+  [
+    eulers-method,
+    velocity,
+    acceleration,
+    newtons-second-law,
+    gravity-and-weight,
+    air-drag,
+  ]
+status: coming-soon

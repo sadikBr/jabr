@@ -1,0 +1,145 @@
+- id: calc.deriv.secant-slope
+  type: parametrised
+  concepts: [average-rate-of-change]
+  params:
+    a: { min: 1, max: 3, step: 1 }
+    b: { min: 4, max: 6, step: 1 }
+  prompt: "For $f(x) = x^2$, what is the average rate of change between $x = {a}$ and $x = {b}$?"
+  answer: "(b^2 - a^2) / (b - a)"
+  tolerance: { absolute: 0.001 }
+  hints:
+    - "Average rate of change is the change in $f$ divided by the change in $x$."
+    - "Compute $f({b}) - f({a})$, then divide by ${b} - {a}$."
+  solution: |
+    The average rate of change is the slope of the secant line:
+
+    $$\frac{f({b}) - f({a})}{{b} - {a}} = \frac{{b}^2 - {a}^2}{{b} - {a}}$$
+
+    Since $b^2 - a^2 = (b - a)(b + a)$, this simplifies to $a + b = {a} + {b}$.
+
+- id: calc.deriv.shrinking-h
+  type: multiple-choice
+  concepts: [derivative-definition, limits-intuition]
+  prompt: "For $f(x) = x^2$ at $x = 1$, the secant slopes for $h = 1$, $0.1$ and $0.01$ are $3$, $2.1$ and $2.01$. What is $f'(1)$?"
+  choices:
+    - id: two
+      text: "$2$"
+      correct: true
+    - id: two-oh-one
+      text: "$2.01$"
+      feedback: "That is the slope for $h = 0.01$. A smaller $h$ gives $2.001$, then $2.0001$. The derivative is where these are heading."
+    - id: three
+      text: "$3$"
+      feedback: "That is the average rate of change over a whole unit, $h = 1$. The derivative is the limit as $h$ shrinks."
+    - id: zero
+      text: "$0$"
+      feedback: "It is $h$ that goes to $0$, not the slope. The slopes go to $2$."
+  hints:
+    - "Look at the pattern: $3$, $2.1$, $2.01$. What would $h = 0.001$ give?"
+  solution: |
+    Each slope is $2 + h$. As $h$ shrinks towards $0$, the slopes approach $2$, so $f'(1) = 2$.
+
+- id: calc.deriv.slope-at-point
+  type: parametrised
+  concepts: [derivative-definition, tangent-line]
+  params:
+    a: { min: -3, max: 5, step: 0.5 }
+  prompt: "What is the slope of the tangent line to $f(x) = x^2$ at $x = {a}$?"
+  answer: "2 * a"
+  tolerance: { absolute: 0.001 }
+  hints:
+    - "The slope of the tangent line at $x$ is the derivative $f'(x)$."
+    - "The worked example showed that $f'(x) = 2x$ for this function."
+  solution: |
+    The slope of the tangent is the derivative. For $f(x) = x^2$ we found $f'(x) = 2x$, so at $x = {a}$ the slope is $2 \times {a}$.
+
+- id: calc.deriv.definition-expression
+  type: expression
+  concepts: [derivative-definition]
+  variables: [x]
+  prompt: "Use the definition of the derivative to find $f'(x)$ for $f(x) = 3x^2$."
+  answer: "6x"
+  hints:
+    - "Expand $f(x+h) - f(x) = 3(x+h)^2 - 3x^2$."
+    - "You should get $6xh + 3h^2$. Divide by $h$."
+    - "The average rate of change is $6x + 3h$. What is left when $h$ shrinks to $0$?"
+  solution: |
+    $$f(x+h) - f(x) = 3(x+h)^2 - 3x^2 = 6xh + 3h^2$$
+
+    Dividing by $h$ gives $6x + 3h$. As $h \to 0$ the $3h$ vanishes, so $f'(x) = 6x$.
+
+- id: calc.deriv.tangent-prediction
+  type: parametrised
+  concepts: [tangent-line, derivative-definition]
+  params:
+    y: { min: 2, max: 8, step: 1 }
+    m: { choices: [-3, -2, 2, 3, 4] }
+  prompt: "A smooth curve passes through the point $(2, {y})$, and its derivative there is ${m}$. Use the tangent line to estimate the curve's height at $x = 2.1$."
+  answer: "y + m * 0.1"
+  tolerance: { absolute: 0.001 }
+  hints:
+    - "Near the point, the curve is close to its tangent line: $f(x + \\Delta x) \\approx f(x) + f'(x)\\,\\Delta x$."
+    - "Here $\\Delta x = 0.1$. The height changes by about ${m} \\times 0.1$."
+  solution: |
+    Moving $\Delta x = 0.1$ along the tangent line changes the height by $f'(2)\,\Delta x = {m} \times 0.1$.
+
+    So $f(2.1) \approx {y} + {m} \times 0.1$.
+
+- id: calc.deriv.concept-check-1
+  type: multiple-choice
+  concepts: [derivative-definition, tangent-line]
+  prompt: "What does $f'(a)$ tell you about the graph of $f$?"
+  choices:
+    - id: slope
+      text: "The slope of the tangent line at $x = a$"
+      correct: true
+    - id: height
+      text: "The height of the graph at $x = a$"
+      feedback: "The height is $f(a)$. The derivative says how fast the height is changing."
+    - id: average
+      text: "The average slope of the whole graph"
+      feedback: "An average needs an interval. The derivative describes a single point."
+    - id: root
+      text: "Where the graph crosses the $x$-axis"
+      feedback: "Those are the points where $f(x) = 0$, which is unrelated to the derivative at $a$."
+  solution: |
+    $f'(a)$ is the instantaneous rate of change of $f$ at $a$: the slope of the tangent line there.
+
+- id: calc.deriv.sign
+  type: multiple-choice
+  multiple: true
+  concepts: [derivative-definition, tangent-line]
+  prompt: "You are told that $f'(3) = -2$. Which of these must be true? Select all that apply."
+  choices:
+    - id: decreasing
+      text: "$f$ is decreasing at $x = 3$"
+      correct: true
+    - id: tangent-down
+      text: "The tangent line at $x = 3$ slopes downward"
+      correct: true
+    - id: negative-value
+      text: "$f(3)$ is negative"
+      feedback: "The derivative says nothing about the height. $f(3)$ could be $100$ and falling."
+    - id: drops
+      text: "Going from $x = 3$ to $x = 3.1$, $f$ drops by about $0.2$"
+      correct: true
+  hints:
+    - "A negative derivative means the tangent line has a negative slope."
+    - "For the last option, use $f(x + \\Delta x) \\approx f(x) + f'(x)\\,\\Delta x$ with $\\Delta x = 0.1$."
+  solution: |
+    A derivative of $-2$ means the tangent slopes downward, so $f$ is decreasing there. Over a small step $\Delta x = 0.1$ the change is about $-2 \times 0.1 = -0.2$.
+
+    The value $f(3)$ itself could be anything: the derivative only describes how $f$ is changing.
+
+- id: calc.deriv.units
+  type: self-check
+  concepts: [derivative-definition, velocity]
+  prompt: "A cyclist's position is $s(t)$, measured in metres, with $t$ in seconds. In your own words, what does $s'(2) = 5$ mean? Include the units."
+  rubric:
+    - "You said it describes the instant $t = 2$ s, not an interval."
+    - "You said the position is changing at 5 metres per second (the cyclist's speed)."
+    - "Your units were metres per second: the units of $s$ divided by the units of $t$."
+  solution: |
+    At the instant $t = 2$ s, the cyclist's position is increasing at a rate of 5 metres per second. In other words, their velocity at that moment is 5 m/s.
+
+    A derivative's units are always the output's units divided by the input's units.

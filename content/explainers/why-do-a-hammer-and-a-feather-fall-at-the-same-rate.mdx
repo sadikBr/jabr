@@ -1,0 +1,203 @@
+---
+id: why-do-a-hammer-and-a-feather-fall-at-the-same-rate
+title: Why do a hammer and a feather fall at the same rate?
+summary: On the Moon they land together. The reason is a perfect tie between how hard gravity pulls and how hard things are to move.
+subject: physics
+concepts: [free-fall, gravity-and-weight, newtons-second-law, mass, air-drag]
+related:
+  [how-does-a-rocket-reach-orbit, how-does-your-phone-know-which-way-is-up]
+---
+
+<Layer depth="intuition">
+
+In 1971, standing on the Moon, astronaut David Scott held out a geology hammer
+in one hand and a falcon feather in the other, and let go of both. They fell
+side by side and hit the dust at the same moment.
+
+On Earth the feather would have drifted down long after the hammer. The only
+difference is **air**. The Moon has none, so nothing got in the feather's way.
+
+But that still leaves a puzzle. The hammer was more than 40 times heavier. Gravity
+really was pulling on it that much harder. So why didn't it win?
+
+Because a heavy thing is also **harder to get moving**. The hammer gets 40
+times the pull, but it takes 40 times the pull to speed it up by the same
+amount. The two effects cancel exactly, every time, for every object.
+
+<Callout kind="insight" title="Galileo's thought experiment">
+
+Suppose heavy things did fall faster. Tie a light stone to a heavy one. The
+slow light stone should hold the heavy one back, so the pair falls _slower_.
+But the pair is also heavier than either stone, so it should fall _faster_.
+Both cannot be true. The only way out: everything falls at the same rate.
+
+</Callout>
+
+</Layer>
+
+<Layer depth="mechanism">
+
+Two different properties of an object are in play, and both are measured by
+its mass.
+
+**How hard gravity pulls.** The pull of gravity on an object, its _weight_,
+is proportional to its mass. Twice the mass, twice the weight.
+
+**How hard it is to accelerate.** Newton's second law says that the
+acceleration you get is the force divided by the mass. Twice the mass, half
+the acceleration for the same force.
+
+Put Scott's two objects through both steps, using the Moon's gravity:
+
+|         | Mass    | Pull of gravity | Acceleration = pull ÷ mass |
+| ------- | ------- | --------------- | -------------------------- |
+| Hammer  | 1.32 kg | 2.14 N          | 1.62 m/s²                  |
+| Feather | 0.03 kg | 0.049 N         | 1.62 m/s²                  |
+
+The hammer feels a force 44 times larger and has 44 times as much mass to
+move. The acceleration comes out identical. Both objects gain speed at the
+same rate, so they stay side by side all the way down.
+
+**So what does air change?** Air pushes back on anything moving through it.
+That push, called _drag_, depends on the object's shape and speed, and not on
+its mass. A feather is all surface and almost no weight, so a tiny amount of
+drag is enough to balance its weight, and it stops speeding up almost
+immediately. The hammer's weight is so much larger that the same drag barely
+matters.
+
+<Callout kind="note" title="Falling is not about weight">
+
+Without air, a bowling ball, a feather and a grain of sand dropped together
+land together. With air, what matters is weight _compared with_ drag.
+
+</Callout>
+
+</Layer>
+
+<Layer depth="maths">
+
+Call the object's mass $m$ and the strength of gravity $g$. Its weight is
+
+$$
+F = m g
+$$
+
+Newton's second law, $F = m a$, gives its acceleration:
+
+$$
+m a = m g \quad\Longrightarrow\quad a = g
+$$
+
+The mass cancels. That one line is the whole answer: the acceleration of a
+falling object does not depend on what it is.
+
+**How long did the Moon drop take?** Starting from rest and falling a height
+$h$ with constant acceleration $g$, the distance fallen is
+$h = \tfrac{1}{2} g t^2$, so
+
+$$
+t = \sqrt{\frac{2h}{g}}
+$$
+
+Scott dropped them from roughly $h = 1.6\ \text{m}$. On the Moon,
+$g = 1.62\ \text{m/s}^2$:
+
+$$
+t = \sqrt{\frac{2 \times 1.6}{1.62}} \approx 1.4\ \text{s}
+$$
+
+On Earth ($g = 9.81\ \text{m/s}^2$) with no air, the same drop takes about
+$0.57\ \text{s}$, for the hammer and the feather alike.
+
+**Where does $g$ come from?** Newton's law of gravitation says a planet of
+mass $M$ pulls on an object of mass $m$, a distance $r$ from its centre, with
+force $F = \dfrac{G M m}{r^2}$. Divide by $m$ and the object's mass cancels
+again:
+
+$$
+g = \frac{G M}{r^2}
+$$
+
+$g$ is a property of the planet. For the Moon,
+$M = 7.34 \times 10^{22}\ \text{kg}$ and $r = 1.74 \times 10^{6}\ \text{m}$
+give $g \approx 1.62\ \text{m/s}^2$, about a sixth of Earth's.
+
+**Adding air.** Drag grows with the square of the speed $v$. Writing
+$k = \tfrac{1}{2} \rho\, C_d A$ for the object's shape, size and the air's
+density, the net force on a falling object is
+
+$$
+m a = m g - k v^2
+$$
+
+Now the mass does **not** cancel: $a = g - \dfrac{k}{m} v^2$. The object
+stops accelerating when drag balances weight, at the _terminal velocity_
+
+$$
+v_t = \sqrt{\frac{m g}{k}}
+$$
+
+A small mass with a large $k$, like a feather, has a tiny terminal velocity.
+
+<Callout kind="insight" title="A coincidence that isn't one">
+
+The $m$ in $F = mg$ measures how strongly gravity grips an object. The $m$ in
+$F = ma$ measures how much it resists being moved. Nothing in Newton's physics
+says these must be the same number, yet experiments find them equal to about
+one part in $10^{15}$. Einstein took that as a clue, and built general
+relativity on it.
+
+</Callout>
+
+</Layer>
+
+<Layer depth="build">
+
+You can watch drag break the tie with a few lines of Python. The loop below
+takes many small time steps. At each one it works out the acceleration from
+the forces, then nudges the velocity and the height forward.
+
+```python
+def fall_time(m, k, h=1.6, g=9.81, dt=0.0001):
+    """Seconds for an object to fall h metres. k is its drag constant."""
+    y, v, t = h, 0.0, 0.0
+    while y > 0:
+        a = g - (k / m) * v**2   # gravity minus drag
+        v += a * dt
+        y -= v * dt
+        t += dt
+    return t
+
+print(f"Hammer, no air:  {fall_time(1.32, 0):.2f} s")
+print(f"Feather, no air: {fall_time(0.003, 0):.2f} s")
+print(f"Hammer, in air:  {fall_time(1.32, 0.005):.2f} s")
+print(f"Feather, in air: {fall_time(0.003, 0.01):.2f} s")
+```
+
+```text
+Hammer, no air:  0.57 s
+Feather, no air: 0.57 s
+Hammer, in air:  0.57 s
+Feather, in air: 1.05 s
+```
+
+With `k = 0` the mass makes no difference, just as the maths said. Turn the
+air on and the hammer does not notice, while the 3-gram feather takes nearly twice
+as long.
+
+Things to try:
+
+- Set `g = 1.62` to drop them on the Moon.
+- Drop from `h = 100`. How long before the feather stops speeding up?
+- Find the feather's terminal velocity from the formula, then check that the
+  simulation agrees.
+
+That step-by-step loop is called Euler's method, and it is the engine inside
+the rocket simulator you can build in Projects.
+
+<ConnectIt
+  concepts={["eulers-method", "newtons-second-law"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Layer>

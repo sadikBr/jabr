@@ -1,0 +1,148 @@
+---
+id: what-is-a-derivative
+title: What is a derivative?
+summary: Zoom in on a curve until it looks straight. The slope of that line is the derivative.
+teaches: [derivative-definition, tangent-line]
+requires: [average-rate-of-change, limits-intuition, slope-of-a-line]
+estimatedMinutes: 15
+---
+
+<Step kind="see" title="Zoom in until it's straight">
+
+A car's speedometer reads 62 km/h. But speed is distance divided by time, and
+at a single instant no time passes and no distance is covered. So what is the
+speedometer measuring?
+
+You already know how to measure change over an **interval**. Between $x$ and
+$x + h$, a function changes at an average rate of
+
+$$
+\frac{f(x+h) - f(x)}{h}
+$$
+
+which is the slope of the straight line through those two points on its graph
+(the _secant line_). The speedometer question is: what happens to that slope
+when the interval shrinks to almost nothing?
+
+Try it. This is $f(x) = x^2$ around the point $x = 1$. The amber line is the
+secant across the window you can see. Zoom in and watch its slope.
+
+<Interactive id="tangent-zoom" props={{ fn: "x^2", x0: 1 }} />
+
+Two things happen as you zoom:
+
+1. **The curve straightens out.** Zoomed in far enough, you cannot tell it
+   apart from a straight line. That line is the **tangent line** at the point.
+2. **The slope settles down.** It reads $3$, then $2.1$, then $2.01$, then
+   $2.001$… It is closing in on $2$ and nothing else.
+
+That number is the **derivative** of $f$ at $x = 1$.
+
+<Callout kind="definition" title="The derivative">
+
+The derivative of $f$ at $x$ is the limit of the average rate of change as the
+interval shrinks:
+
+$$
+f'(x) = \lim_{h \to 0} \frac{f(x+h) - f(x)}{h}
+$$
+
+It is the slope of the tangent line at $x$, and the **instantaneous rate of
+change** of $f$ there.
+
+</Callout>
+
+<Callout kind="insight" title="We never divide by zero">
+
+Setting $h = 0$ directly gives $\frac{0}{0}$, which is meaningless. The limit
+asks a different question: what value do the slopes _approach_ as $h$ gets
+small? That question has a perfectly good answer.
+
+</Callout>
+
+You don't need to zoom every time. For $f(x) = x^2$ the algebra gives the
+slope at **every** point at once.
+
+<WorkedExample title="The derivative of x² from the definition">
+
+Start with the change in $f$ between $x$ and $x + h$:
+
+$$
+f(x+h) - f(x) = (x+h)^2 - x^2 = 2xh + h^2
+$$
+
+Divide by $h$ to get the average rate of change. Since $h \neq 0$, it cancels:
+
+$$
+\frac{2xh + h^2}{h} = 2x + h
+$$
+
+Now let $h$ shrink towards $0$. The $h$ fades away and $2x$ remains:
+
+$$
+f'(x) = \lim_{h \to 0} \,(2x + h) = 2x
+$$
+
+At $x = 1$ that gives $f'(1) = 2$ — exactly what the zoom showed. Notice the
+$2x + h$ in the middle too: with $x = 1$ and $h = 0.1$ it predicts the slope
+$2.1$ you saw on the way.
+
+</WorkedExample>
+
+</Step>
+
+<Step kind="do" title="Find some slopes yourself">
+
+Start with an interval, shrink it, then use the result.
+
+<Question id="calc.deriv.secant-slope" />
+
+<Question id="calc.deriv.shrinking-h" />
+
+<Question id="calc.deriv.slope-at-point" />
+
+<Question id="calc.deriv.definition-expression" />
+
+Because a curve looks like its tangent line up close, the tangent is a good
+stand-in for the curve near the point. That gives you a way to predict nearby
+values:
+
+$$
+f(x + \Delta x) \approx f(x) + f'(x)\,\Delta x
+$$
+
+<Question id="calc.deriv.tangent-prediction" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+No calculation needed here. These check that you can read what a derivative
+is telling you.
+
+<Question id="calc.deriv.concept-check-1" />
+
+<Question id="calc.deriv.sign" />
+
+<Question id="calc.deriv.units" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+The speedometer finally makes sense: it shows the derivative of the car's
+position with respect to time. That idea, **velocity is the derivative of
+position**, is where physics picks calculus up.
+
+The prediction formula you just used is more powerful than it looks. Apply it
+again and again in small steps and you can follow a rocket, a planet or a
+bouncing ball through time, even when no formula exists for where it will be.
+That is Euler's method, and it is how simulations work.
+
+<ConnectIt
+  concepts={["velocity", "eulers-method", "power-rule"]}
+  explainers={["how-do-video-games-simulate-physics"]}
+  projects={["tangent-line-explorer"]}
+/>
+
+</Step>

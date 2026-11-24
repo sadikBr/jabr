@@ -1,0 +1,24 @@
+id: calculus-essentials
+title: Calculus essentials
+subject: maths
+level: university-year-1
+summary: Limits, derivatives and integrals, built through interaction — and the bridge from calculus to simulation.
+modules:
+  - id: change-and-limits
+    title: Change and limits
+    summary: Measure how fast things change, and what it means to get arbitrarily close.
+    lessons: [rates-of-change-from-data, limits-intuition, continuity]
+  - id: derivatives
+    title: Derivatives
+    summary: The rate of change at a single instant, and the rules for computing it.
+    lessons: [what-is-a-derivative, derivative-rules, derivatives-in-motion]
+    project: tangent-line-explorer
+  - id: integrals
+    title: Integrals
+    summary: Add up a changing rate to get a total, and discover why that undoes the derivative.
+    lessons: [accumulation-and-area, riemann-sums, fundamental-theorem]
+  - id: numerical-methods
+    title: Numerical methods
+    summary: When there is no formula, step forward a little at a time.
+    lessons: [eulers-method]
+capstone: rocket-flight-simulator

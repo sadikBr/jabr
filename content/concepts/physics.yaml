@@ -1,0 +1,47 @@
+- id: velocity
+  title: Velocity
+  subject: physics
+  summary: How fast position changes, and in which direction — the derivative of position with respect to time.
+  prerequisites: [derivative-definition]
+  lesson: calculus-essentials/derivatives/derivatives-in-motion
+
+- id: acceleration
+  title: Acceleration
+  subject: physics
+  summary: How fast velocity changes — the derivative of velocity with respect to time.
+  prerequisites: [velocity]
+  lesson: calculus-essentials/derivatives/derivatives-in-motion
+
+- id: mass
+  title: Mass and inertia
+  subject: physics
+  summary: How much an object resists having its motion changed. More mass needs more force for the same acceleration.
+
+- id: force
+  title: Force
+  subject: physics
+  summary: A push or a pull — the thing that changes an object's motion.
+
+- id: newtons-second-law
+  title: Newton's second law
+  subject: physics
+  summary: Net force equals mass times acceleration, F = m·a.
+  prerequisites: [force, mass, acceleration]
+
+- id: gravity-and-weight
+  title: Gravity and weight
+  subject: physics
+  summary: Weight is the force of gravity on an object, m·g — proportional to its mass.
+  prerequisites: [newtons-second-law]
+
+- id: free-fall
+  title: Free fall
+  subject: physics
+  summary: Motion under gravity alone. Every object in free fall has the same acceleration, g.
+  prerequisites: [gravity-and-weight]
+
+- id: air-drag
+  title: Air drag
+  subject: physics
+  summary: The force of air pushing back on a moving object. It grows with speed and depends on shape, not mass.
+  prerequisites: [force, velocity]

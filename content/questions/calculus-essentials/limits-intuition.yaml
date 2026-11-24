@@ -1,0 +1,221 @@
+- id: calc.limits.plug-in
+  type: parametrised
+  concepts: [limits-intuition]
+  params:
+    a: { min: 1, max: 4, step: 1 }
+    b: { min: 2, max: 5, step: 1 }
+  prompt: |
+    What is $\lim_{x \to {a}} \left(x^2 + {b}x\right)$?
+  answer: "a^2 + b * a"
+  tolerance: { absolute: 0.001 }
+  hints:
+    - "This function has no gaps or jumps anywhere. Where do its values head as $x$ gets close to {a}?"
+    - "Try $x = {a}.01$ on a calculator if you are unsure, then compare with putting in $x = {a}$ directly."
+  solution: |
+    $x^2 + {b}x$ is a polynomial: its graph is a smooth, unbroken curve. As $x$ approaches {a}, its values approach the value at {a}:
+
+    $${a}^2 + {b} \times {a}$$
+
+    Functions whose limits you can find by plugging in are called continuous. They are the subject of the next lesson.
+
+- id: calc.limits.hole
+  type: parametrised
+  concepts: [limits-intuition]
+  params:
+    a: { min: 2, max: 6, step: 1 }
+  derived:
+    a2: "a^2"
+    double: "2 * a"
+  prompt: |
+    What is $\lim_{x \to {a}} \dfrac{x^2 - {a2}}{x - {a}}$?
+  answer: "2 * a"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "0"
+      feedback: "The top does go to $0$, but so does the bottom. $\\frac{0}{0}$ is not $0$. Look at values near {a} instead."
+  hints:
+    - "Putting in $x = {a}$ gives $\\frac{0}{0}$, so look nearby. What do you get at $x = {a}.01$?"
+    - "Or factorise the top: $x^2 - {a2} = (x - {a})(x + {a})$."
+  solution: |
+    For $x \neq {a}$ the fraction simplifies:
+
+    $$\frac{x^2 - {a2}}{x - {a}} = \frac{(x - {a})(x + {a})}{x - {a}} = x + {a}$$
+
+    As $x$ approaches {a}, this approaches ${a} + {a} = {double}$.
+
+- id: calc.limits.factor
+  type: parametrised
+  concepts: [limits-intuition]
+  params:
+    a: { choices: [1, 2, 3] }
+    b: { choices: [5, 6, 7] }
+  derived:
+    p: "b - a"
+    q: "a * b"
+    total: "a + b"
+  prompt: |
+    What is $\lim_{x \to {a}} \dfrac{x^2 + {p}x - {q}}{x - {a}}$?
+  answer: "a + b"
+  tolerance: { absolute: 0.001 }
+  hints:
+    - "At $x = {a}$ the top is $0$ as well, so $x - {a}$ must be a factor of the top."
+    - "$x^2 + {p}x - {q} = (x - {a})(x + {b})$."
+  solution: |
+    The top is zero at $x = {a}$, which means $(x - {a})$ is one of its factors:
+
+    $$x^2 + {p}x - {q} = (x - {a})(x + {b})$$
+
+    So for $x \neq {a}$ the fraction equals $x + {b}$, and as $x$ approaches {a} it approaches ${a} + {b} = {total}$.
+
+- id: calc.limits.one-sided
+  type: multiple-choice
+  concepts: [limits-intuition]
+  prompt: |
+    As $x$ approaches $2$ from the left, $f(x)$ approaches $5$. As $x$ approaches $2$ from the right, $f(x)$ approaches $1$. Also, $f(2) = 5$. What is $\lim_{x \to 2} f(x)$?
+  choices:
+    - id: none
+      text: "It does not exist"
+      correct: true
+    - id: five
+      text: "$5$"
+      feedback: "That is the left-hand limit, and it happens to be the value at the point too. But the right-hand side heads to $1$, and the limit needs both sides to agree."
+    - id: one
+      text: "$1$"
+      feedback: "That is the right-hand limit only. The left-hand side heads to $5$."
+    - id: three
+      text: "$3$"
+      feedback: "Limits do not average the two sides. If they disagree, there is no limit."
+  hints:
+    - "For the limit to exist, the left-hand and right-hand limits must be the same number."
+  solution: |
+    The left-hand limit is $5$ and the right-hand limit is $1$. They disagree, so the limit does not exist. The value $f(2) = 5$ plays no part: a limit never looks at the point itself.
+
+- id: calc.limits.sinc
+  type: numeric
+  concepts: [limits-intuition]
+  prompt: |
+    Use the explorer above. What is $\lim_{x \to 0} \dfrac{\sin x}{x}$?
+  answer: 1
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: 0
+      feedback: "$\\sin x$ does go to $0$, but so does $x$, and their ratio does something else. Close in with the explorer and read the table."
+    - answer: 0.017453
+      feedback: "That is what a calculator in degree mode gives. This limit is for $x$ in radians."
+  hints:
+    - 'Press "10× closer" a few times and read down the table.'
+    - "The values run $0.998\\ldots$, $0.99998\\ldots$, $0.9999998\\ldots$"
+  solution: |
+    Close to $0$ the values are $0.99833$, $0.99998$, $0.9999998$ and so on, from either side. They are closing in on $1$:
+
+    $$\lim_{x \to 0} \frac{\sin x}{x} = 1$$
+
+    In other words, for small angles in radians, $\sin x \approx x$.
+
+- id: calc.limits.code-approach
+  type: code
+  concepts: [limits-intuition]
+  prompt: |
+    Complete `approach` so it returns the values of `f` at `a + 0.1`, `a + 0.01`, `a + 0.001` and so on. Then run it to investigate a limit you have not seen: $\dfrac{1 - \cos x}{x^2}$ as $x$ approaches $0$.
+  starter: |
+    import math
+
+    def approach(f, a, steps=5):
+        """Values of f at a + 0.1, a + 0.01, ... closing in on a from the right."""
+        values = []
+        for k in range(1, steps + 1):
+            # Replace the next line: the value of f a distance 10**-k from a.
+            value = 0
+            values.append(value)
+        return values
+
+    def f(x):
+        return (1 - math.cos(x)) / x**2
+
+    for k, value in enumerate(approach(f, 0), start=1):
+        print(f"x = {10**-k:<8g} f(x) = {value:.8f}")
+  tests: |
+    def test_one_value_for_each_step():
+        assert len(approach(lambda x: x, 0, 4)) == 4, "With steps=4 there should be four values."
+
+    def test_closes_in_by_powers_of_ten():
+        values = approach(lambda x: x, 2, 3)
+        assert all(abs(v - e) < 1e-12 for v, e in zip(values, [2.1, 2.01, 2.001])), "With f(x) = x and a = 2 the values should be 2.1, 2.01 and 2.001."
+
+    def test_finds_the_limit_at_a_hole():
+        values = approach(lambda x: (x * x - 1) / (x - 1), 1)
+        assert abs(values[-1] - 2) < 1e-3, "For (x² - 1)/(x - 1) near x = 1 the values should close in on 2."
+
+    def test_finds_the_famous_limit():
+        import math
+        values = approach(lambda x: math.sin(x) / x, 0)
+        assert abs(values[-1] - 1) < 1e-6, "For sin(x)/x near x = 0 the values should close in on 1."
+  hints:
+    - "On pass `k` of the loop the distance from `a` is `10**-k`."
+    - "Use `value = f(a + 10**-k)`."
+  solution: |
+    Each pass evaluates the function a little closer to the point:
+
+    `value = f(a + 10**-k)`
+
+    The printed values run 0.49958, 0.4999958, 0.49999996 and so on, so the limit appears to be $\frac{1}{2}$. (It is.)
+
+    Do not push this too far, though. With `steps=9` the answer falls apart, because the computer cannot tell $\cos x$ from $1$ when $x$ is that small. Numerical evidence suggests a limit; it does not prove one.
+
+- id: calc.limits.meaning
+  type: multiple-choice
+  multiple: true
+  concepts: [limits-intuition]
+  prompt: |
+    You are told that $\lim_{x \to 2} f(x) = 5$. Which of these must be true? Select all that apply.
+  choices:
+    - id: close
+      text: "$f(x)$ is close to $5$ whenever $x$ is close enough to $2$ (but not equal to it)"
+      correct: true
+    - id: sides
+      text: "Approaching $2$ from the left and from the right both lead to $5$"
+      correct: true
+    - id: value
+      text: "$f(2) = 5$"
+      feedback: "The limit says nothing about the value at the point. $f(2)$ could be $5$, or $100$, or not defined."
+    - id: defined
+      text: "$f(2)$ is defined"
+      feedback: "A function can have a limit at a point where it has no value, like the first example in this lesson."
+  hints:
+    - "A limit describes the values near the point. Does it say anything about the point itself?"
+  solution: |
+    The limit being $5$ means the values of $f$ close in on $5$ from both sides as $x$ approaches $2$. It makes no promise about $f(2)$, which may be anything, or nothing.
+
+- id: calc.limits.which-fails
+  type: multiple-choice
+  concepts: [limits-intuition]
+  prompt: "Which of these has **no** limit as $x$ approaches $0$?"
+  choices:
+    - id: blow-up
+      text: "$\\dfrac{1}{x^2}$"
+      correct: true
+    - id: square
+      text: "$x^2$"
+      feedback: "$x^2$ heads to $0$ as $x$ approaches $0$. A limit of $0$ is still a limit."
+    - id: sinc
+      text: "$\\dfrac{\\sin x}{x}$"
+      feedback: "It has no value at $0$, but its limit there is $1$."
+    - id: cancel
+      text: "$\\dfrac{x^2 + x}{x}$"
+      feedback: "For $x \\neq 0$ this equals $x + 1$, which heads to $1$."
+  hints:
+    - "Try $x = 0.1$, then $x = 0.01$ in each. Which one refuses to settle?"
+  solution: |
+    $\frac{1}{x^2}$ gives $100$, then $10\,000$, then $1\,000\,000$ as $x$ shrinks. The values grow without bound and never settle on a number, so there is no limit. The other three head to $0$, $1$ and $1$.
+
+- id: calc.limits.explain
+  type: self-check
+  concepts: [limits-intuition]
+  prompt: |
+    A friend says: "The limit of $\frac{x^2 - 1}{x - 1}$ at $x = 1$ can't exist, because you can't divide by zero." What would you tell them?
+  rubric:
+    - "You said a limit is about the values near $x = 1$, not the value at $x = 1$."
+    - "You said that near $x = 1$ the values close in on $2$ from both sides."
+    - "You said we never actually put $x = 1$ into the fraction, so nothing is ever divided by zero."
+  solution: |
+    They are right that the function has no value at $x = 1$. But a limit does not ask for one. It asks where the values are heading as $x$ gets close to $1$, and at every $x$ other than $1$ the fraction is perfectly well defined (it equals $x + 1$). Those values close in on $2$, so the limit is $2$.

@@ -1,0 +1,232 @@
+- id: calc.rates.whole-race
+  type: numeric
+  concepts: [average-rate-of-change]
+  prompt: "Bolt ran 100 m in 9.58 s. What was his average speed over the whole race? Give it to two decimal places."
+  answer: 10.44
+  tolerance: { absolute: 0.01 }
+  unit: m/s
+  commonMistakes:
+    - answer: 0.0958
+      feedback: "That is seconds per metre. Speed is distance divided by time, so put the metres on top."
+  hints:
+    - "Average speed is the distance covered divided by the time taken."
+    - "Work out $100 \\div 9.58$."
+  solution: |
+    $$\frac{100 \text{ m}}{9.58 \text{ s}} \approx 10.44 \text{ m/s}$$
+
+- id: calc.rates.table
+  type: parametrised
+  concepts: [average-rate-of-change]
+  params:
+    u: { min: 3, max: 5, step: 1 }
+    v: { min: 8, max: 11, step: 1 }
+    w: { min: 6, max: 9, step: 1 }
+  derived:
+    d1: "10 * u"
+    d2: "d1 + 10 * v"
+    d3: "d2 + 10 * w"
+    covered: "d3 - d1"
+  prompt: |
+    A cyclist's GPS logs her distance from the start every 10 seconds:
+
+    $$\begin{array}{l|cccc} \text{time (s)} & 0 & 10 & 20 & 30 \\ \hline \text{distance (m)} & 0 & {d1} & {d2} & {d3} \end{array}$$
+
+    What was her average speed between $t = 10$ s and $t = 30$ s?
+  answer: "(d3 - d1) / 20"
+  tolerance: { absolute: 0.01 }
+  unit: m/s
+  commonMistakes:
+    - answer: "d3 / 30"
+      feedback: "That is her average over the whole 30 s. Use only the distance she covered between 10 s and 30 s."
+    - answer: "(d3 - d1) / 30"
+      feedback: "The distance is right, but from 10 s to 30 s is 20 s, not 30 s."
+    - answer: "d3 / 20"
+      feedback: "The time is right, but she was already {d1} m along at 10 s. Subtract that to get the distance covered."
+    - answer: "(d3 - d2) / 10"
+      feedback: "That is her speed over the last 10 s only. The question asks about 10 s to 30 s."
+  hints:
+    - "You need two things: the distance covered between those two times, and how long it took."
+    - "She was at {d1} m after 10 s and at {d3} m after 30 s."
+  solution: |
+    Between $t = 10$ s and $t = 30$ s she went from {d1} m to {d3} m:
+
+    $$\frac{{d3} - {d1}}{30 - 10} = \frac{{covered}}{20} \text{ m/s}$$
+
+    The reading at 20 s is not needed. An average only looks at the two ends.
+
+- id: calc.rates.ball
+  type: parametrised
+  concepts: [average-rate-of-change]
+  params:
+    a: { choices: [0, 1] }
+    b: { choices: [2, 3, 4] }
+  derived:
+    ha: "20 * a - 5 * a^2"
+    hb: "20 * b - 5 * b^2"
+  prompt: "A ball is thrown straight up. Its height after $t$ seconds is $h(t) = 20t - 5t^2$ metres. What is the average rate of change of its height between $t = {a}$ and $t = {b}$? (If the ball ends up lower than it started, the answer is negative.)"
+  answer: "(hb - ha) / (b - a)"
+  tolerance: { absolute: 0.01 }
+  unit: m/s
+  hints:
+    - "Work out the two heights first: $h({a})$ and $h({b})$."
+    - "$h({a}) = {ha}$ and $h({b}) = {hb}$. Divide the change in height by the change in time."
+  solution: |
+    The heights are $h({a}) = {ha}$ m and $h({b}) = {hb}$ m, so
+
+    $$\frac{h({b}) - h({a})}{{b} - {a}} = \frac{{hb} - {ha}}{{b} - {a}} \text{ m/s}$$
+
+    A positive answer means the ball finished higher than it started, a negative one lower. An answer of exactly zero would mean it came back to the same height, however far it travelled in between: another thing an average can hide.
+
+- id: calc.rates.shrinking
+  type: parametrised
+  concepts: [average-rate-of-change]
+  params:
+    h: { choices: [0.5, 0.2, 0.1] }
+  derived:
+    t2: "2 + h"
+    s2: "(2 + h)^2"
+    gain: "(2 + h)^2 - 4"
+  prompt: "On the ramp, $s(t) = t^2$ metres. What is the ball's average speed between $t = 2$ and $t = {t2}$?"
+  answer: "gain / h"
+  tolerance: { absolute: 0.005 }
+  unit: m/s
+  commonMistakes:
+    - answer: "s2 / t2"
+      feedback: "That is the average from the very start, $t = 0$. Use the distance covered between $t = 2$ and $t = {t2}$ only."
+    - answer: "gain"
+      feedback: "That is the distance covered. Now divide by the time it took, {h} s."
+  hints:
+    - "The ball is at $s(2) = 4$ m and then at $s({t2}) = {s2}$ m."
+    - "It covers ${s2} - 4 = {gain}$ m in {h} s."
+  solution: |
+    $$\frac{s({t2}) - s(2)}{{t2} - 2} = \frac{{s2} - 4}{{h}} = \frac{{gain}}{{h}} \text{ m/s}$$
+
+    Try the other intervals too. Over 0.5 s the answer is 4.5, over 0.2 s it is 4.2 and over 0.1 s it is 4.1. The shorter the interval, the closer the average gets to 4.
+
+- id: calc.rates.code-speeds
+  type: code
+  concepts: [average-rate-of-change]
+  prompt: "Complete `average_speeds` so it returns Bolt's average speed over each stretch between one reading and the next. Then run it to see his whole race, 10 metres at a time."
+  starter: |
+    times = [0, 1.89, 2.88, 3.78, 4.64, 5.47, 6.29, 7.10, 7.92, 8.75, 9.58]
+    distances = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+
+    def average_speeds(times, distances):
+        """The average speed between each reading and the next one."""
+        speeds = []
+        for i in range(len(times) - 1):
+            # Replace the next line: distance covered divided by time taken.
+            speed = 0
+            speeds.append(speed)
+        return speeds
+
+    speeds = average_speeds(times, distances)
+    for i, speed in enumerate(speeds):
+        print(f"{distances[i]:>3} to {distances[i + 1]:<3} m: {speed:5.2f} m/s")
+    print(f"Fastest stretch: {max(speeds):.2f} m/s")
+  tests: |
+    def test_one_speed_for_each_stretch():
+        assert len(average_speeds([0, 1, 2, 3], [0, 5, 10, 15])) == 3, "Four readings make three stretches."
+
+    def test_steady_motion():
+        speeds = average_speeds([0, 2, 4], [0, 10, 20])
+        assert all(abs(s - 5) < 1e-9 for s in speeds), "10 m every 2 s is 5 m/s on every stretch."
+
+    def test_stretches_of_different_lengths():
+        speeds = average_speeds([0, 1, 4], [0, 3, 9])
+        assert abs(speeds[0] - 3) < 1e-9 and abs(speeds[1] - 2) < 1e-9, "Divide each distance by the time that stretch took: 3 m in 1 s, then 6 m in 3 s."
+
+    def test_bolts_fastest_stretch():
+        assert abs(max(average_speeds(times, distances)) - 12.35) < 0.01, "Bolt's fastest 10 m should come out near 12.35 m/s."
+  hints:
+    - "Stretch `i` runs from reading `i` to reading `i + 1`."
+    - "The distance covered is `distances[i + 1] - distances[i]`, and the time taken is `times[i + 1] - times[i]`."
+  solution: |
+    Each stretch is one application of "change in distance over change in time":
+
+    `speed = (distances[i + 1] - distances[i]) / (times[i + 1] - times[i])`
+
+    The output shows Bolt accelerating for about 60 m, peaking at 12.35 m/s between 60 m and 70 m, then holding nearly all of it to the line.
+
+- id: calc.rates.draining
+  type: parametrised
+  concepts: [average-rate-of-change]
+  params:
+    full: { min: 60, max: 90, step: 10 }
+    drained: { choices: [24, 30, 36, 42] }
+    minutes: { choices: [4, 6, 8] }
+  derived:
+    remaining: "full - drained"
+  prompt: "A tank holds {full} litres of water. After draining for {minutes} minutes it holds {remaining} litres. What is the average rate of change of the volume of water in the tank?"
+  answer: "-drained / minutes"
+  tolerance: { absolute: 0.01 }
+  unit: L/min
+  commonMistakes:
+    - answer: "drained / minutes"
+      feedback: "Right size, wrong sign. The volume is going down, so its rate of change is negative. Change always means final minus initial."
+    - answer: "remaining / minutes"
+      feedback: "Use the change in volume, not the volume that is left: {remaining} − {full}."
+  hints:
+    - "Change means final minus initial: {remaining} − {full} litres."
+    - "Divide that change by the {minutes} minutes it took. Keep the sign."
+  solution: |
+    $$\frac{{remaining} - {full}}{{minutes}} = \frac{-{drained}}{{minutes}} \text{ L/min}$$
+
+    The answer is negative because the volume is decreasing.
+
+- id: calc.rates.same-average
+  type: multiple-choice
+  concepts: [average-rate-of-change]
+  prompt: "Two runners each finish a 400 m lap in exactly 80 s. Which statement must be true?"
+  choices:
+    - id: same-average
+      text: "Both had an average speed of 5 m/s over the lap"
+      correct: true
+    - id: steady
+      text: "Both ran at 5 m/s the whole way round"
+      feedback: "An average says nothing about what happened inside the interval. One of them could have sprinted the first half and jogged the second."
+    - id: together
+      text: "They were side by side for the whole lap"
+      feedback: "They started and finished together, but in between either one could have been ahead."
+    - id: same-top
+      text: "They reached the same top speed"
+      feedback: "Top speed depends on what happened during the lap, which the average cannot see."
+  hints:
+    - "What does an average speed depend on? Only the total distance and the total time."
+  solution: |
+    Average speed is total distance over total time: $400 \div 80 = 5$ m/s for both. Everything else depends on what happened during the lap, and the average hides that.
+
+- id: calc.rates.steeper
+  type: multiple-choice
+  concepts: [average-rate-of-change, slope-of-a-line]
+  prompt: "On a distance–time graph of a car journey, the secant line across stretch A is steeper than the one across stretch B. What does that tell you?"
+  choices:
+    - id: faster
+      text: "The car's average speed was higher over A than over B"
+      correct: true
+    - id: further
+      text: "The car went further during A than during B"
+      feedback: "Not necessarily. A short, fast stretch has a steep line but covers little distance. Slope is distance divided by time, not distance alone."
+    - id: longer
+      text: "Stretch A took longer than stretch B"
+      feedback: "The slope does not tell you how long the stretch lasted, only the ratio of distance to time."
+    - id: accelerating
+      text: "The car was speeding up during A"
+      feedback: "A single secant line gives one average speed. To see speeding up you would need to compare several intervals inside A."
+  hints:
+    - "The slope of a secant line is rise over run. On this graph, what are the rise and the run?"
+  solution: |
+    The slope of the secant is the distance covered divided by the time taken, which is the average speed. A steeper line means a higher average speed, and nothing more.
+
+- id: calc.rates.speed-camera
+  type: self-check
+  concepts: [average-rate-of-change]
+  prompt: "Average-speed cameras time each car over a 2 km stretch of road where the limit is 80 km/h. One driver does 110 km/h for part of the stretch and still is not caught. Explain how that is possible, and what you would change about the cameras to catch them."
+  rubric:
+    - "You said the cameras only measure the average over the whole stretch: total distance divided by total time."
+    - "You said the driver must have gone slower than 80 km/h elsewhere on the stretch, pulling the average down to the limit or below."
+    - "You said measuring over shorter stretches would reveal the fast part, because a shorter interval hides less."
+  solution: |
+    The cameras work out one number: 2 km divided by the time taken. A driver who does 110 km/h for a while and then slows down enough can bring that average to 80 km/h or less.
+
+    Shorter stretches would catch them, because the average over a short interval stays close to the speed the car was actually doing. Take that idea to its limit, an interval of no length at all, and you get the speed at an instant.

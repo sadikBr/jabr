@@ -1,0 +1,220 @@
+- id: calc.motion.velocity-expression
+  type: expression
+  concepts: [velocity, power-rule]
+  variables: [t]
+  prompt: "A drone's position along a track is $s(t) = 4t^3 - 6t^2 + 5$ metres after $t$ seconds. Find its velocity $v(t)$."
+  answer: "12t^2 - 12t"
+  hints:
+    - "Velocity is the derivative of position: differentiate $s(t)$ term by term."
+    - "$4t^3$ becomes $12t^2$ and $-6t^2$ becomes $-12t$. What happens to the constant $5$?"
+  solution: |
+    Velocity is the derivative of position:
+
+    $$v(t) = \frac{ds}{dt} = 12t^2 - 12t$$
+
+    The constant $5$ disappears. It says where the drone started, which has no effect on how fast it moves.
+
+- id: calc.motion.acceleration-expression
+  type: expression
+  concepts: [acceleration, velocity]
+  variables: [t]
+  prompt: "For the same drone, with $s(t) = 4t^3 - 6t^2 + 5$, find its acceleration $a(t)$."
+  answer: "24t - 12"
+  hints:
+    - "Acceleration is the derivative of velocity, so differentiate your last answer."
+    - "$v(t) = 12t^2 - 12t$."
+  solution: |
+    Acceleration is the derivative of velocity:
+
+    $$a(t) = \frac{dv}{dt} = \frac{d}{dt}\,\big(12t^2 - 12t\big) = 24t - 12$$
+
+- id: calc.motion.velocity-at
+  type: parametrised
+  concepts: [velocity]
+  params:
+    p: { choices: [2, 3, 4] }
+    q: { min: 2, max: 6, step: 1 }
+    c: { choices: [1, 2, 3] }
+  derived:
+    double: "2 * p"
+  prompt: "A cart's position is $s(t) = {p}t^2 + {q}t$ metres after $t$ seconds. What is its velocity at $t = {c}$ s?"
+  answer: "2 * p * c + q"
+  tolerance: { absolute: 0.001 }
+  unit: m/s
+  commonMistakes:
+    - answer: "p * c^2 + q * c"
+      feedback: "That is the cart's position at $t = {c}$. Differentiate first to get the velocity."
+    - answer: "(p * c^2 + q * c) / c"
+      feedback: "That is the average velocity since $t = 0$. The velocity at an instant is the derivative."
+  hints:
+    - "Find $v(t)$ by differentiating $s(t)$."
+    - "$v(t) = {double}t + {q}$. Now put in $t = {c}$."
+  solution: |
+    Differentiating, $v(t) = {double}t + {q}$. At $t = {c}$:
+
+    $$v({c}) = {double} \times {c} + {q} \text{ m/s}$$
+
+- id: calc.motion.peak-time
+  type: parametrised
+  concepts: [velocity]
+  params:
+    u: { min: 10, max: 25, step: 1 }
+  prompt: "A ball is thrown straight up at {u} m/s, so its height is $h(t) = {u}t - 4.9t^2$ metres. How long after the throw does it reach the top of its flight?"
+  answer: "u / 9.8"
+  tolerance: { relative: 0.01 }
+  unit: s
+  commonMistakes:
+    - answer: "u / 4.9"
+      feedback: "That is when the ball lands: you solved $h(t) = 0$. At the top it is the velocity that is zero."
+  hints:
+    - "At the top the ball is momentarily at rest, so its velocity is zero."
+    - "$v(t) = {u} - 9.8t$. Solve $v(t) = 0$."
+  solution: |
+    The velocity is $v(t) = {u} - 9.8t$. At the top, $v = 0$:
+
+    $${u} - 9.8t = 0 \quad\Rightarrow\quad t = \frac{{u}}{9.8} \text{ s}$$
+
+- id: calc.motion.peak-height
+  type: parametrised
+  concepts: [velocity]
+  params:
+    u: { min: 10, max: 25, step: 1 }
+  prompt: "The same ball, thrown straight up at {u} m/s with $h(t) = {u}t - 4.9t^2$. How high does it get?"
+  answer: "u^2 / 19.6"
+  tolerance: { relative: 0.01 }
+  unit: m
+  hints:
+    - "It is highest at the moment its velocity is zero, which is at $t = {u} \\div 9.8$."
+    - "Put that time back into $h(t)$."
+  solution: |
+    The top is reached at $t = \dfrac{{u}}{9.8}$ s. Putting that into the height:
+
+    $$h = {u} \cdot \frac{{u}}{9.8} - 4.9 \left(\frac{{u}}{9.8}\right)^2 = \frac{{u}^2}{19.6} \text{ m}$$
+
+    Notice the square: throw twice as fast and the ball goes four times as high.
+
+- id: calc.motion.code-gravity
+  type: code
+  concepts: [velocity, acceleration, average-rate-of-change]
+  prompt: "A ball was dropped in front of a camera, and its height read off every tenth of a second. Complete `rates` so it returns the average rate of change between each value and the next. The code then uses it twice: once to turn heights into velocities, and again to turn velocities into accelerations."
+  starter: |
+    def rates(values, dt):
+        """The average rate of change between each value and the next, dt apart."""
+        # Replace the next line: one rate for each neighbouring pair of values.
+        return []
+
+    dt = 0.1  # seconds between readings
+    heights = [2.000, 1.951, 1.804, 1.559, 1.215, 0.774, 0.234]  # metres
+
+    velocities = rates(heights, dt)
+    accelerations = rates(velocities, dt)
+    print("velocities (m/s):    ", [round(v, 2) for v in velocities])
+    print("accelerations (m/s²):", [round(a, 1) for a in accelerations])
+  tests: |
+    def test_one_rate_for_each_pair():
+        assert len(rates([5, 5, 5, 5], 1)) == 3, "Four values make three neighbouring pairs."
+
+    def test_rates_of_square_numbers():
+        result = rates([0, 1, 4, 9], 1)
+        assert all(abs(r - e) < 1e-9 for r, e in zip(result, [1, 3, 5])), "From 0, 1, 4, 9 with dt = 1 the rates should be 1, 3, 5."
+
+    def test_divides_by_the_time_step():
+        result = rates([0, 2, 4], 0.5)
+        assert all(abs(r - 4) < 1e-9 for r in result), "A change of 2 in 0.5 s is a rate of 4."
+
+    def test_twice_gives_acceleration():
+        positions = [3 * (0.1 * i) ** 2 for i in range(8)]
+        accelerations = rates(rates(positions, 0.1), 0.1)
+        assert len(accelerations) == 6 and all(abs(a - 6) < 1e-6 for a in accelerations), "For s = 3t², taking rates twice should give an acceleration of 6 everywhere."
+  hints:
+    - "The rate between `values[i]` and `values[i + 1]` is their difference divided by `dt`."
+    - "Loop over `range(len(values) - 1)`, or use a list comprehension."
+    - "`return [(values[i + 1] - values[i]) / dt for i in range(len(values) - 1)]`"
+  solution: |
+    One rate for each neighbouring pair:
+
+    `return [(values[i + 1] - values[i]) / dt for i in range(len(values) - 1)]`
+
+    The velocities come out increasingly negative, as the ball falls faster and faster. The accelerations all come out close to $-9.8$ m/s²: you have measured gravity from seven numbers. The small wobble comes from the heights being rounded to the nearest millimetre, and taking differences twice magnifies it.
+
+- id: calc.motion.at-the-top
+  type: multiple-choice
+  concepts: [velocity, acceleration]
+  prompt: "A ball is thrown straight up. At the very top of its flight, which is true? (Take upwards as positive.)"
+  choices:
+    - id: zero-v
+      text: "Its velocity is $0$ and its acceleration is $-9.8$ m/s²"
+      correct: true
+    - id: both-zero
+      text: "Its velocity and its acceleration are both $0$"
+      feedback: "If the acceleration were zero as well, the velocity would stay at zero and the ball would hang in the air."
+    - id: up
+      text: "Its velocity is $0$ and its acceleration is $+9.8$ m/s²"
+      feedback: "Gravity pulls downwards for the whole flight. With upwards as positive, that is a negative acceleration."
+    - id: zero-a
+      text: "Its velocity is $-9.8$ m/s and its acceleration is $0$"
+      feedback: "The other way round. At the top the ball is momentarily at rest, and gravity is still acting on it."
+  hints:
+    - "What does the velocity graph read at the top? And is its slope zero there?"
+  solution: |
+    At the top the ball is momentarily at rest, so $v = 0$. But the velocity is still decreasing at the same steady rate as always, so $a = -9.8$ m/s². Zero velocity does not mean zero acceleration.
+
+- id: calc.motion.speeding-up
+  type: multiple-choice
+  concepts: [velocity, acceleration]
+  prompt: "At some moment an object has velocity $-6$ m/s and acceleration $-2$ m/s². What is happening to its speed?"
+  choices:
+    - id: faster
+      text: "It is speeding up"
+      correct: true
+    - id: slower
+      text: "It is slowing down"
+      feedback: "A negative acceleration does not always mean slowing down. Here the velocity is negative too, and it is becoming more negative: $-6$, then $-8$, then $-10$."
+    - id: steady
+      text: "Its speed is not changing"
+      feedback: "The acceleration is not zero, so the velocity is changing."
+    - id: unknown
+      text: "There is not enough information"
+      feedback: "The signs are enough. Compare the direction of the velocity with the direction of the acceleration."
+  hints:
+    - "One second later, the velocity will be about $-8$ m/s. Is that faster or slower than $6$ m/s?"
+  solution: |
+    The velocity is going from $-6$ towards $-8$ m/s. Its size, the speed, is growing from $6$ to $8$ m/s, so the object is speeding up.
+
+    The rule: when velocity and acceleration have the same sign the object speeds up, and when they have opposite signs it slows down.
+
+- id: calc.motion.straight-line
+  type: multiple-choice
+  multiple: true
+  concepts: [velocity, acceleration]
+  prompt: "A position–time graph is a straight line sloping upwards. Which of these are true? Select all that apply."
+  choices:
+    - id: constant-v
+      text: "The velocity is constant"
+      correct: true
+    - id: zero-a
+      text: "The acceleration is zero"
+      correct: true
+    - id: speeding
+      text: "The object is speeding up"
+      feedback: "Speeding up would make the graph get steeper. A straight line has the same slope everywhere."
+    - id: rest
+      text: "The object is at rest"
+      feedback: "At rest, the position would not change and the graph would be flat."
+  hints:
+    - "The velocity is the slope of this graph. What is special about the slope of a straight line?"
+  solution: |
+    A straight line has the same slope everywhere, so the velocity is constant (and positive, since the line slopes upwards). A velocity that does not change has a derivative of zero, so the acceleration is zero.
+
+- id: calc.motion.explain
+  type: self-check
+  concepts: [velocity, acceleration]
+  prompt: "Describe one everyday moment when your velocity is zero but your acceleration is not, and one when your acceleration is zero but your velocity is not."
+  rubric:
+    - "For zero velocity with acceleration, you picked an instant where motion is starting or reversing: a car just as it pulls away, a swing at the top of its arc, a ball at the top of a throw."
+    - "For zero acceleration with velocity, you picked steady motion in a straight line: cruising at constant speed on a motorway, or a train between stations."
+    - "You said velocity is how fast position changes, and acceleration is how fast velocity changes, so one can be zero without the other."
+  solution: |
+    Zero velocity, non-zero acceleration: the instant a car starts moving from a red light, or a swing at its highest point. You are stationary for a moment, but your velocity is changing.
+
+    Zero acceleration, non-zero velocity: cruising at a steady 100 km/h on a straight road. You are moving fast, but nothing about your motion is changing, which is why it feels like sitting still.

@@ -1,10 +1,164 @@
 ---
 id: limits-intuition
-title: "Getting closer: limits"
-summary: "What a function is heading towards, even where it has no value."
+title: "Limits, intuitively"
+summary: "Where is a function heading as you close in on a point? The answer can exist even when the function has no value there."
 teaches: [limits-intuition]
 requires: [functions]
-status: coming-soon
+estimatedMinutes: 15
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Step kind="see" title="Getting close without arriving">
+
+Here is a function with a problem:
+
+$$
+f(x) = \frac{x^2 - 1}{x - 1}
+$$
+
+Put in $x = 1$ and you get $\frac{0}{0}$, which is not a number. The function
+simply has no value there.
+
+But nothing stops you asking about $x = 1.1$, or $x = 0.99$, or $x = 1.0001$.
+So ask. Close in on $x = 1$ from both sides and watch the values.
+
+<Interactive id="limit-explorer" props={{ cases: ["hole"] }} />
+
+From the left the values run $1.9$, $1.99$, $1.999$. From the right they run
+$2.1$, $2.01$, $2.001$. Both sides are closing in on $2$, and you can get as
+close to $2$ as you like by taking $x$ close enough to $1$.
+
+That target has a name: it is the **limit** of $f(x)$ as $x$ approaches $1$.
+
+<Callout kind="definition" title="The limit">
+
+We write
+
+$$
+\lim_{x \to a} f(x) = L
+$$
+
+and say "the limit of $f(x)$ as $x$ approaches $a$ is $L$" when $f(x)$ gets as
+close to $L$ as we like, provided $x$ is close enough to $a$ **without being
+equal to $a$**.
+
+</Callout>
+
+<Callout kind="insight" title="The limit never looks at the point itself">
+
+A limit is about the journey, not the destination. What $f$ does _at_ $a$ is
+irrelevant: it might have no value there, or a value somewhere unexpected.
+The limit only cares about the values nearby.
+
+</Callout>
+
+Sliding closer and closer is convincing, but algebra can settle it for good.
+
+<WorkedExample title="Why the limit is exactly 2">
+
+The top of the fraction factorises:
+
+$$
+\frac{x^2 - 1}{x - 1} = \frac{(x - 1)(x + 1)}{x - 1}
+$$
+
+For any $x$ other than $1$, the factor $x - 1$ is not zero and cancels,
+leaving
+
+$$
+f(x) = x + 1 \qquad (x \neq 1)
+$$
+
+So away from $x = 1$ this function _is_ the straight line $x + 1$, with a
+single point missing. As $x$ approaches $1$, the line approaches $1 + 1 = 2$:
+
+$$
+\lim_{x \to 1} \frac{x^2 - 1}{x - 1} = 2
+$$
+
+We never put $x = 1$ into the original fraction. We did not need to.
+
+</WorkedExample>
+
+Not every journey has a destination. Try these three, and for each one decide
+what goes wrong before you read the verdict.
+
+<Interactive
+  id="limit-explorer"
+  title="Three ways to have no limit"
+  props={{ cases: ["jump", "blow-up", "oscillating"] }}
+/>
+
+When the two sides disagree it helps to talk about them separately. The
+**left-hand limit** $\lim_{x \to a^-} f(x)$ uses only values of $x$ below $a$,
+and the **right-hand limit** $\lim_{x \to a^+} f(x)$ only values above. The
+limit exists exactly when both one-sided limits exist and are equal.
+
+</Step>
+
+<Step kind="do" title="Find some limits yourself">
+
+For a "nice" function with no gaps or jumps, the values head exactly where you
+would expect: to the value at the point. So the first limit here needs no
+cleverness at all.
+
+<Question id="calc.limits.plug-in" />
+
+The interesting ones are where plugging in gives $\frac{0}{0}$. A table of
+nearby values, or a bit of factorising, gets you there.
+
+<Question id="calc.limits.hole" />
+
+<Question id="calc.limits.factor" />
+
+<Question id="calc.limits.one-sided" />
+
+Some limits cannot be untangled with school algebra. This one matters
+enormously later on (it is the reason the derivative of $\sin x$ is $\cos x$),
+and you can find it just by looking. Here $x$ is in radians.
+
+<Interactive
+  id="limit-explorer"
+  title="A famous limit"
+  props={{ cases: ["sinc"] }}
+/>
+
+<Question id="calc.limits.sinc" />
+
+A computer can do the closing in for you. That makes it easy to investigate a
+limit you have never seen before.
+
+<CodeLab id="calc.limits.code-approach" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="calc.limits.meaning" />
+
+<Question id="calc.limits.which-fails" />
+
+<Question id="calc.limits.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Look back at the ramp from the last lesson. The average speed between $t = 2$
+and $t = 2 + h$ was
+
+$$
+\frac{(2 + h)^2 - 4}{h}
+$$
+
+At $h = 0$ that is $\frac{0}{0}$: the same trouble as the function on this
+page. But now you know the right question to ask. Not "what is it _at_
+$h = 0$?" but "what is its limit as $h$ approaches $0$?" The answer, $4$, is
+the ball's speed at the instant $t = 2$.
+
+A limit of average rates of change is called a **derivative**, and it is the
+central idea of this course. Before that, one short stop: the functions where
+limits hold no surprises at all are called **continuous**.
+
+<ConnectIt concepts={["continuity", "derivative-definition"]} />
+
+</Step>

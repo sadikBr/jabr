@@ -4,7 +4,157 @@ title: "Rates of change from data"
 summary: "Turn a table of measurements into speeds, and see why the interval you pick matters."
 teaches: [average-rate-of-change]
 requires: [functions, slope-of-a-line]
-status: coming-soon
+estimatedMinutes: 15
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Step kind="see" title="How fast is the fastest human?">
+
+In Berlin in 2009, Usain Bolt set a 100 m world record of 9.58 seconds. So how
+fast was he going?
+
+The obvious answer is distance divided by time: $100 \div 9.58 \approx 10.4$
+metres per second. But he started from a standstill, so he cannot have been
+doing 10.4 m/s the whole way. For part of the race he must have been going
+faster than that. How much faster?
+
+The timing system recorded the moment he passed each 10 m mark, so we can find
+out. Each dot below is one of those readings. Pick any two, and the line
+through them shows his **average speed** between them: the distance covered
+divided by the time taken.
+
+<Interactive
+  id="secant-explorer"
+  title="Find his top speed"
+  props={{
+    dataset: "sprint",
+    a: 0,
+    b: 9.58,
+    labels: "motion",
+    goal: { min: 12.3 },
+  }}
+/>
+
+You should have found it between 60 m and 70 m: ten metres in 0.81 seconds,
+which is about 12.3 m/s, or 44 km/h. That is well above his "average" of 10.4.
+
+What you just did has a name.
+
+<Callout kind="definition" title="Average rate of change">
+
+Between two inputs $a$ and $b$, the average rate of change of a function $f$ is
+
+$$
+\frac{\Delta y}{\Delta x} = \frac{f(b) - f(a)}{b - a}
+$$
+
+the change in the output divided by the change in the input. On a graph it is
+the slope of the straight line through the two points, called the **secant
+line**.
+
+</Callout>
+
+When the input is time and the output is distance, the average rate of change
+is an average speed. But the same calculation measures how fast _anything_
+changes: litres per minute draining from a tank, degrees per hour as a room
+warms up, euros per year in a savings account.
+
+<WorkedExample title="A speed from two rows of a table">
+
+Here are four of Bolt's readings.
+
+| Distance (m) | 20   | 50   | 70   | 100  |
+| ------------ | ---- | ---- | ---- | ---- |
+| Time (s)     | 2.88 | 5.47 | 7.10 | 9.58 |
+
+His average speed between the 20 m and 50 m marks was
+
+$$
+\frac{50 - 20}{5.47 - 2.88} = \frac{30}{2.59} \approx 11.6 \text{ m/s}
+$$
+
+Always subtract "later minus earlier" on both the top and the bottom, in the
+same order. The units come along for free: metres divided by seconds gives
+metres per second.
+
+</WorkedExample>
+
+<Callout kind="insight" title="An average hides what happens in between">
+
+The line across the whole race said 10.4 m/s. It told you nothing about the
+slow start or the peak in the middle. Shorter intervals reveal more.
+
+Keep one question in mind for later: what would the _shortest possible_
+interval tell you?
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Work out some rates yourself">
+
+Start with the number from the top of the page, then try a table that is
+different every time you ask for new numbers.
+
+<Question id="calc.rates.whole-race" />
+
+<Question id="calc.rates.table" />
+
+Rates of change can be negative. That simply means the quantity is going down.
+
+<Question id="calc.rates.ball" />
+
+The same idea works for a formula instead of a table. A ball rolls down a
+ramp, and after $t$ seconds it has travelled $s(t) = t^2$ metres. Leave the
+first point at $t = 2$ and bring the second one in towards it, a step at a
+time. Watch the average speed.
+
+<Interactive
+  id="secant-explorer"
+  title="Shrink the interval"
+  props={{
+    fn: "x^2",
+    domain: [0, 4],
+    a: 2,
+    b: 4,
+    units: { x: "s", y: "m" },
+    labels: "motion",
+  }}
+/>
+
+<Question id="calc.rates.shrinking" />
+
+Subtracting and dividing down a table gets tedious quickly, which makes it a
+good job for a computer.
+
+<CodeLab id="calc.rates.code-speeds" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="calc.rates.draining" />
+
+<Question id="calc.rates.same-average" />
+
+<Question id="calc.rates.steeper" />
+
+<Question id="calc.rates.speed-camera" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+On the ramp, the average speeds starting from $t = 2$ came out as 6, then 5,
+then 4.5, then 4.1 as the interval shrank. They are clearly heading somewhere.
+
+But you cannot simply shrink the interval to nothing: over zero seconds the
+ball covers zero metres, and $0 \div 0$ is meaningless. Asking where a
+sequence of values is _heading_, without ever arriving, is what **limits**
+are for. With limits in hand, the speed at a single instant finally makes
+sense. It is called the **derivative**.
+
+<ConnectIt
+  concepts={["limits-intuition", "derivative-definition", "velocity"]}
+/>
+
+</Step>

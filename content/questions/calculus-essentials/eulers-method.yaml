@@ -1,0 +1,224 @@
+- id: calc.euler.one-step
+  type: parametrised
+  concepts: [eulers-method]
+  params:
+    k: { choices: [2, 3] }
+    y0: { choices: [2, 4, 5] }
+    dt: { choices: [0.1, 0.2, 0.5] }
+  derived:
+    slope: "k * y0"
+  prompt: |
+    A quantity obeys $\dfrac{dy}{dt} = {k}y$ and starts at $y(0) = {y0}$. Use one step of Euler's method with $\Delta t = {dt}$ to estimate $y({dt})$.
+  answer: "y0 + k * y0 * dt"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "k * y0 * dt"
+      feedback: "That is how much $y$ changes during the step. Add it to the starting value, {y0}."
+    - answer: "y0 + k * y0"
+      feedback: "You added the slope itself. The change is slope × step: multiply by $\\Delta t = {dt}$."
+    - answer: "y0 + y0 * dt"
+      feedback: "Check the slope. The rule is $\\frac{dy}{dt} = {k}y$, so at $y = {y0}$ the slope is {slope}."
+  hints:
+    - "New value = old value + slope × step."
+    - "At the start, the slope is ${k} \\times {y0} = {slope}$."
+  solution: |
+    At the start $y = {y0}$, so the slope is ${k} \times {y0} = {slope}$. One step of size {dt}:
+
+    $$y({dt}) \approx {y0} + {slope} \times {dt}$$
+
+- id: calc.euler.two-steps
+  type: parametrised
+  concepts: [eulers-method]
+  params:
+    y0: { choices: [2, 4, 10] }
+    dt: { choices: [0.1, 0.2, 0.5] }
+  derived:
+    y1: "y0 * (1 + dt)"
+    t2: "2 * dt"
+  prompt: |
+    A colony grows according to $\dfrac{dy}{dt} = y$, starting from $y(0) = {y0}$. Use **two** steps of Euler's method with $\Delta t = {dt}$ to estimate $y({t2})$.
+  answer: "y0 * (1 + dt)^2"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "y0 * (1 + 2 * dt)"
+      feedback: "That uses the starting slope for both steps. After the first step $y$ has grown to {y1}, so the second step needs a new, steeper slope."
+    - answer: "y0 * (1 + dt)"
+      feedback: "That is where the first step lands, at $t = {dt}$. Take one more step from there."
+  hints:
+    - "First step: the slope is {y0}, so $y$ becomes ${y0} + {y0} \\times {dt} = {y1}$."
+    - "Second step: start from {y1}. The slope there is {y1}, not {y0}."
+  solution: |
+    **Step 1.** The slope is $y = {y0}$, so $y({dt}) \approx {y0} + {y0} \times {dt} = {y1}$.
+
+    **Step 2.** Now the slope is {y1}, so
+
+    $$y({t2}) \approx {y1} + {y1} \times {dt}$$
+
+    Each step multiplies $y$ by $1 + \Delta t$. That is compound interest, and it is no coincidence.
+
+- id: calc.euler.cooling-step
+  type: parametrised
+  concepts: [eulers-method]
+  params:
+    T0: { choices: [70, 80, 90] }
+    dt: { choices: [0.5, 1] }
+  derived:
+    excess: "T0 - 20"
+    slope: "-0.5 * (T0 - 20)"
+  prompt: |
+    The coffee obeys $\dfrac{dT}{dt} = -0.5\,(T - 20)$, with $T$ in °C and $t$ in minutes. It starts at {T0} °C. Use one step of Euler's method with $\Delta t = {dt}$ min to estimate its temperature {dt} min later.
+  answer: "T0 - 0.5 * (T0 - 20) * dt"
+  tolerance: { absolute: 0.01 }
+  unit: "°C"
+  commonMistakes:
+    - answer: "T0 + 0.5 * (T0 - 20) * dt"
+      feedback: "The coffee is cooling: the slope is negative, so the temperature goes down."
+    - answer: "T0 - 0.5 * T0 * dt"
+      feedback: "The rate depends on how far the coffee is above room temperature, $T - 20$, not on $T$ itself."
+  hints:
+    - "Work out the slope at the start: $-0.5 \\times ({T0} - 20)$."
+    - "The slope is {slope} °C per minute. New value = old value + slope × step."
+  solution: |
+    At the start the coffee is {excess} °C above the room, so the slope is $-0.5 \times {excess} = {slope}$ °C per minute. One step of {dt} min:
+
+    $$T \approx {T0} + ({slope}) \times {dt} \text{ °C}$$
+
+- id: calc.euler.halving
+  type: multiple-choice
+  concepts: [eulers-method]
+  prompt: "You run Euler's method with 100 steps and find it is off by 0.08. Roughly how far off would you expect it to be with 200 steps over the same interval?"
+  choices:
+    - id: half
+      text: "About 0.04"
+      correct: true
+    - id: quarter
+      text: "About 0.02"
+      feedback: "That would be a method whose error falls with the square of the step size. Such methods exist, but Euler's error only falls in proportion to the step."
+    - id: same
+      text: "About 0.08"
+      feedback: "More steps means smaller steps, and smaller steps give the slope less time to change. The error does shrink."
+    - id: zero
+      text: "Zero"
+      feedback: "The error shrinks as the steps get smaller, but it never quite reaches zero for a curve that bends."
+  hints:
+    - "Look back at the explorer: what happened to the error each time the number of steps doubled?"
+  solution: |
+    Doubling the number of steps halves the step size, and for Euler's method the error is roughly proportional to the step size. So expect about half the error: 0.04.
+
+    This is why Euler's method is called a _first-order_ method.
+
+- id: calc.euler.code-euler
+  type: code
+  concepts: [eulers-method]
+  prompt: |
+    Complete `euler` so that each pass through the loop moves `y` one step along the slope `f(t, y)`. The code below it then follows the colony, $\frac{dy}{dt} = y$, and plots your result against the exact answer. Once it works, change `steps` and run it again.
+  starter: |
+    import math
+    import matplotlib.pyplot as plt
+
+    def euler(f, y0, dt, steps):
+        """Follow dy/dt = f(t, y) from y(0) = y0. Returns every value of y, starting with y0."""
+        t, y = 0, y0
+        ys = [y0]
+        for _ in range(steps):
+            # Replace the next line: new value = old value + slope * step.
+            y = y
+            t = t + dt
+            ys.append(y)
+        return ys
+
+    steps = 8
+    dt = 2 / steps
+    ys = euler(lambda t, y: y, 1, dt, steps)
+    print(f"Euler: y(2) = {ys[-1]:.4f}   exact: {math.exp(2):.4f}")
+
+    ts = [i * dt for i in range(steps + 1)]
+    smooth = [i / 50 for i in range(101)]
+    plt.plot(smooth, [math.exp(t) for t in smooth], label="exact")
+    plt.plot(ts, ys, "o-", label="Euler")
+    plt.xlabel("t")
+    plt.legend()
+    plt.show()
+  tests: |
+    def test_starts_at_y0_with_one_value_per_step():
+        ys = euler(lambda t, y: 0, 5, 0.1, 10)
+        assert ys[0] == 5 and len(ys) == 11, "Ten steps should give eleven values, starting with y0."
+
+    def test_a_constant_slope_gives_a_straight_line():
+        ys = euler(lambda t, y: 2, 1, 0.5, 4)
+        assert all(abs(a - b) < 1e-9 for a, b in zip(ys, [1, 2, 3, 4, 5])), "With a slope of 2 and steps of 0.5, y should rise by 1 each step."
+
+    def test_the_worked_example():
+        ys = euler(lambda t, y: y, 1, 0.5, 4)
+        assert abs(ys[-1] - 5.0625) < 1e-9, "Four steps of 0.5 on dy/dt = y should end at 5.0625, as in the worked example."
+
+    def test_the_slope_can_depend_on_time():
+        ys = euler(lambda t, y: 2 * t, 0, 1, 3)
+        assert all(abs(a - b) < 1e-9 for a, b in zip(ys, [0, 0, 2, 6])), "For dy/dt = 2t with steps of 1, y should go 0, 0, 2, 6. Use the slope at the start of each step."
+  hints:
+    - "The slope at the current point is `f(t, y)`."
+    - "`y = y + f(t, y) * dt`"
+  solution: |
+    One line does the work:
+
+    `y = y + f(t, y) * dt`
+
+    With 8 steps the colony reaches 5.96 instead of the exact 7.39. Try `steps = 80` and then `steps = 800`: the path closes in on the curve, and each tenfold increase in steps cuts the error roughly tenfold.
+
+- id: calc.euler.why-below
+  type: multiple-choice
+  concepts: [eulers-method, tangent-line]
+  prompt: |
+    For $\dfrac{dy}{dt} = y$, Euler's method always ends up **below** the true curve. Why?
+  choices:
+    - id: stale
+      text: "Each step uses the slope from its start, but the true slope keeps increasing during the step"
+      correct: true
+    - id: rounding
+      text: "The computer rounds every number down"
+      feedback: "Rounding errors are millions of times smaller than this gap. The same thing happens when you do the steps by hand with exact fractions."
+    - id: always
+      text: "Euler's method always underestimates, whatever the equation"
+      feedback: "Not always. For the cooling coffee it lands below the true curve too, but for a curve that bends the other way it would land above."
+    - id: wrong-start
+      text: "It starts from the wrong value"
+      feedback: "It starts from exactly the right value, $y(0) = 1$. The gap opens up afterwards."
+  hints:
+    - "A tangent line to a curve that bends upwards lies below the curve."
+  solution: |
+    Within each step Euler's method follows a straight line with the slope from the start of the step. But $y$ is growing, so the true slope $\frac{dy}{dt} = y$ grows during the step as well, and the true curve pulls away above the line. The shortfall from each step carries into the next.
+
+- id: calc.euler.trade-off
+  type: multiple-choice
+  concepts: [eulers-method]
+  prompt: "A simulation uses Euler's method. What happens if you make the time step ten times smaller?"
+  choices:
+    - id: both
+      text: "It becomes more accurate, but needs ten times as many steps to cover the same time"
+      correct: true
+    - id: free
+      text: "It becomes more accurate at no extra cost"
+      feedback: "Each step covers a tenth of the time, so reaching the same moment takes ten times as many steps and ten times the computing."
+    - id: worse
+      text: "It becomes less accurate, because errors pile up over more steps"
+      feedback: "There are more steps, but each one's error shrinks much faster than the number of steps grows. Overall the result improves."
+    - id: nothing
+      text: "Nothing changes, as long as the total time is the same"
+      feedback: "The step size is exactly what controls the error. Smaller steps follow the curve more closely."
+  hints:
+    - "Think about the explorer: what did more steps do to the error, and what did they cost?"
+  solution: |
+    Smaller steps track the true curve more closely, so the error falls (by about ten times, for Euler's method). The price is ten times as many steps for the same stretch of time. Choosing a step size is always a trade between accuracy and work.
+
+- id: calc.euler.game
+  type: self-check
+  concepts: [eulers-method, velocity]
+  prompt: "Sixty times a second, a video game runs the line `position = position + velocity * dt` for every moving object. Explain why this is Euler's method. What plays the role of the slope, and what is `dt`?"
+  rubric:
+    - "You said velocity is the rate of change of position, so it is the slope in the update."
+    - "You said `dt` is the time step: the time between one frame and the next, here one sixtieth of a second."
+    - "You said the update assumes the velocity stays the same during the frame, which is the straight-line prediction: new value = old value + slope × step."
+  solution: |
+    Velocity is the derivative of position, so `velocity` is the slope and the line is exactly "new value = old value + slope × step". The step `dt` is the time between frames, $\frac{1}{60}$ of a second.
+
+    The game is assuming each object keeps its current velocity for the whole frame. That is not quite true, but over a sixtieth of a second it is close enough that you never notice.

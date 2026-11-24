@@ -4,7 +4,7 @@ import { evaluateAnswer } from "@/lib/content/parametrised";
 import { content } from "@/lib/content/source";
 import type { Question } from "@/lib/content/types";
 import type { QuestionResponse } from "@/lib/grading/grade";
-import { defaultSeed, pickParams } from "@/lib/grading/params";
+import { defaultSeed, pickParams, questionValues } from "@/lib/grading/params";
 
 import { checkAnswer, getQuestionVariant, revealSolution } from "./actions";
 
@@ -27,7 +27,7 @@ function correctResponse(
       return {
         type: "text",
         value: String(
-          evaluateAnswer(question.answer, pickParams(question.params, seed)),
+          evaluateAnswer(question.answer, questionValues(question, seed)),
         ),
       };
     case "expression":

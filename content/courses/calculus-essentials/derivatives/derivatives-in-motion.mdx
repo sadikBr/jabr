@@ -4,7 +4,160 @@ title: "Derivatives in motion"
 summary: "From position to velocity to acceleration, one derivative at a time."
 teaches: [velocity, acceleration]
 requires: [derivative-definition, power-rule]
-status: coming-soon
+estimatedMinutes: 20
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Step kind="see" title="Throw a ball straight up">
+
+Throw a ball straight up and catch it again. Three questions describe its
+flight at any moment: _where_ is it, _how fast_ is it moving, and how quickly
+is that speed _changing_?
+
+Each question has its own graph, and the three graphs are tied together by
+derivatives. Throw the ball, then drag through time and watch all three at
+once. On the top graph, the short amber line is the tangent.
+
+<Interactive
+  id="motion-graphs"
+  title="One throw, three graphs"
+  props={{ speed: 15, goal: "peak" }}
+/>
+
+Watch the tangent on the height graph as you drag. Its slope starts steep and
+positive (the ball is rising fast), flattens to zero at the top, then turns
+negative (the ball is falling). That slope, at each moment, is exactly the
+number on the second graph.
+
+<Callout kind="definition" title="Velocity">
+
+**Velocity** is the derivative of position with respect to time:
+
+$$
+v(t) = \frac{ds}{dt}
+$$
+
+Its sign gives the direction: positive means moving in the positive direction
+(here, up), negative means the other way. **Speed** is the size of the
+velocity, ignoring the sign.
+
+</Callout>
+
+The velocity graph is a straight line sloping downwards, and a straight line
+has the same slope everywhere. So the velocity is changing at a constant rate,
+which is what the third graph shows.
+
+<Callout kind="definition" title="Acceleration">
+
+**Acceleration** is the derivative of velocity with respect to time, which
+makes it the _second_ derivative of position:
+
+$$
+a(t) = \frac{dv}{dt} = \frac{d^2s}{dt^2}
+$$
+
+</Callout>
+
+For the ball, the rules from the last lesson give all three at once. Thrown
+upwards at $15$ m/s from the ground, its height in metres after $t$ seconds is
+
+$$
+h(t) = 15t - 4.9t^2
+$$
+
+Differentiate once for the velocity, and once more for the acceleration:
+
+$$
+v(t) = 15 - 9.8t \qquad\qquad a(t) = -9.8
+$$
+
+That constant $-9.8$ m/s² is gravity. It is the same on the way up, at the
+top, and on the way down.
+
+<Callout kind="insight" title="Zero velocity is not zero acceleration">
+
+At the top of its flight the ball is not moving: $v = 0$. But its velocity is
+still _changing_, from just above zero to just below it. If the acceleration
+were zero there too, the ball would simply hang in the air.
+
+</Callout>
+
+<WorkedExample title="A particle that turns around">
+
+A particle moves along a line. Its position in metres after $t$ seconds is
+$s(t) = t^3 - 6t^2 + 9t$. When is it at rest, and when is it moving backwards?
+
+Differentiate to get the velocity:
+
+$$
+v(t) = 3t^2 - 12t + 9 = 3(t - 1)(t - 3)
+$$
+
+It is at rest when $v = 0$, at $t = 1$ and $t = 3$. Between those times one
+bracket is positive and the other negative, so $v$ is negative: the particle
+is moving backwards from $t = 1$ to $t = 3$, and forwards otherwise.
+
+Differentiate again for the acceleration: $a(t) = 6t - 12$. At $t = 1$ that
+is $-6$ m/s², so although the particle has stopped, it is about to move
+backwards.
+
+</WorkedExample>
+
+</Step>
+
+<Step kind="do" title="From position to velocity and beyond">
+
+Start with one position function and take it down two levels.
+
+<Question id="calc.motion.velocity-expression" />
+
+<Question id="calc.motion.acceleration-expression" />
+
+<Question id="calc.motion.velocity-at" />
+
+Now back to the ball. The top of the flight is the moment the velocity is
+zero, and that is enough to find out when it happens and how high the ball
+gets.
+
+<Question id="calc.motion.peak-time" />
+
+<Question id="calc.motion.peak-height" />
+
+Formulas are a luxury. In an experiment you have measurements instead. But the
+idea still works: the rate of change of the positions gives velocities, and
+the rate of change of _those_ gives accelerations. Here you will measure
+gravity from a few frames of video.
+
+<CodeLab id="calc.motion.code-gravity" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="calc.motion.at-the-top" />
+
+<Question id="calc.motion.speeding-up" />
+
+<Question id="calc.motion.straight-line" />
+
+<Question id="calc.motion.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+You have just gone _down_ the ladder: from position, to velocity, to
+acceleration. Physics usually hands you the ladder from the other end.
+
+Newton's second law says the forces on an object decide its acceleration.
+From there you have to climb back _up_: from acceleration to velocity, and
+from velocity to position. Undoing a derivative is the job of integration, or,
+when no formula will do, of stepping forwards a little at a time with Euler's
+method. That is exactly what a flight simulator does.
+
+<ConnectIt
+  concepts={["newtons-second-law", "free-fall", "eulers-method"]}
+  explainers={["why-do-a-hammer-and-a-feather-fall-at-the-same-rate"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Step>

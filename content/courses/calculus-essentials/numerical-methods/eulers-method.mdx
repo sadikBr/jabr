@@ -4,7 +4,166 @@ title: "Euler's method"
 summary: "Predict the future one small step at a time — the idea behind every physics simulation."
 teaches: [eulers-method]
 requires: [derivative-definition, tangent-line]
-status: coming-soon
+estimatedMinutes: 20
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Step kind="see" title="Follow the slope">
+
+So far you have started with a function and found its derivative. The world
+usually sets the opposite problem: you know how fast something is _changing_,
+and you want to know what it will _be_.
+
+A colony of bacteria is a good example. The more bacteria there are, the
+faster the colony grows. In the simplest version, its rate of growth equals
+its size:
+
+$$
+\frac{dy}{dt} = y
+$$
+
+Suppose the colony starts at $y = 1$ (thousand, say). What is $y$ two hours
+later? Nobody has handed you a formula for $y$. All you have is a rule for its
+slope.
+
+But you already own a tool that turns a slope into a prediction. Near any
+point, a curve is close to its tangent line:
+
+$$
+y(t + \Delta t) \approx y(t) + y'(t)\,\Delta t
+$$
+
+So take a small step along the tangent. You land at a new point, where the
+rule gives you a new slope. Step again. And again.
+
+That is the whole method. Below, the purple curve is the true answer and the
+amber path is what stepping along tangents gives. Start with a few big steps,
+then add more.
+
+<Interactive
+  id="euler-stepper"
+  title="Step along the slope"
+  props={{ problem: "growth", steps: 4, goal: { maxError: 0.5 } }}
+/>
+
+<Callout kind="definition" title="Euler's method">
+
+To follow $\dfrac{dy}{dt} = f(t, y)$ from a known starting point $(t_0, y_0)$,
+choose a step size $\Delta t$ and repeat:
+
+$$
+y_{n+1} = y_n + f(t_n, y_n)\,\Delta t \qquad\qquad t_{n+1} = t_n + \Delta t
+$$
+
+In words: new value = old value + slope × step.
+
+</Callout>
+
+<WorkedExample title="Four steps by hand">
+
+Take $\dfrac{dy}{dt} = y$ from $y(0) = 1$ to $t = 2$ in four steps, so
+$\Delta t = 0.5$. Here the slope is simply the current value of $y$.
+
+| Step | $t$   | $y$     | Slope   | $y + \text{slope} \times 0.5$ |
+| ---- | ----- | ------- | ------- | ----------------------------- |
+| 1    | $0$   | $1$     | $1$     | $1.5$                         |
+| 2    | $0.5$ | $1.5$   | $1.5$   | $2.25$                        |
+| 3    | $1$   | $2.25$  | $2.25$  | $3.375$                       |
+| 4    | $1.5$ | $3.375$ | $3.375$ | $5.0625$                      |
+
+Euler's method says $y(2) \approx 5.06$. The true answer is $e^2 \approx 7.39$,
+so four steps leave us short by about $2.3$.
+
+</WorkedExample>
+
+<Callout kind="insight" title="Why it falls behind, and how to fix it">
+
+Each step uses the slope at the _start_ of the step and pretends it stays the
+same until the end. But the colony keeps growing during the step, so the true
+slope keeps rising, and the straight-line prediction falls behind.
+
+Smaller steps give the slope less time to go stale. In the explorer, 16 steps
+were off by about $0.8$, 32 steps by $0.43$ and 64 steps by $0.22$. Each time
+you halve the step size, you roughly halve the error.
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Take some steps yourself">
+
+One step first, then two. The second step is where people slip: it needs a
+_new_ slope, worked out at the point where the first step landed.
+
+<Question id="calc.euler.one-step" />
+
+<Question id="calc.euler.two-steps" />
+
+A cup of coffee cools quickly at first and then more slowly, because the rate
+of cooling depends on how much hotter it is than the room. For a room at
+20 °C, with time in minutes:
+
+$$
+\frac{dT}{dt} = -0.5\,(T - 20)
+$$
+
+<Question id="calc.euler.cooling-step" />
+
+Now let the explorer do the arithmetic, over eight minutes of cooling. Before
+you chase the goal, try just one, two and three steps and look at where the
+coffee ends up.
+
+<Interactive
+  id="euler-stepper"
+  title="Cool a cup of coffee"
+  props={{ problem: "cooling", steps: 8, goal: { maxError: 0.3 } }}
+/>
+
+One giant step sends the coffee to $-190$ °C. Steps that are too big do not
+just lose accuracy: they can produce nonsense. Every simulation has to choose
+a step small enough to stay stable.
+
+<Question id="calc.euler.halving" />
+
+The method is a loop, so it belongs in code. Write it once, in a general
+form, and you can follow _any_ rate-of-change rule.
+
+<CodeLab id="calc.euler.code-euler" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="calc.euler.why-below" />
+
+<Question id="calc.euler.trade-off" />
+
+<Question id="calc.euler.game" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+You now have the engine of every physics simulation. A game or a flight
+simulator keeps track of where each object is and how fast it is moving. Many
+times a second it works out the forces, turns them into an acceleration, and
+takes one Euler step:
+
+$$
+v \leftarrow v + a\,\Delta t \qquad\qquad x \leftarrow x + v\,\Delta t
+$$
+
+Nothing else is needed. No formula for the path has to exist, which is just as
+well, because once air drag or a burning rocket engine is involved, none does.
+
+Time to build one.
+
+<ConnectIt
+  concepts={["newtons-second-law", "air-drag"]}
+  explainers={[
+    "how-do-video-games-simulate-physics",
+    "why-do-a-hammer-and-a-feather-fall-at-the-same-rate",
+  ]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Step>

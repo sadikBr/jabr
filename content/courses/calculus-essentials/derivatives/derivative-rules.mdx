@@ -1,10 +1,246 @@
 ---
 id: derivative-rules
 title: "Derivative rules"
-summary: "Power, sum, product and chain: four rules that differentiate almost anything."
+summary: "Spot the patterns that let you differentiate almost anything in one line: powers, sums, products and chains."
 teaches: [power-rule, sum-rule, product-rule, chain-rule]
 requires: [derivative-definition]
-status: coming-soon
+estimatedMinutes: 30
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Step kind="see" title="Trace a derivative, spot a pattern">
+
+You found the derivative of $x^2$ from the definition: expand, cancel, take
+the limit. It works, but doing that for every function would be slow.
+Fortunately, derivatives follow patterns.
+
+Remember that a derivative is itself a function: it gives the slope at
+_every_ point. So you can draw it. Slide the point along the curve below and
+the slope at each position is plotted underneath. Sweep the whole curve to
+trace out its derivative, then try the other functions.
+
+<Interactive id="derivative-explorer" title="Draw the derivative" />
+
+The slopes of $x^2$ traced a straight line, $2x$. The slopes of $x^3$ traced a
+parabola, $3x^2$. Put them in a row, along with a couple more that the
+definition gives:
+
+| Function   | $x^2$ | $x^3$  | $x^4$  | $x^5$  |
+| ---------- | ----- | ------ | ------ | ------ |
+| Derivative | $2x$  | $3x^2$ | $4x^3$ | $5x^4$ |
+
+Each time, the power comes down in front and the power itself drops by one.
+
+<Callout kind="definition" title="The power rule">
+
+$$
+\frac{d}{dx}\, x^n = n\,x^{n-1}
+$$
+
+It works for every power, not just whole numbers. Since $\frac{1}{x} = x^{-1}$
+and $\sqrt{x} = x^{1/2}$,
+
+$$
+\frac{d}{dx}\,\frac{1}{x} = -x^{-2} = -\frac{1}{x^2}
+\qquad\qquad
+\frac{d}{dx}\,\sqrt{x} = \tfrac{1}{2}\,x^{-1/2} = \frac{1}{2\sqrt{x}}
+$$
+
+</Callout>
+
+The notation $\frac{d}{dx}$ just means "the derivative of what follows, with
+respect to $x$". It says the same thing as the dash in $f'(x)$.
+
+<Question id="calc.rules.power-slope" />
+
+Most functions are built from several pieces. Two facts deal with the
+simplest ways of combining them, and both are what you would hope.
+
+<Callout kind="definition" title="Constants and sums">
+
+A constant multiple stays where it is, and a sum is differentiated one term
+at a time:
+
+$$
+\frac{d}{dx}\,\big[c\,f(x)\big] = c\,f'(x)
+\qquad\qquad
+\frac{d}{dx}\,\big[f(x) + g(x)\big] = f'(x) + g'(x)
+$$
+
+A constant on its own has derivative $0$: its graph is flat.
+
+</Callout>
+
+<WorkedExample title="A whole polynomial in one line">
+
+To differentiate $3x^4 - 5x + 7$, take the terms one at a time.
+
+- $3x^4$ becomes $3 \cdot 4x^3 = 12x^3$
+- $-5x$ becomes $-5$, because $x = x^1$ has derivative $1 \cdot x^0 = 1$
+- $7$ becomes $0$
+
+So
+
+$$
+\frac{d}{dx}\,\big(3x^4 - 5x + 7\big) = 12x^3 - 5
+$$
+
+</WorkedExample>
+
+<Question id="calc.rules.polynomial" />
+
+<Question id="calc.rules.negative-power" />
+
+</Step>
+
+<Step kind="see" title="Products and chains">
+
+Sums were easy. Products are where intuition goes wrong.
+
+It is tempting to guess that the derivative of a product is the product of the
+derivatives. Test the guess on $x \cdot x$. Each factor has derivative $1$, so
+the guess gives $1 \cdot 1 = 1$. But $x \cdot x = x^2$, whose derivative is
+$2x$. The guess is wrong.
+
+Here is what really happens. Think of $f \cdot g$ as the area of a rectangle
+with sides $f$ and $g$. When $x$ changes a little, both sides grow. The area
+gains a strip along one side, of size (change in $f$) $\times\, g$, and a
+strip along the other, of size $f \times$ (change in $g$). There is also a
+tiny corner piece, but it is a small change times a small change, and it
+vanishes in the limit.
+
+<Callout kind="definition" title="The product rule">
+
+$$
+\frac{d}{dx}\,\big[f(x)\,g(x)\big] = f'(x)\,g(x) + f(x)\,g'(x)
+$$
+
+Differentiate each factor in turn, leaving the other alone, and add.
+
+</Callout>
+
+<WorkedExample title="Checking the product rule against the power rule">
+
+Take $x^2 \cdot x^3$. With $f = x^2$ and $g = x^3$:
+
+$$
+f'g + fg' = 2x \cdot x^3 + x^2 \cdot 3x^2 = 2x^4 + 3x^4 = 5x^4
+$$
+
+And since $x^2 \cdot x^3 = x^5$, the power rule gives $5x^4$ directly. They
+agree, as they must.
+
+</WorkedExample>
+
+The explorer above showed one more derivative worth remembering, and two
+relatives come with it:
+
+$$
+\frac{d}{dx}\,\sin x = \cos x
+\qquad
+\frac{d}{dx}\,\cos x = -\sin x
+\qquad
+\frac{d}{dx}\,e^x = e^x
+$$
+
+With those you can try a product that cannot be multiplied out.
+
+<Question id="calc.rules.product" />
+
+The last rule handles a function _inside_ another function, like
+$(3x + 1)^4$ or $\sin(x^2)$. The idea behind it is that **rates multiply**.
+
+Picture three gears. If the second turns twice as fast as the first, and the
+third turns three times as fast as the second, then the third turns
+$2 \times 3 = 6$ times as fast as the first.
+
+<Question id="calc.rules.rates-multiply" />
+
+<Callout kind="definition" title="The chain rule">
+
+If $y$ depends on $u$, and $u$ depends on $x$, then
+
+$$
+\frac{dy}{dx} = \frac{dy}{du} \cdot \frac{du}{dx}
+$$
+
+In function notation: $\dfrac{d}{dx}\, f\big(g(x)\big) = f'\big(g(x)\big) \cdot g'(x)$.
+
+Differentiate the outside, leaving the inside alone, then multiply by the
+derivative of the inside.
+
+</Callout>
+
+<WorkedExample title="A function inside a function">
+
+Take $y = (3x + 1)^2$. The inside is $u = 3x + 1$ and the outside is $u^2$.
+
+- Outside: $u^2$ has derivative $2u = 2(3x + 1)$
+- Inside: $3x + 1$ has derivative $3$
+
+Multiply:
+
+$$
+\frac{dy}{dx} = 2(3x + 1) \cdot 3 = 6(3x + 1) = 18x + 6
+$$
+
+You can check this one by multiplying out first: $(3x + 1)^2 = 9x^2 + 6x + 1$,
+which has derivative $18x + 6$.
+
+</WorkedExample>
+
+<Callout kind="warning" title="The mistake everyone makes once">
+
+Forgetting to multiply by the derivative of the inside. The derivative of
+$(3x + 1)^2$ is **not** $2(3x + 1)$. The inside is changing three times as
+fast as $x$, and the answer has to say so.
+
+</Callout>
+
+<Question id="calc.rules.chain" />
+
+</Step>
+
+<Step kind="do" title="Mix the rules">
+
+Real functions rarely announce which rule they need. Decide first, then
+differentiate.
+
+<Question id="calc.rules.chain-trig" />
+
+<Question id="calc.rules.tangent-slope" />
+
+How do you know you got a derivative right? Ask the definition. A computer can
+measure the slope of a function directly, without knowing any rules, and
+compare it with your formula. Working engineers check their algebra this way
+all the time.
+
+<CodeLab id="calc.rules.code-check" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="calc.rules.product-trap" />
+
+<Question id="calc.rules.which-rule" />
+
+<Question id="calc.rules.explain-chain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+With these four rules and a short list of known derivatives, you can
+differentiate any formula built from powers, sines, cosines and exponentials.
+No limits needed. That is what makes calculus practical.
+
+The first place to use them is motion. If you have a formula for where
+something is, one derivative tells you how fast it is moving, and a second
+tells you how quickly that is changing.
+
+<ConnectIt
+  concepts={["velocity", "acceleration"]}
+  projects={["tangent-line-explorer"]}
+/>
+
+</Step>

@@ -1,0 +1,216 @@
+- id: calc.cont.classify
+  type: multiple-choice
+  concepts: [continuity, limits-intuition]
+  prompt: |
+    Is $f(x) = \dfrac{x^2 - 4}{x - 2}$ continuous at $x = 2$?
+  choices:
+    - id: undefined
+      text: "No, because $f(2)$ is not defined"
+      correct: true
+    - id: limit-exists
+      text: "Yes, because the limit at $x = 2$ exists"
+      feedback: "The limit does exist (it is $4$), but that is only one of the three tests. The function also needs a value there."
+    - id: no-limit
+      text: "No, because the limit at $x = 2$ does not exist"
+      feedback: "The limit does exist: for $x \\neq 2$ the function equals $x + 2$, which approaches $4$. Something else is missing."
+    - id: cancel
+      text: "Yes, because it simplifies to $x + 2$"
+      feedback: "It simplifies to $x + 2$ only for $x \\neq 2$. At $x = 2$ itself the original formula gives $\\frac{0}{0}$."
+  hints:
+    - "Go through the three tests in order. Start with: what is $f(2)$?"
+  solution: |
+    Putting $x = 2$ into the formula gives $\frac{0}{0}$, so $f(2)$ is not defined and the first test fails. The graph is the line $x + 2$ with a hole at $x = 2$.
+
+    The limit there is $4$, so defining $f(2) = 4$ would fill the hole and make the function continuous.
+
+- id: calc.cont.patch
+  type: parametrised
+  concepts: [continuity]
+  params:
+    a: { choices: [1, 2, 3] }
+    m: { choices: [2, 3, 4, 5] }
+  derived:
+    a2: "a^2"
+    ma: "m * a"
+  prompt: |
+    A function is defined in two pieces:
+
+    $$f(x) = \begin{cases} x^2 & x \le {a} \\ {m}x + k & x > {a} \end{cases}$$
+
+    What value of $k$ makes $f$ continuous at $x = {a}$?
+  answer: "a^2 - m * a"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "a^2"
+      feedback: "That is the height the two pieces must meet at. Now find the $k$ that makes ${m}x + k$ equal to it at $x = {a}$."
+    - answer: "m * a - a^2"
+      feedback: "Check the sign. You need ${ma} + k = {a2}$, so $k = {a2} - {ma}$."
+  hints:
+    - "For continuity the two pieces must meet: the left-hand and right-hand limits at $x = {a}$ must be equal."
+    - "From the left, $x^2$ approaches {a2}. From the right, ${m}x + k$ approaches ${ma} + k$."
+  solution: |
+    From the left, $x^2$ approaches ${a}^2 = {a2}$, which is also the value $f({a})$. From the right, ${m}x + k$ approaches ${ma} + k$.
+
+    For the function to be continuous these must be equal:
+
+    $${ma} + k = {a2} \quad\Rightarrow\quad k = {a2} - {ma}$$
+
+- id: calc.cont.ivt
+  type: multiple-choice
+  concepts: [continuity]
+  prompt: "A function $f$ is continuous, with $f(1) = -3$ and $f(2) = 4$. What can you be sure of?"
+  choices:
+    - id: at-least-one
+      text: "$f(x) = 0$ for at least one $x$ between $1$ and $2$"
+      correct: true
+    - id: exactly-one
+      text: "$f(x) = 0$ for exactly one $x$ between $1$ and $2$"
+      feedback: "There must be one, but there could be more. The graph is free to wiggle across the axis three times, or five."
+    - id: increasing
+      text: "$f$ is increasing all the way from $1$ to $2$"
+      feedback: "It ends higher than it starts, but it could go up and down on the way."
+    - id: nothing
+      text: "Nothing, without knowing the formula for $f$"
+      feedback: "Continuity is enough. To get from $-3$ to $4$ without a jump, the function must pass through every value in between."
+  hints:
+    - "Is $0$ between $-3$ and $4$? What does the intermediate value theorem say about such values?"
+  solution: |
+    $0$ lies between $f(1) = -3$ and $f(2) = 4$, and $f$ is continuous, so by the intermediate value theorem $f$ takes the value $0$ somewhere between $1$ and $2$. The theorem promises at least one such point. It does not say there is only one.
+
+- id: calc.cont.ivt-fails
+  type: multiple-choice
+  concepts: [continuity]
+  prompt: |
+    For $g(x) = \dfrac{1}{x}$ we have $g(-1) = -1$ and $g(1) = 1$: one negative, one positive. Yet $g(x)$ is never $0$. Why does the intermediate value theorem not apply?
+  choices:
+    - id: not-continuous
+      text: "$g$ is not continuous on the whole interval from $-1$ to $1$: it has no value at $x = 0$"
+      correct: true
+    - id: too-small
+      text: "The interval from $-1$ to $1$ is too short"
+      feedback: "The length of the interval does not matter. What matters is whether the function is continuous across all of it."
+    - id: not-polynomial
+      text: "The theorem only works for polynomials"
+      feedback: "It works for any continuous function: sines, exponentials, anything, as long as there are no breaks in the interval."
+    - id: symmetric
+      text: "The values $-1$ and $1$ are the same size"
+      feedback: "The sizes of the values make no difference. Look at what the function does in the middle of the interval."
+  hints:
+    - "The theorem has one condition. Check it at every point between $-1$ and $1$."
+  solution: |
+    The theorem needs $f$ to be continuous on the whole interval. $\frac{1}{x}$ is not defined at $x = 0$, and near there it shoots off to huge negative values on one side and huge positive values on the other. It gets from negative to positive by breaking, not by crossing zero.
+
+    This is why bisection insists on a continuous function.
+
+- id: calc.cont.code-bisect
+  type: code
+  concepts: [continuity]
+  prompt: |
+    Complete `bisect`. It is given a continuous function and two points, `lo` and `hi`, where the function has opposite signs. On each pass it should test the midpoint and keep the half where the sign still changes. Then run it to find the root of $x^3 - x - 2$ from the worked example.
+  starter: |
+    def bisect(f, lo, hi, tolerance=1e-6):
+        """A root of f between lo and hi, where f(lo) and f(hi) have opposite signs."""
+        while hi - lo > tolerance:
+            mid = (lo + hi) / 2
+            # Replace the next two lines. If the sign changes between lo and
+            # mid, the root is in the left half; otherwise it is in the right.
+            lo = mid
+            hi = mid
+        return (lo + hi) / 2
+
+    def f(x):
+        return x**3 - x - 2
+
+    root = bisect(f, 1, 2)
+    print(f"root is about {root:.5f}")
+    print(f"f(root) = {f(root):.2e}")
+  tests: |
+    def test_square_root_of_two():
+        root = bisect(lambda x: x * x - 2, 1, 2)
+        assert abs(root - 2 ** 0.5) < 1e-5, "The root of x² - 2 between 1 and 2 is √2, about 1.41421."
+
+    def test_the_worked_example():
+        root = bisect(lambda x: x**3 - x - 2, 1, 2)
+        assert abs(root - 1.5213797) < 1e-5, "The root of x³ - x - 2 between 1 and 2 is about 1.52138."
+
+    def test_a_function_that_goes_downhill():
+        root = bisect(lambda x: 1 - x, 0, 3)
+        assert abs(root - 1) < 1e-5, "For 1 - x, which goes from positive to negative, the root is 1. Compare signs rather than assuming the function increases."
+
+    def test_stops_at_the_tolerance():
+        root = bisect(lambda x: x - 0.3, 0, 1, 0.1)
+        assert abs(root - 0.3) <= 0.05 + 1e-12, "With a tolerance of 0.1 the answer should be within 0.05 of the true root."
+  hints:
+    - "Two numbers have opposite signs exactly when their product is negative."
+    - "If `f(lo) * f(mid) <= 0`, the sign changes in the left half, so move `hi` to `mid`. Otherwise move `lo` to `mid`."
+  solution: |
+    Keep whichever half still has a sign change:
+
+    `if f(lo) * f(mid) <= 0:`
+    `    hi = mid`
+    `else:`
+    `    lo = mid`
+
+    Each pass halves the interval, so twenty passes shrink it a million times. The root comes out as $1.52138$, and $f$ there is as close to zero as the tolerance allows.
+
+- id: calc.cont.everywhere
+  type: multiple-choice
+  multiple: true
+  concepts: [continuity]
+  prompt: "Which of these functions are continuous at every real number $x$? Select all that apply."
+  choices:
+    - id: polynomial
+      text: "$x^3 - 2x$"
+      correct: true
+    - id: absolute
+      text: "$|x|$"
+      correct: true
+    - id: reciprocal
+      text: "$\\dfrac{1}{x}$"
+      feedback: "It has no value at $x = 0$, so it cannot be continuous there."
+    - id: step
+      text: "The function that is $0$ for $x < 0$ and $1$ for $x \\ge 0$"
+      feedback: "It jumps from $0$ to $1$ at $x = 0$. The two one-sided limits disagree."
+  hints:
+    - "Look for places where a formula breaks down, or where a graph would force you to lift your pen."
+    - "A sharp corner is not a break. Can you draw $|x|$ in one stroke?"
+  solution: |
+    Polynomials are continuous everywhere. So is $|x|$: it has a sharp corner at $0$, but no gap or jump, and its limit there equals its value, $0$.
+
+    $\frac{1}{x}$ breaks at $x = 0$, where it is undefined, and the step function jumps there.
+
+- id: calc.cont.nearly
+  type: multiple-choice
+  concepts: [continuity, limits-intuition]
+  prompt: |
+    You know that $\lim_{x \to 3} f(x) = 5$ and that $f(3) = 5.2$. Is $f$ continuous at $x = 3$?
+  choices:
+    - id: no
+      text: "No: the limit and the value are different"
+      correct: true
+    - id: yes-close
+      text: "Yes: they are close enough"
+      feedback: "Continuity needs the limit and the value to be exactly equal. A point lifted $0.2$ off the curve is still a break."
+    - id: yes-both
+      text: "Yes: the limit exists and the function is defined there"
+      feedback: "Those are the first two tests. The third is that they are equal, and $5 \\neq 5.2$."
+    - id: unknown
+      text: "It is impossible to say"
+      feedback: "You have everything you need: the limit, the value, and whether they match."
+  hints:
+    - "Check the three tests. Which one fails?"
+  solution: |
+    The function has a value at $3$, and the limit exists, but they are not equal: $5 \neq 5.2$. The third test fails, so $f$ is not continuous at $3$. Its graph has a single point sitting just off the curve.
+
+- id: calc.cont.real-world
+  type: self-check
+  concepts: [continuity]
+  prompt: "Think of two quantities over the course of a day: the temperature outside, and the balance of a bank account. Which is a continuous function of time and which is not? Explain how you can tell."
+  rubric:
+    - "You said the temperature is continuous: it cannot change instantly, so it passes through every value in between."
+    - "You said the bank balance is not: it jumps the instant a payment goes in or out."
+    - "You linked this to the definition or the intermediate value theorem: a continuous quantity cannot skip values, and a jump is exactly a place where the two one-sided limits differ."
+  solution: |
+    The temperature is continuous. It may change quickly, but never instantly, so to get from 12 °C to 20 °C it has to pass through every temperature in between.
+
+    The bank balance is not. When a payment arrives the balance jumps from one amount to another without visiting the amounts between. Just before the payment the balance is heading to one value, just after it is at another: the one-sided limits disagree.

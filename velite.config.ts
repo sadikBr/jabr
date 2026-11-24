@@ -1,6 +1,7 @@
 import rehypeKatex from "rehype-katex";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeSlug from "rehype-slug";
+import remarkGfm from "remark-gfm";
 import remarkMath from "remark-math";
 import { defineCollection, defineConfig, s } from "velite";
 
@@ -280,7 +281,7 @@ export default defineConfig({
     questions,
   },
   mdx: {
-    remarkPlugins: [remarkMath],
+    remarkPlugins: [remarkGfm, remarkMath],
     rehypePlugins: [
       rehypeSlug,
       [rehypeKatex, { strict: "error", throwOnError: true }],

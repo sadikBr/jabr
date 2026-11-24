@@ -1,0 +1,259 @@
+- id: calc.rules.power-slope
+  type: parametrised
+  concepts: [power-rule]
+  params:
+    n: { choices: [3, 4, 5] }
+    a: { choices: [-2, -1, 1, 2] }
+  derived:
+    m: "n - 1"
+  prompt: "What is the slope of the tangent to $f(x) = x^{n}$ at $x = {a}$?"
+  answer: "n * a^(n - 1)"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "a^n"
+      feedback: "That is the height of the curve at $x = {a}$. The slope is the derivative there."
+    - answer: "n * a^n"
+      feedback: "The power comes down in front, and the power itself also drops by one."
+    - answer: "-(n * a^(n - 1))"
+      feedback: "Check the sign. A negative number raised to an even power is positive, and to an odd power is negative."
+  hints:
+    - "Use the power rule to find $f'(x)$ first, then put in $x = {a}$."
+    - "$f'(x) = {n}x^{m}$."
+  solution: |
+    By the power rule, $f'(x) = {n}x^{m}$. At $x = {a}$:
+
+    $$f'({a}) = {n} \times ({a})^{m}$$
+
+- id: calc.rules.polynomial
+  type: expression
+  concepts: [power-rule, sum-rule]
+  variables: [x]
+  prompt: "Differentiate $f(x) = 4x^3 - 2x^2 + 7x - 9$."
+  answer: "12x^2 - 4x + 7"
+  hints:
+    - "Take it one term at a time. The constants in front stay where they are."
+    - "$4x^3$ becomes $12x^2$, and $-2x^2$ becomes $-4x$."
+    - "$7x$ becomes $7$, and the constant $-9$ becomes $0$."
+  solution: |
+    Differentiate term by term:
+
+    $$f'(x) = 4 \cdot 3x^2 - 2 \cdot 2x + 7 - 0 = 12x^2 - 4x + 7$$
+
+- id: calc.rules.negative-power
+  type: expression
+  concepts: [power-rule]
+  variables: [x]
+  prompt: |
+    Differentiate $f(x) = \dfrac{1}{x^3}$. Rewrite it as a power of $x$ first.
+  answer: "-3/x^4"
+  hints:
+    - "$\\frac{1}{x^3} = x^{-3}$."
+    - "The power rule with $n = -3$: bring down $-3$, and the new power is $-3 - 1 = -4$."
+  solution: |
+    Write the function as $x^{-3}$ and use the power rule with $n = -3$:
+
+    $$f'(x) = -3\,x^{-4} = -\frac{3}{x^4}$$
+
+    The power drops by one, and "one less than $-3$" is $-4$, not $-2$.
+
+- id: calc.rules.product
+  type: expression
+  concepts: [product-rule]
+  variables: [x]
+  prompt: "Differentiate $f(x) = x^2 \\sin x$. Type `sin(x)` and `cos(x)` with brackets."
+  answer: "2x*sin(x) + x^2*cos(x)"
+  hints:
+    - "This is a product of $x^2$ and $\\sin x$, so use $f'g + fg'$."
+    - "The derivative of $x^2$ is $2x$, and the derivative of $\\sin x$ is $\\cos x$."
+  solution: |
+    With $f = x^2$ and $g = \sin x$, we have $f' = 2x$ and $g' = \cos x$:
+
+    $$\frac{d}{dx}\,\big(x^2 \sin x\big) = 2x \sin x + x^2 \cos x$$
+
+- id: calc.rules.rates-multiply
+  type: parametrised
+  concepts: [chain-rule]
+  params:
+    p: { min: 2, max: 5, step: 1 }
+    q: { min: 2, max: 6, step: 1 }
+  prompt: "A machine has three linked dials. Dial $u$ changes {p} times as fast as dial $x$, and dial $y$ changes {q} times as fast as dial $u$. How many times as fast as $x$ does $y$ change?"
+  answer: "p * q"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "p + q"
+      feedback: "Rates passed along a chain multiply rather than add. If $x$ moves by 1, $u$ moves by {p}, and then $y$ moves by {q} for each of those."
+  hints:
+    - "Suppose $x$ changes by 1. How much does $u$ change? Then how much does $y$ change?"
+  solution: |
+    If $x$ changes by $1$, then $u$ changes by {p}, and $y$ changes by {q} for every unit of $u$. So $y$ changes by ${p} \times {q}$.
+
+    In symbols: $\dfrac{dy}{dx} = \dfrac{dy}{du} \cdot \dfrac{du}{dx}$.
+
+- id: calc.rules.chain
+  type: expression
+  concepts: [chain-rule, power-rule]
+  variables: [x]
+  prompt: "Differentiate $f(x) = (3x + 1)^4$."
+  answer: "12(3x + 1)^3"
+  hints:
+    - "The outside is $u^4$ and the inside is $u = 3x + 1$."
+    - "The outside gives $4u^3 = 4(3x + 1)^3$. What is the derivative of the inside?"
+    - "Multiply $4(3x + 1)^3$ by $3$."
+  solution: |
+    Outside: $u^4$ has derivative $4u^3$. Inside: $3x + 1$ has derivative $3$.
+
+    $$f'(x) = 4(3x + 1)^3 \cdot 3 = 12(3x + 1)^3$$
+
+- id: calc.rules.chain-trig
+  type: expression
+  concepts: [chain-rule]
+  variables: [x]
+  prompt: "Differentiate $f(x) = \\sin(x^2)$."
+  answer: "2x*cos(x^2)"
+  hints:
+    - "There is a function inside a function: the outside is $\\sin(u)$ and the inside is $u = x^2$."
+    - "The outside gives $\\cos(u) = \\cos(x^2)$. Multiply by the derivative of the inside."
+  solution: |
+    Outside: $\sin(u)$ has derivative $\cos(u)$. Inside: $x^2$ has derivative $2x$.
+
+    $$f'(x) = \cos(x^2) \cdot 2x = 2x\cos(x^2)$$
+
+- id: calc.rules.tangent-slope
+  type: parametrised
+  concepts: [power-rule, sum-rule]
+  params:
+    a: { choices: [2, 3, 4] }
+    b: { min: 2, max: 6, step: 1 }
+    c: { choices: [1, 2] }
+  derived:
+    three: "3 * a"
+  prompt: "What is the slope of the tangent to $f(x) = {a}x^3 - {b}x$ at $x = {c}$?"
+  answer: "3 * a * c^2 - b"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "a * c^3 - b * c"
+      feedback: "That is $f({c})$, the height of the curve. Differentiate first, then put in $x = {c}$."
+    - answer: "3 * a * c^2"
+      feedback: "Do not lose the second term: the derivative of $-{b}x$ is $-{b}$."
+  hints:
+    - "Differentiate term by term to get $f'(x)$."
+    - "$f'(x) = {three}x^2 - {b}$. Now put in $x = {c}$."
+  solution: |
+    Differentiating term by term, $f'(x) = {three}x^2 - {b}$. At $x = {c}$:
+
+    $$f'({c}) = {three} \times {c}^2 - {b}$$
+
+- id: calc.rules.code-check
+  type: code
+  concepts: [product-rule, derivative-definition]
+  prompt: |
+    Two jobs. First, complete `numerical_derivative` so it returns the slope of the line through the points at `x - h` and `x + h`. Stepping to both sides of `x` cancels most of the error. Second, write your own formula for the derivative of $x^2 \sin x$ in `df`. Run the code: if your formula is right, the two columns will match.
+  starter: |
+    import math
+
+    def numerical_derivative(f, x, h=1e-5):
+        """Estimate f'(x) from the slope between x - h and x + h."""
+        # Replace the next line: rise over run, where the run is 2 * h.
+        return 0
+
+    def f(x):
+        return x**2 * math.sin(x)
+
+    def df(x):
+        """Your formula for the derivative of f."""
+        # Replace the next line.
+        return 0
+
+    for x in [0.5, 1, 2, 3]:
+        print(f"x = {x:<4} formula: {df(x):9.5f}   measured: {numerical_derivative(f, x):9.5f}")
+  tests: |
+    def test_measures_the_slope_of_a_cubic():
+        assert abs(numerical_derivative(lambda x: x**3, 2) - 12) < 1e-6, "For x³ at x = 2 the slope should be 12."
+
+    def test_measures_the_slope_of_sine():
+        import math
+        assert abs(numerical_derivative(math.sin, 0) - 1) < 1e-6, "For sin(x) at x = 0 the slope should be 1."
+
+    def test_steps_to_both_sides():
+        assert abs(numerical_derivative(lambda x: x * x, 3, 0.1) - 6) < 1e-9, "Use the points x - h and x + h, one on each side. For x² that gives the exact slope, 6 at x = 3, even with h = 0.1."
+
+    def test_your_formula_matches():
+        import math
+        for x in [-2, -0.5, 0.3, 1, 2.5]:
+            expected = 2 * x * math.sin(x) + x**2 * math.cos(x)
+            assert abs(df(x) - expected) < 1e-9, f"df({x}) is not the derivative of x² sin(x). Use the product rule."
+  hints:
+    - "The rise is `f(x + h) - f(x - h)` and the run is `2 * h`."
+    - "For `df`, the product rule gives $2x \\sin x + x^2 \\cos x$."
+    - "In Python: `2 * x * math.sin(x) + x**2 * math.cos(x)`."
+  solution: |
+    The slope between the two points either side of `x`:
+
+    `return (f(x + h) - f(x - h)) / (2 * h)`
+
+    And the product rule for the formula:
+
+    `return 2 * x * math.sin(x) + x**2 * math.cos(x)`
+
+    The two columns agree to five decimal places. If you had forgotten a term, they would not, and you would know immediately.
+
+- id: calc.rules.product-trap
+  type: multiple-choice
+  concepts: [product-rule, power-rule]
+  prompt: "Which of these is the derivative of $x^3 \\cdot x^4$?"
+  choices:
+    - id: seven
+      text: "$7x^6$"
+      correct: true
+    - id: twelve
+      text: "$12x^5$"
+      feedback: "That is $3x^2 \\cdot 4x^3$, the product of the two derivatives. The product rule is $f'g + fg'$, not $f'g'$."
+    - id: power
+      text: "$x^7$"
+      feedback: "That is the product itself, simplified. It still needs differentiating."
+    - id: twelve-eleven
+      text: "$12x^{11}$"
+      feedback: "When multiplying, powers add: $x^3 \\cdot x^4 = x^7$, not $x^{12}$."
+  hints:
+    - "Either simplify to a single power first, or use the product rule. Both must give the same answer."
+  solution: |
+    Simplest: $x^3 \cdot x^4 = x^7$, and the power rule gives $7x^6$.
+
+    The product rule agrees: $3x^2 \cdot x^4 + x^3 \cdot 4x^3 = 3x^6 + 4x^6 = 7x^6$.
+
+- id: calc.rules.which-rule
+  type: multiple-choice
+  concepts: [chain-rule, product-rule]
+  prompt: "Which rule do you need to differentiate $\\sqrt{x^2 + 1}$?"
+  choices:
+    - id: chain
+      text: "The chain rule: it is a function inside a function"
+      correct: true
+    - id: product
+      text: "The product rule: it is two functions multiplied"
+      feedback: "Nothing is being multiplied here. The square root is applied to $x^2 + 1$."
+    - id: sum
+      text: "The sum rule: take the root of each term separately"
+      feedback: "$\\sqrt{x^2 + 1}$ is not $\\sqrt{x^2} + \\sqrt{1}$. The sum is inside the root, so the root has to be dealt with first."
+    - id: power
+      text: "The power rule alone"
+      feedback: "The power rule handles the outside, $u^{1/2}$, but the inside is not just $x$, so there is a second factor to find."
+  hints:
+    - "What is the last operation you would do when calculating this for a particular $x$? That is the outside."
+  solution: |
+    The outside is $\sqrt{u} = u^{1/2}$ and the inside is $u = x^2 + 1$, so this needs the chain rule (with the power rule for each piece):
+
+    $$\frac{1}{2}(x^2 + 1)^{-1/2} \cdot 2x = \frac{x}{\sqrt{x^2 + 1}}$$
+
+- id: calc.rules.explain-chain
+  type: self-check
+  concepts: [chain-rule]
+  prompt: "A classmate differentiates $(5x)^2$ and gets $2(5x) = 10x$. Without using the chain rule, show that this is wrong. Then explain what they forgot."
+  rubric:
+    - "You multiplied out: $(5x)^2 = 25x^2$, whose derivative is $50x$, not $10x$."
+    - "You said they forgot to multiply by the derivative of the inside, which is $5$."
+    - "You connected it to rates: the inside $5x$ changes five times as fast as $x$, so the whole thing changes five times as fast as they claimed."
+  solution: |
+    Multiplying out gives $(5x)^2 = 25x^2$, and the power rule gives $50x$. So $10x$ is too small by a factor of $5$.
+
+    That factor is the derivative of the inside. The chain rule gives $2(5x) \cdot 5 = 50x$: the inside, $5x$, changes five times as fast as $x$, and the answer has to include that.

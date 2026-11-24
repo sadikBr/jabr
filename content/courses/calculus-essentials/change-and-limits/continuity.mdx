@@ -1,10 +1,167 @@
 ---
 id: continuity
 title: "Continuity"
-summary: "Graphs you can draw without lifting your pen, and why they matter."
+summary: "No jumps, no holes: what it means for a function to hold no surprises, and what that promise buys you."
 teaches: [continuity]
 requires: [limits-intuition]
-status: coming-soon
+estimatedMinutes: 15
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Step kind="see" title="Drawing without lifting your pen">
+
+Some graphs you can draw in one stroke. Others force you to lift your pen: to
+hop over a gap, or to jump to a different height. The first kind are called
+**continuous**, and limits let us say precisely what that means, one point at
+a time.
+
+In the last lesson you saw that a limit ignores the value at the point itself.
+Continuity is what you get when the two agree: when the function arrives
+exactly where it was heading.
+
+Here are five functions. For each one, guess whether it is continuous at the
+marked point. Then close in, and see which of three tests it passes.
+
+<Interactive
+  id="limit-explorer"
+  title="Continuous or not?"
+  props={{
+    mode: "continuity",
+    cases: ["smooth", "hole", "moved-point", "jump", "blow-up"],
+  }}
+/>
+
+Only the first one passed all three. Each of the others broke in its own way:
+no value at the point, a value in the wrong place, two sides that disagree, or
+no limit at all.
+
+<Callout kind="definition" title="Continuous at a point">
+
+A function $f$ is **continuous at $a$** when all three of these hold:
+
+1. $f(a)$ is defined
+2. $\lim_{x \to a} f(x)$ exists
+3. they are equal
+
+In one line:
+
+$$
+\lim_{x \to a} f(x) = f(a)
+$$
+
+A function is simply called **continuous** when this is true at every point
+where it is defined.
+
+</Callout>
+
+<Callout kind="insight" title="For continuous functions, limits are easy">
+
+Read that one line again. It says: to find the limit of a continuous
+function, just put the number in.
+
+Most functions you know are continuous wherever they are defined: polynomials,
+$\sin x$, $\cos x$, $e^x$, $\sqrt{x}$, and anything built from them by adding,
+multiplying, dividing or composing. The trouble spots are the places where a
+formula stops making sense, such as a division by zero, and the joins in
+functions defined piece by piece.
+
+</Callout>
+
+Continuity is a promise of "no surprises", and promises can be used. Here is
+the most useful one.
+
+<Callout kind="definition" title="The intermediate value theorem">
+
+If $f$ is continuous on the interval from $a$ to $b$, then it takes **every**
+value between $f(a)$ and $f(b)$ somewhere in that interval.
+
+</Callout>
+
+It sounds obvious, and for anything that changes continuously it is. If it was
+12 °C at 8 a.m. and 20 °C at noon, then at some moment in between it was
+exactly 15 °C. The temperature cannot get from 12 to 20 without passing
+through everything on the way.
+
+Its most practical use is for finding where a function is zero. If a
+continuous function is negative at one point and positive at another, it must
+cross zero somewhere between them.
+
+<WorkedExample title="Trapping a root">
+
+Where does $f(x) = x^3 - x - 2$ equal zero? There is no easy formula, but
+the function is a polynomial, so it is continuous. Try a couple of values:
+
+$$
+f(1) = -2 \qquad f(2) = 4
+$$
+
+One is negative and one positive, so there is a root between $1$ and $2$. Now
+test the midpoint:
+
+$$
+f(1.5) = -0.125
+$$
+
+Negative. So the sign change, and with it the root, is between $1.5$ and $2$.
+Test the midpoint again:
+
+$$
+f(1.75) \approx 1.61
+$$
+
+Positive, so the root is between $1.5$ and $1.75$. Each test halves the
+interval. Ten more and you would know the root to three decimal places:
+$x \approx 1.521$.
+
+This is called **bisection**. It is slow but it cannot fail, as long as the
+function is continuous.
+
+</WorkedExample>
+
+</Step>
+
+<Step kind="do" title="Test for continuity, then use it">
+
+<Question id="calc.cont.classify" />
+
+At the join of a piecewise function, continuity means the two pieces must
+meet. That gives you an equation to solve.
+
+<Question id="calc.cont.patch" />
+
+<Question id="calc.cont.ivt" />
+
+<Question id="calc.cont.ivt-fails" />
+
+Halving an interval over and over is a perfect job for a loop. Write the
+bisection method yourself, and you will have a tool that can solve equations
+no algebra can.
+
+<CodeLab id="calc.cont.code-bisect" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="calc.cont.everywhere" />
+
+<Question id="calc.cont.nearly" />
+
+<Question id="calc.cont.real-world" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Bisection is your first **numerical method**: a recipe that gets as close to
+an answer as you like, by repeating a simple step, when no formula is
+available. The same spirit drives Euler's method later in this course, and
+every simulation built on it.
+
+Continuity also sets the stage for the derivative. To find a slope at a point
+you zoom in until the curve looks straight, and a function with a jump or a
+hole there never will. Every function that has a derivative at a point is
+continuous at that point.
+
+<ConnectIt concepts={["derivative-definition", "eulers-method"]} />
+
+</Step>

@@ -24,10 +24,13 @@ test("course catalog leads to a course and on to a lesson", async ({
   await expect(page.getByText("Coming soon").first()).toBeVisible();
   await expectNoSidewaysScroll(page);
 
+  // A newcomer is sent to the first lesson of the course.
   await page.getByTestId("continue-card").click();
-  await expect(page).toHaveURL(lesson);
+  await expect(page).toHaveURL(
+    "/courses/calculus-essentials/change-and-limits/rates-of-change-from-data",
+  );
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "What is a derivative?",
+    "Rates of change from data",
   );
 });
 
@@ -78,13 +81,9 @@ test("a lesson reopens on the step in the URL", async ({ page }) => {
 test("a coming-soon lesson says so and shows what it will cover", async ({
   page,
 }) => {
-  await page.goto(
-    "/courses/calculus-essentials/numerical-methods/eulers-method",
-  );
+  await page.goto("/courses/calculus-essentials/integrals/riemann-sums");
   await expect(page.getByText("This lesson is being written")).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Euler's method" }),
-  ).toBeVisible();
+  await expect(page.getByRole("link", { name: "Riemann sums" })).toBeVisible();
 });
 
 test("explore filters by subject and opens an explainer", async ({ page }) => {

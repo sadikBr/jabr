@@ -263,7 +263,7 @@ test.describe("what to learn", () => {
     await expect(panel).toContainText("Some of these are new to you");
     await expect(
       panel.getByRole("link", {
-        name: /Average rate of change: Read about it/,
+        name: /Average rate of change: Learn it in “Rates of change from data”/,
       }),
     ).toBeVisible();
     await expect(

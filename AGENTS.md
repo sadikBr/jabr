@@ -16,7 +16,11 @@ plan. This file records how the repo works. Keep it current.
 
 **Status:** Phases 0 to 5 are done: foundations, content pipeline, interactivity
 and grading, progress on this device, knowledge map and review, projects.
-Phase 6 (content) is next. Accounts are deferred: see the brief.
+Phase 6 (content) is in progress, one course at a time. Calculus essentials
+has its first two modules and Euler's method written (seven lessons); its
+Integrals module is still coming soon. Next: Classical mechanics, then Python
+for scientists and the remaining explainers. Accounts are deferred: see the
+brief.
 
 ## Commands
 
@@ -89,6 +93,15 @@ Writing content:
   and a component in `components/interactives/registry.tsx`. Sliders must be
   native range inputs (keyboard and touch for free) with the `slider` class,
   and the graphic needs a text description.
+- Graphs use `Plot` from `components/interactives/plot.tsx`, with the
+  geometry in `lib/maths/plot.ts`. It measures itself and draws one unit per
+  pixel, so text and lines are the same size on a phone as on a desktop, and
+  takes its shape from aspect-ratio classes so nothing jumps when it is
+  measured. Curves and handles are render functions that receive the scale.
+  A graph that can be dragged (`onDrag`) must also have a slider for each
+  thing the drag moves.
+- Lessons can use Markdown tables. Put the labels in the header row and the
+  data underneath: the header row is styled smaller.
 - Every formula, number and code sample must be checked before it is
   committed. Run code samples and paste their real output.
 - **Reading alone is never the whole lesson.** Every lesson and explainer
@@ -113,7 +126,14 @@ Writing content:
   answer plus the feedback for it). The grader also spots sign errors,
   power-of-ten slips and degrees read as radians on its own.
 - Parametrised questions pick their numbers from a seed
-  (`lib/grading/params.ts`). The page is prerendered with the question's
+  (`lib/grading/params.ts`). They can also declare `derived` values: formulas
+  of the params, worked out in order, for numbers the prompt needs to show
+  (a table of readings, an intermediate result in the solution). Use
+  `questionValues(question, seed)` wherever a question's numbers are needed;
+  it returns the params and the derived values together. Avoid naming a
+  param or derived value `end`: mathjs reserves it. Any `{name}` in the text
+  is replaced, so do not give a value the same name as a TeX argument you
+  write literally. The page is prerendered with the question's
   default seed; "New numbers" asks the server for another and remembers it in
   `localStorage`.
 - The browser only ever gets a `QuestionView` (`lib/questions/view.ts`):
@@ -338,6 +358,10 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 | 2026-11-24 | A milestone is checked by an ordinary code question                                                             | One mechanism for labs, grading, hints, solutions and verification                                                                    |
 | 2026-11-24 | Milestones are open, not locked                                                                                 | Being blocked is more frustrating than helpful; the page says what it builds on                                                       |
 | 2026-11-24 | Starter code carries the previous milestone's solution forward                                                  | Nobody is stuck in milestone 4 because of a bug from milestone 2                                                                      |
+| 2026-11-24 | Questions can show values derived from their random numbers                                                     | A table of readings or a worked intermediate step has to change with the numbers                                                      |
+| 2026-11-24 | Graphs are drawn one unit per pixel, shaped by CSS aspect ratios                                                | Scaled-down graphs had unreadable labels on phones; a CSS shape means measuring never moves the page                                  |
+| 2026-11-24 | The ball in `motion-graphs` uses g = 9.8, not 9.81                                                              | So the graphs agree exactly with h = v₀t − 4.9t² as the lessons and questions write it                                                |
+| 2026-11-24 | Lessons may have more than one step of the same kind                                                            | A long lesson (derivative rules) reads better as two "see" steps with a question after each rule                                      |
 
 ## Known limitations
 
@@ -346,9 +370,8 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   import on the progress page are the workaround.
 - Mastery is computed in the browser from graded results, so it can be
   edited by anyone who opens the developer tools. That only fools themselves.
-- With one written lesson, recommendations and reviews have little to work
-  with: review draws on that lesson's questions only. They come into their
-  own as content is added (Phase 6).
+- Reviews and recommendations draw on the seven written calculus lessons
+  only. They widen as each course is written (Phase 6).
 - The map lays out about 25 concepts comfortably. Past roughly 80 it will
   need grouping by subject or course; revisit when the content gets there.
 - Code lab test results are computed in the browser and reported to the
@@ -358,11 +381,15 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   beyond the app itself.
 - The first Python run takes a few seconds (about 14 MB of runtime).
 - Ctrl/⌘+Enter runs code on desktop only; phones use the Run button.
-- Only one lesson and one explainer are written; the rest are listed as
-  coming soon. `content:check` warns about eight concepts no lesson teaches
-  yet (the mechanics course and two foundations concepts).
-- `euler-stepper` and `projectile-sim` are used on the landing page and in
-  the explainer, not yet in a lesson of their own (Phase 6 content).
+- Seven lessons and one explainer are written; the rest are listed as coming
+  soon, including the three Integrals lessons. `content:check` warns about
+  nine concepts no lesson teaches yet (the mechanics course and two
+  foundations concepts).
+- `projectile-sim` is used on the landing page only, not yet in a lesson
+  (it belongs to the mechanics course).
+- A graph is drawn at a default size on the server and re-drawn at its real
+  size once measured in the browser. Its box does not move, but the drawing
+  inside can visibly sharpen on first load.
 - One project is written (the rocket capstone). The tangent line explorer is
   listed as coming soon.
 - The last capstone milestone plots with matplotlib, so its first run needs a

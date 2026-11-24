@@ -55,7 +55,7 @@ Explainers are layered by depth, and the learner chooses where to stop:
 - **Lesson**: an MDX document made of **Blocks**. It declares `teaches: ConceptId[]` and `requires: ConceptId[]`.
 - **Block**: a unit inside a lesson: prose, figure, `Interactive`, `Question`, `CodeLab`, `WorkedExample`, `Callout`, `ConnectIt` (links to where the concept is used).
 - **Explainer**: a question-led article ("How does GPS work?") with up to 4 depth layers; also declares concepts.
-- **Project**: a multi-milestone build. Each **Milestone** has instructions, starter code or setup, a check (automated tests or self-check rubric), and `requires: ConceptId[]`.
+- **Project**: a multi-milestone build. Each **Milestone** has instructions, starter code or setup, a check (automated tests or self-check rubric), and `requires: ConceptId[]`. The check is a code question with tests; passing it passes the milestone. Milestones are done in order but none is locked: a later one says which milestone it builds on. Each milestone's starter code carries the previous solution forward.
 - **Question**: a gradable item defined in content, graded on the server.
 - **Attempt**: one learner answer to one question.
 - **Mastery**: a per-user, per-concept score from 0 to 1 with a status (`new`, `learning`, `practicing`, `mastered`).

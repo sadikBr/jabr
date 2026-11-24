@@ -14,9 +14,9 @@ A learning-by-doing platform for maths, physics, engineering and software.
 `PROJECT_BRIEF.md` is the source of truth for product decisions and the phase
 plan. This file records how the repo works. Keep it current.
 
-**Status:** Phases 0 to 4 are done: foundations, content pipeline, interactivity
-and grading, progress on this device, knowledge map and review. Phase 5
-(projects) is next. Accounts are deferred: see the brief.
+**Status:** Phases 0 to 5 are done: foundations, content pipeline, interactivity
+and grading, progress on this device, knowledge map and review, projects.
+Phase 6 (content) is next. Accounts are deferred: see the brief.
 
 ## Commands
 
@@ -195,6 +195,27 @@ Writing content:
 - Stored progress gained `reviews` without a version bump: the field is
   optional when read, so older saved progress still loads.
 
+## Projects
+
+- A project is `content/projects/<project>/project.yaml`, which lists its
+  milestones in order, plus `milestones/<id>.mdx` for each.
+- A milestone's frontmatter names its `check`: a code question with tests
+  (kept with the other questions, in `content/questions/projects/`). The MDX
+  body is the instructions; the page shows the check's code lab after them.
+  Passing every test passes the milestone.
+- Each milestone's starter code is the previous milestone's solution plus the
+  new gaps, so the learner always starts from working code. Starters must
+  finish quickly even when incomplete (bounded loops, sensible stubs).
+- Every graded lab needs a reference solution in
+  `tests/fixtures/solutions/<question-id>.py`. `bun run content:verify-code`
+  checks that each starter fails and each solution passes, and an e2e test
+  completes the whole capstone in the browser with those solutions.
+- Milestones are not locked. A later milestone opens and works; it just says
+  which one it builds on if that one is not passed yet.
+- Milestone progress is `milestones` in stored progress, optional when read
+  like `reviews`. The code itself is kept by the code lab under its question
+  id.
+
 ## Offline
 
 - `public/sw.js` is hand-written and small. Pages are network-first with a
@@ -246,6 +267,10 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 - Business logic lives in `lib/` as pure, unit-tested functions, not in
   components.
 - New pages get at least a smoke e2e test; new logic gets unit tests.
+- After a click-through, Next.js keeps the page just left in the document,
+  hidden, so going back is instant. In e2e tests, `getByText` and
+  `getByTestId` can therefore match that hidden page too: prefer `getByRole`
+  (visible only), add `.filter({ visible: true })`, or load the page afresh.
 - e2e specs import `test` and `expect` from `tests/e2e/fixtures.ts`, not from
   Playwright directly. Its `page.goto` and `page.reload` wait for the
   `data-hydrated` marker, so clicks never race the page's scripts.
@@ -310,6 +335,9 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 | 2026-11-24 | Map filters dim other concepts instead of removing them                                                         | Positions stay put and the context stays visible                                                                                      |
 | 2026-11-24 | The map is reached from the Progress page and concept pages, not the main navigation                            | Five navigation items is the limit on a phone                                                                                         |
 | 2026-11-24 | Reviews can be done early                                                                                       | Lets a learner (and the owner) use review without waiting days                                                                        |
+| 2026-11-24 | A milestone is checked by an ordinary code question                                                             | One mechanism for labs, grading, hints, solutions and verification                                                                    |
+| 2026-11-24 | Milestones are open, not locked                                                                                 | Being blocked is more frustrating than helpful; the page says what it builds on                                                       |
+| 2026-11-24 | Starter code carries the previous milestone's solution forward                                                  | Nobody is stuck in milestone 4 because of a bug from milestone 2                                                                      |
 
 ## Known limitations
 
@@ -335,7 +363,10 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   yet (the mechanics course and two foundations concepts).
 - `euler-stepper` and `projectile-sim` are used on the landing page and in
   the explainer, not yet in a lesson of their own (Phase 6 content).
-- Projects are listed but cannot be started until Phase 5.
+- One project is written (the rocket capstone). The tangent line explorer is
+  listed as coming soon.
+- The last capstone milestone plots with matplotlib, so its first run needs a
+  connection to download it.
 - An unknown lesson, explainer or concept URL shows the not-found page with a
   `noindex` tag but HTTP status 200. That is how Next.js streams `notFound()`
   for dynamic routes with Cache Components on.

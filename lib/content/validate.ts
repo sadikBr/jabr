@@ -27,6 +27,7 @@ export type IssueCode =
   | "question-missing-hints"
   | "question-invalid-choices"
   | "parametrised-answer-error"
+  | "placeholder-collision"
   | "question-unused"
   | "code-without-tests"
   | "codelab-not-code"
@@ -544,6 +545,31 @@ export function validateContent(
             `The common mistake "${mistake.answer}" is not a valid formula: ${cause instanceof Error ? cause.message : String(cause)}.`,
           );
         }
+      }
+
+      // `{name}` is replaced wherever it appears, including where it was
+      // meant literally, as in \frac{dy}{dt} with a value called "dt". A
+      // placeholder meant as a TeX argument is written with two pairs of
+      // braces, \frac{1}{{dt}}, so a lone `}{name}` is almost surely a clash.
+      const names = [
+        ...Object.keys(question.params),
+        ...Object.keys(question.derived),
+      ];
+      const texts = [
+        question.prompt,
+        question.solution ?? "",
+        ...question.hints,
+        ...question.commonMistakes.map((mistake) => mistake.feedback),
+      ];
+      const clash = names.find((name) =>
+        texts.some((text) => text.includes(`}{${name}}`)),
+      );
+      if (clash) {
+        error(
+          "placeholder-collision",
+          source,
+          `The text contains "}{${clash}}", which would be replaced by the value of "${clash}". Rename the value, or write "}{{${clash}}}" if the replacement is intended.`,
+        );
       }
     }
 

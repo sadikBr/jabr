@@ -483,6 +483,25 @@ describe("validateContent", () => {
       expect(issue).toBeDefined();
     });
 
+    it("rejects a value whose name clashes with a literal TeX argument", () => {
+      const withPrompt = (prompt: string) =>
+        issueAfter("placeholder-collision", (c) => {
+          c.questions = [
+            {
+              ...(parametrised("a") as ParametrisedQuestion),
+              prompt,
+            },
+          ];
+        });
+      // The "a" in \\frac{x}{a} would silently become a number.
+      expect(
+        withPrompt("What is $\\frac{x}{a}$ when $a = {a}$?"),
+      ).toBeDefined();
+      // Doubled braces say the replacement is meant.
+      expect(withPrompt("What is $\\frac{x}{{a}}$?")).toBeUndefined();
+      expect(withPrompt("What is $x^{a}$, or ${a}x$?")).toBeUndefined();
+    });
+
     it("lets the answer use derived values", () => {
       const issue = issueAfter("parametrised-answer-error", (c) => {
         c.questions = [

@@ -4,55 +4,55 @@
   params:
     k: { choices: [2, 3] }
     y0: { choices: [2, 4, 5] }
-    dt: { choices: [0.1, 0.2, 0.5] }
+    step: { choices: [0.1, 0.2, 0.5] }
   derived:
     slope: "k * y0"
   prompt: |
-    A quantity obeys $\dfrac{dy}{dt} = {k}y$ and starts at $y(0) = {y0}$. Use one step of Euler's method with $\Delta t = {dt}$ to estimate $y({dt})$.
-  answer: "y0 + k * y0 * dt"
+    A quantity obeys $\dfrac{dy}{dt} = {k}y$ and starts at $y(0) = {y0}$. Use one step of Euler's method with $\Delta t = {step}$ to estimate $y({step})$.
+  answer: "y0 + k * y0 * step"
   tolerance: { absolute: 0.001 }
   commonMistakes:
-    - answer: "k * y0 * dt"
+    - answer: "k * y0 * step"
       feedback: "That is how much $y$ changes during the step. Add it to the starting value, {y0}."
     - answer: "y0 + k * y0"
-      feedback: "You added the slope itself. The change is slope × step: multiply by $\\Delta t = {dt}$."
-    - answer: "y0 + y0 * dt"
+      feedback: "You added the slope itself. The change is slope × step: multiply by $\\Delta t = {step}$."
+    - answer: "y0 + y0 * step"
       feedback: "Check the slope. The rule is $\\frac{dy}{dt} = {k}y$, so at $y = {y0}$ the slope is {slope}."
   hints:
     - "New value = old value + slope × step."
     - "At the start, the slope is ${k} \\times {y0} = {slope}$."
   solution: |
-    At the start $y = {y0}$, so the slope is ${k} \times {y0} = {slope}$. One step of size {dt}:
+    At the start $y = {y0}$, so the slope is ${k} \times {y0} = {slope}$. One step of size {step}:
 
-    $$y({dt}) \approx {y0} + {slope} \times {dt}$$
+    $$y({step}) \approx {y0} + {slope} \times {step}$$
 
 - id: calc.euler.two-steps
   type: parametrised
   concepts: [eulers-method]
   params:
     y0: { choices: [2, 4, 10] }
-    dt: { choices: [0.1, 0.2, 0.5] }
+    step: { choices: [0.1, 0.2, 0.5] }
   derived:
-    y1: "y0 * (1 + dt)"
-    t2: "2 * dt"
+    y1: "y0 * (1 + step)"
+    t2: "2 * step"
   prompt: |
-    A colony grows according to $\dfrac{dy}{dt} = y$, starting from $y(0) = {y0}$. Use **two** steps of Euler's method with $\Delta t = {dt}$ to estimate $y({t2})$.
-  answer: "y0 * (1 + dt)^2"
+    A colony grows according to $\dfrac{dy}{dt} = y$, starting from $y(0) = {y0}$. Use **two** steps of Euler's method with $\Delta t = {step}$ to estimate $y({t2})$.
+  answer: "y0 * (1 + step)^2"
   tolerance: { absolute: 0.001 }
   commonMistakes:
-    - answer: "y0 * (1 + 2 * dt)"
+    - answer: "y0 * (1 + 2 * step)"
       feedback: "That uses the starting slope for both steps. After the first step $y$ has grown to {y1}, so the second step needs a new, steeper slope."
-    - answer: "y0 * (1 + dt)"
-      feedback: "That is where the first step lands, at $t = {dt}$. Take one more step from there."
+    - answer: "y0 * (1 + step)"
+      feedback: "That is where the first step lands, at $t = {step}$. Take one more step from there."
   hints:
-    - "First step: the slope is {y0}, so $y$ becomes ${y0} + {y0} \\times {dt} = {y1}$."
+    - "First step: the slope is {y0}, so $y$ becomes ${y0} + {y0} \\times {step} = {y1}$."
     - "Second step: start from {y1}. The slope there is {y1}, not {y0}."
   solution: |
-    **Step 1.** The slope is $y = {y0}$, so $y({dt}) \approx {y0} + {y0} \times {dt} = {y1}$.
+    **Step 1.** The slope is $y = {y0}$, so $y({step}) \approx {y0} + {y0} \times {step} = {y1}$.
 
     **Step 2.** Now the slope is {y1}, so
 
-    $$y({t2}) \approx {y1} + {y1} \times {dt}$$
+    $$y({t2}) \approx {y1} + {y1} \times {step}$$
 
     Each step multiplies $y$ by $1 + \Delta t$. That is compound interest, and it is no coincidence.
 
@@ -61,27 +61,27 @@
   concepts: [eulers-method]
   params:
     T0: { choices: [70, 80, 90] }
-    dt: { choices: [0.5, 1] }
+    step: { choices: [0.5, 1] }
   derived:
     excess: "T0 - 20"
     slope: "-0.5 * (T0 - 20)"
   prompt: |
-    The coffee obeys $\dfrac{dT}{dt} = -0.5\,(T - 20)$, with $T$ in °C and $t$ in minutes. It starts at {T0} °C. Use one step of Euler's method with $\Delta t = {dt}$ min to estimate its temperature {dt} min later.
-  answer: "T0 - 0.5 * (T0 - 20) * dt"
+    The coffee obeys $\dfrac{dT}{dt} = -0.5\,(T - 20)$, with $T$ in °C and $t$ in minutes. It starts at {T0} °C. Use one step of Euler's method with $\Delta t = {step}$ min to estimate its temperature {step} min later.
+  answer: "T0 - 0.5 * (T0 - 20) * step"
   tolerance: { absolute: 0.01 }
   unit: "°C"
   commonMistakes:
-    - answer: "T0 + 0.5 * (T0 - 20) * dt"
+    - answer: "T0 + 0.5 * (T0 - 20) * step"
       feedback: "The coffee is cooling: the slope is negative, so the temperature goes down."
-    - answer: "T0 - 0.5 * T0 * dt"
+    - answer: "T0 - 0.5 * T0 * step"
       feedback: "The rate depends on how far the coffee is above room temperature, $T - 20$, not on $T$ itself."
   hints:
     - "Work out the slope at the start: $-0.5 \\times ({T0} - 20)$."
     - "The slope is {slope} °C per minute. New value = old value + slope × step."
   solution: |
-    At the start the coffee is {excess} °C above the room, so the slope is $-0.5 \times {excess} = {slope}$ °C per minute. One step of {dt} min:
+    At the start the coffee is {excess} °C above the room, so the slope is $-0.5 \times {excess} = {slope}$ °C per minute. One step of {step} min:
 
-    $$T \approx {T0} + ({slope}) \times {dt} \text{ °C}$$
+    $$T \approx {T0} + ({slope}) \times {step} \text{ °C}$$
 
 - id: calc.euler.halving
   type: multiple-choice

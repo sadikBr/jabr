@@ -132,8 +132,40 @@ const projects = defineCollection({
     subjects: s.array(s.enum(subjects)).min(1),
     kind: s.enum(["capstone", "mini"]),
     concepts: s.array(id).default([]),
+    /** Milestone ids in order; each has a file in milestones/<id>.mdx. */
+    milestones: s.array(id).default([]),
     status,
   }),
+});
+
+const milestones = defineCollection({
+  name: "Milestone",
+  pattern: "projects/*/milestones/*.mdx",
+  schema: s
+    .object({
+      id,
+      title: s.string(),
+      summary: s.string(),
+      /** Concepts the learner will use. */
+      requires: s.array(id).default([]),
+      /** The code question whose tests decide whether the milestone is passed. */
+      check: questionId,
+      estimatedMinutes: s.number().int().positive().optional(),
+      path: s.path(),
+      body: s.mdx(),
+      refs,
+    })
+    .transform((milestone, { addIssue }) => {
+      // path is "projects/<project>/milestones/<milestone>"
+      const [, project = "", , file = ""] = milestone.path.split("/");
+      if (file !== milestone.id) {
+        addIssue({
+          code: "custom",
+          message: `milestone id "${milestone.id}" must match its file name "${file}"`,
+        });
+      }
+      return { ...milestone, project, key: `${project}/${file}` };
+    }),
 });
 
 const questionBase = {
@@ -232,7 +264,15 @@ export default defineConfig({
     clean: true,
   },
   strict: true,
-  collections: { concepts, courses, lessons, explainers, projects, questions },
+  collections: {
+    concepts,
+    courses,
+    lessons,
+    explainers,
+    projects,
+    milestones,
+    questions,
+  },
   mdx: {
     remarkPlugins: [remarkMath],
     rehypePlugins: [

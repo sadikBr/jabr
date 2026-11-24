@@ -6,6 +6,7 @@ import concepts from "@/.velite/concepts.json";
 import courses from "@/.velite/courses.json";
 import explainers from "@/.velite/explainers.json";
 import lessons from "@/.velite/lessons.json";
+import milestones from "@/.velite/milestones.json";
 import projects from "@/.velite/projects.json";
 import questions from "@/.velite/questions.json";
 
@@ -18,5 +19,6 @@ export const content = {
   lessons,
   explainers,
   projects,
+  milestones,
   questions,
 } as unknown as ContentBundle;

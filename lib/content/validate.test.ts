@@ -6,6 +6,7 @@ import type {
   ContentBundle,
   Explainer,
   Lesson,
+  Milestone,
   Question,
 } from "./types";
 import { collectIds, type IssueCode, validateContent } from "./validate";
@@ -116,9 +117,11 @@ function validBundle(): ContentBundle {
         subjects: ["physics"],
         kind: "capstone",
         concepts: ["derivative"],
+        milestones: [],
         status: "coming-soon",
       },
     ],
+    milestones: [],
     questions: [structuredClone(numericQuestion)],
   };
 }
@@ -546,6 +549,153 @@ describe("validateContent", () => {
           c.lessons[0]!.refs.questions = [];
         }),
       ).toMatchObject({ level: "warning" });
+    });
+  });
+
+  describe("projects and milestones", () => {
+    const codeLab: Question = {
+      id: "q.lab",
+      type: "code",
+      concepts: ["slope"],
+      prompt: "Code it",
+      hints: ["Try a loop."],
+      starter: "x = 1",
+      tests: "def test_x():\n    assert x == 2",
+    };
+    const milestone = (
+      id: string,
+      overrides: Partial<Milestone> = {},
+    ): Milestone => ({
+      id,
+      key: `rocket/${id}`,
+      project: "rocket",
+      title: id,
+      summary: id,
+      requires: ["slope"],
+      check: "q.lab",
+      body: "",
+      refs: emptyRefs,
+      ...overrides,
+    });
+    /** The valid bundle with the rocket project made ready, with one milestone. */
+    function withProject(change?: (content: ContentBundle) => void) {
+      const content = validBundle();
+      content.projects[0] = {
+        ...content.projects[0]!,
+        status: "ready",
+        milestones: ["first"],
+      };
+      content.milestones = [milestone("first")];
+      content.questions.push(codeLab);
+      change?.(content);
+      return validateContent(content);
+    }
+    const find = (
+      issues: ReturnType<typeof validateContent>,
+      code: IssueCode,
+    ) => issues.find((issue) => issue.code === code);
+
+    it("accepts a ready project whose milestone is checked by a code lab", () => {
+      expect(withProject()).toEqual([]);
+    });
+
+    it("rejects a ready project with no milestones", () => {
+      const issues = withProject((c) => {
+        c.projects[0]!.milestones = [];
+        c.milestones = [];
+        c.questions.pop();
+      });
+      expect(find(issues, "project-without-milestones")).toMatchObject({
+        level: "error",
+      });
+    });
+
+    it("rejects a milestone listed without a file, and a file that is not listed", () => {
+      expect(
+        find(
+          withProject((c) => c.projects[0]!.milestones.push("ghost")),
+          "missing-milestone",
+        )?.message,
+      ).toContain("milestones/ghost.mdx");
+      expect(
+        find(
+          withProject((c) => c.milestones.push(milestone("orphan"))),
+          "milestone-not-in-project",
+        ),
+      ).toMatchObject({ source: "milestone rocket/orphan" });
+    });
+
+    it("rejects a milestone listed twice", () => {
+      expect(
+        find(
+          withProject((c) => c.projects[0]!.milestones.push("first")),
+          "duplicate-id",
+        ),
+      ).toBeDefined();
+    });
+
+    it("rejects a check that is missing, not code, or has no tests", () => {
+      expect(
+        find(
+          withProject((c) => {
+            c.milestones[0]!.check = "q.ghost";
+          }),
+          "invalid-milestone-check",
+        )?.message,
+      ).toContain("is not a question");
+      expect(
+        find(
+          withProject((c) => {
+            c.milestones[0]!.check = "q.numeric";
+          }),
+          "invalid-milestone-check",
+        )?.message,
+      ).toContain("code question with tests");
+      expect(
+        find(
+          withProject((c) => {
+            (c.questions.at(-1) as { tests?: string }).tests = undefined;
+            c.questions.at(-1)!.hints = [];
+          }),
+          "invalid-milestone-check",
+        ),
+      ).toBeDefined();
+    });
+
+    it("rejects unknown concepts and components in a milestone", () => {
+      expect(
+        find(
+          withProject((c) => {
+            c.milestones[0]!.requires = ["ghost"];
+          }),
+          "missing-concept",
+        ),
+      ).toBeDefined();
+      expect(
+        find(
+          withProject((c) => {
+            c.milestones[0]!.refs = { ...emptyRefs, components: ["Sparkles"] };
+          }),
+          "unknown-component",
+        ),
+      ).toBeDefined();
+    });
+
+    it("counts a milestone's check as a use of that question", () => {
+      expect(find(withProject(), "question-unused")).toBeUndefined();
+    });
+
+    it("warns when a milestone id recorded before has gone", () => {
+      const before = collectIds({
+        ...validBundle(),
+        milestones: [milestone("first")],
+      });
+      expect(validateContent(validBundle(), before)).toEqual([
+        expect.objectContaining({
+          code: "removed-id",
+          source: "milestones rocket/first",
+        }),
+      ]);
     });
   });
 

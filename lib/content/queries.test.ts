@@ -99,9 +99,11 @@ const content: ContentBundle = {
       subjects: ["physics"],
       kind: "capstone",
       concepts: ["derivative"],
+      milestones: [],
       status: "coming-soon",
     },
   ],
+  milestones: [],
   questions: [],
 };
 const course = content.courses[0]!;

@@ -34,6 +34,7 @@ async function loadContent(): Promise<ContentBundle> {
     lessons: await load("lessons"),
     explainers: await load("explainers"),
     projects: await load("projects"),
+    milestones: await load("milestones"),
     questions: await load("questions"),
   };
 }

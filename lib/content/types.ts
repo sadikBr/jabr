@@ -67,7 +67,25 @@ export interface Project {
   subjects: Subject[];
   kind: "capstone" | "mini";
   concepts: string[];
+  /** Milestone ids, in order. */
+  milestones: string[];
   status: ContentStatus;
+}
+
+export interface Milestone {
+  id: string;
+  /** project/milestone — the stable key stored against user progress. */
+  key: string;
+  project: string;
+  title: string;
+  summary: string;
+  requires: string[];
+  /** Id of the code question that checks the milestone. */
+  check: string;
+  estimatedMinutes?: number;
+  /** Compiled MDX (function body): the instructions. */
+  body: string;
+  refs: MdxRefs;
 }
 
 export type Tolerance = { absolute: number } | { relative: number };
@@ -140,5 +158,6 @@ export interface ContentBundle {
   lessons: Lesson[];
   explainers: Explainer[];
   projects: Project[];
+  milestones: Milestone[];
   questions: Question[];
 }

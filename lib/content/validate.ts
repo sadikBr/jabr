@@ -31,6 +31,10 @@ export type IssueCode =
   | "code-without-tests"
   | "codelab-not-code"
   | "nothing-to-do"
+  | "missing-milestone"
+  | "milestone-not-in-project"
+  | "invalid-milestone-check"
+  | "project-without-milestones"
   | "concept-never-taught"
   | "removed-id";
 
@@ -44,7 +48,13 @@ export interface Issue {
 
 /** Ids recorded in content/ids.lock.json, by kind. */
 export type IdLock = Record<
-  "concepts" | "courses" | "lessons" | "explainers" | "projects" | "questions",
+  | "concepts"
+  | "courses"
+  | "lessons"
+  | "explainers"
+  | "projects"
+  | "milestones"
+  | "questions",
   string[]
 >;
 
@@ -56,6 +66,7 @@ export function collectIds(content: ContentBundle): IdLock {
     lessons: sorted(content.lessons.map((l) => l.key)),
     explainers: sorted(content.explainers.map((e) => e.id)),
     projects: sorted(content.projects.map((p) => p.id)),
+    milestones: sorted(content.milestones.map((m) => m.key)),
     questions: sorted(content.questions.map((q) => q.id)),
   };
 }
@@ -113,6 +124,7 @@ export function validateContent(
     ["lesson", content.lessons.map((l) => l.key)],
     ["explainer", content.explainers.map((e) => e.id)],
     ["project", content.projects.map((p) => p.id)],
+    ["milestone", content.milestones.map((m) => m.key)],
     ["question", content.questions.map((q) => q.id)],
   ];
   for (const [kind, ids] of idGroups) {
@@ -389,16 +401,72 @@ export function validateContent(
   }
 
   // --- Projects ------------------------------------------------------------
+  const milestonesByKey = new Map(content.milestones.map((m) => [m.key, m]));
+  const listedMilestoneKeys = new Set<string>();
   for (const project of content.projects) {
-    requireConcepts(project.concepts, `project ${project.id}`, '"concepts"');
+    const source = `project ${project.id}`;
+    requireConcepts(project.concepts, source, '"concepts"');
+    for (const id of duplicates(project.milestones)) {
+      error("duplicate-id", source, `The milestone "${id}" is listed twice.`);
+    }
+    for (const id of project.milestones) {
+      const key = `${project.id}/${id}`;
+      listedMilestoneKeys.add(key);
+      if (!milestonesByKey.has(key)) {
+        error(
+          "missing-milestone",
+          source,
+          `Lists the milestone "${id}", but milestones/${id}.mdx does not exist.`,
+        );
+      }
+    }
+    if (project.status === "ready" && project.milestones.length === 0) {
+      error(
+        "project-without-milestones",
+        source,
+        'A project marked ready needs at least one milestone. Mark it "coming-soon" until it has one.',
+      );
+    }
+  }
+
+  for (const milestone of content.milestones) {
+    const source = `milestone ${milestone.key}`;
+    if (!listedMilestoneKeys.has(milestone.key)) {
+      error(
+        "milestone-not-in-project",
+        source,
+        "This milestone file is not listed in its project.yaml.",
+      );
+    }
+    requireConcepts(milestone.requires, source, '"requires"');
+    checkRefs(milestone.refs, source);
+    // A milestone is passed by passing its lab, so the lab must be a code
+    // question that actually tests something.
+    const check = questionsById.get(milestone.check);
+    if (!check) {
+      error(
+        "invalid-milestone-check",
+        source,
+        `Its check "${milestone.check}" is not a question.`,
+      );
+    } else if (check.type !== "code" || check.tests === undefined) {
+      error(
+        "invalid-milestone-check",
+        source,
+        `Its check "${milestone.check}" must be a code question with tests.`,
+      );
+    }
   }
 
   // --- Questions -----------------------------------------------------------
-  const usedQuestionIds = new Set(
-    [...content.lessons, ...content.explainers].flatMap(
-      (document) => document.refs.questions,
-    ),
-  );
+  const usedQuestionIds = new Set([
+    ...[
+      ...content.lessons,
+      ...content.explainers,
+      ...content.milestones,
+    ].flatMap((document) => document.refs.questions),
+    ...content.milestones.map((milestone) => milestone.check),
+  ]);
   for (const question of content.questions) {
     const source = `question ${question.id}`;
     if (question.concepts.length === 0) {

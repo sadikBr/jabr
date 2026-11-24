@@ -295,6 +295,107 @@
       "goal": "Add steps until the error is {maxError} or less.",
       "goalReached": "Done: {steps} steps is enough.",
       "live": "{steps} steps. Error {error}."
+    },
+    "secant": {
+      "description": "A graph with two movable points, at {from} and {to}, and the straight line through them.",
+      "reading": "{x}, {y}",
+      "drag": "Drag on the graph, or use the sliders, to move the two points.",
+      "goalReached": "Found it: {slope} between {from} and {to}.",
+      "live": "From {from} to {to}: slope {slope}.",
+      "generic": {
+        "from": "First point",
+        "to": "Second point",
+        "run": "Run (change in x)",
+        "rise": "Rise (change in y)",
+        "slope": "Slope of the secant",
+        "goal": "Find two points where the slope is at least {min}."
+      },
+      "motion": {
+        "from": "Start",
+        "to": "End",
+        "run": "Time taken",
+        "rise": "Distance covered",
+        "slope": "Average speed",
+        "goal": "Find the stretch where the average speed is at least {min}."
+      }
+    },
+    "limit": {
+      "description": "A graph of the function near x = {a}, with a marker {d} to the left of that point and another {d} to the right.",
+      "choose": "Function",
+      "cases": {
+        "smooth": "Smooth",
+        "hole": "Hole",
+        "sinc": "sin(x)/x",
+        "moved-point": "Moved point",
+        "jump": "Jump",
+        "blow-up": "Blow-up",
+        "oscillating": "Wild"
+      },
+      "distance": "Distance from x = {a}",
+      "closer": "10× closer",
+      "reset": "Back off",
+      "tableCaption": "Values of the function at shrinking distances either side of x = {a}",
+      "columns": {
+        "distance": "Distance",
+        "left": "Left of {a}",
+        "right": "Right of {a}"
+      },
+      "atPoint": "At x = {a} itself",
+      "undefined": "not defined",
+      "prompt": "Close in on x = {a} from both sides. Where are the values heading?",
+      "promptContinuity": "Close in on x = {a}. Is the function continuous there?",
+      "verdict": {
+        "continuous": "From both sides the values close in on {limit}, and that is exactly the value at x = {a}. Nothing surprising happens here.",
+        "hole": "From both sides the values close in on {limit}. That is the limit, even though the function has no value at x = {a}.",
+        "moved-point": "From both sides the values close in on {limit}. That is the limit. The value at x = {a} is {value}, and the limit does not care.",
+        "jump": "From the left the values close in on {left}; from the right, on {right}. Two different answers, so there is no limit here.",
+        "blow-up": "The values keep growing without bound. There is no number they settle on, so there is no limit here.",
+        "oscillating": "However close you get, the values keep swinging between −1 and 1. They never settle, so there is no limit here."
+      },
+      "tests": {
+        "defined": "The function has a value at x = {a}",
+        "limit": "The limit at x = {a} exists",
+        "equal": "The limit equals the value"
+      },
+      "yes": "Yes:",
+      "no": "No:",
+      "continuous": "Continuous at x = {a}.",
+      "notContinuous": "Not continuous at x = {a}.",
+      "live": "Distance {d}. Left value {left}, right value {right}."
+    },
+    "derivative": {
+      "description": "A graph of f(x) = {fn} with a movable point at x = {x} and the tangent line there.",
+      "slopeDescription": "A graph of the tangent's slope against x, {percent} percent traced.",
+      "choose": "Function",
+      "slopeAxis": "slope of the tangent",
+      "point": "Point x",
+      "slope": "Slope there",
+      "clear": "Clear",
+      "goal": "Sweep the point across the whole curve to draw its derivative. {percent}% traced.",
+      "complete": "Traced. The derivative of {fn} is {derivative}.",
+      "legendCurve": "The curve",
+      "legendTangent": "Tangent, and its slope",
+      "live": "x = {x}. Slope {slope}."
+    },
+    "motion": {
+      "heightDescription": "A graph of the height of a ball thrown upward at {speed} metres per second. At {time} seconds it is {height} metres up.",
+      "velocityDescription": "A graph of the ball's velocity against time: a straight line sloping down. Now {velocity} metres per second.",
+      "accelerationDescription": "A graph of the ball's acceleration against time: a flat line at {acceleration} metres per second squared.",
+      "heightAxis": "height (m)",
+      "velocityAxis": "velocity (m/s)",
+      "accelerationAxis": "acceleration (m/s²)",
+      "timeAxis": "time (s)",
+      "time": "Time",
+      "speed": "Throw speed",
+      "throw": "Throw",
+      "reset": "Reset",
+      "jumpToTop": "Jump to the top",
+      "height": "Height",
+      "velocity": "Velocity",
+      "acceleration": "Acceleration",
+      "goal": "Stop the clock at the very top of the flight.",
+      "goalReached": "That's the top. The velocity is zero, but the acceleration is still {acceleration} m/s².",
+      "live": "Time {time} seconds. Height {height} metres. Velocity {velocity} metres per second."
     }
   },
   "questions": {

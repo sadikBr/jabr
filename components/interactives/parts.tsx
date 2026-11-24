@@ -63,11 +63,14 @@ export function Slider({
 export function Readout({
   label,
   value,
+  unit,
   highlight,
   testId,
 }: {
   label: string;
   value: ReactNode;
+  /** Shown small after the value, so a long unit never crowds a narrow box. */
+  unit?: string;
   highlight?: boolean;
   testId?: string;
 }) {
@@ -84,6 +87,12 @@ export function Readout({
         className="mt-0.5 font-mono text-lg font-semibold tabular-nums"
       >
         {value}
+        {unit ? (
+          <span className="font-sans text-xs font-medium text-muted-foreground">
+            {" "}
+            {unit}
+          </span>
+        ) : null}
       </dd>
     </div>
   );

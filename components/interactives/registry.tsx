@@ -31,6 +31,18 @@ const interactiveComponents: {
   "euler-stepper": dynamic(() =>
     import("./euler-stepper").then((module) => module.EulerStepper),
   ),
+  "secant-explorer": dynamic(() =>
+    import("./secant-explorer").then((module) => module.SecantExplorer),
+  ),
+  "limit-explorer": dynamic(() =>
+    import("./limit-explorer").then((module) => module.LimitExplorer),
+  ),
+  "derivative-explorer": dynamic(() =>
+    import("./derivative-explorer").then((module) => module.DerivativeExplorer),
+  ),
+  "motion-graphs": dynamic(() =>
+    import("./motion-graphs").then((module) => module.MotionGraphs),
+  ),
 };
 
 /**

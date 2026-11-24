@@ -8,6 +8,7 @@ import {
   isInteractiveId,
 } from "@/lib/content/interactive-specs";
 import { renderRichText } from "@/lib/content/rich-text";
+import { type LimitCaseId, limitCases } from "@/lib/maths/limits";
 import { odeProblems } from "@/lib/sim/euler";
 
 /** Props an interactive needs that are best prepared on the server. */
@@ -20,6 +21,17 @@ function serverExtras(
     return {
       equationHtml: renderRichText(
         `$${problem.equation} \\qquad ${problem.solution}$`,
+      ),
+    };
+  }
+  if (id === "limit-explorer") {
+    const cases = props.cases as LimitCaseId[];
+    return {
+      texHtml: Object.fromEntries(
+        cases.map((caseId) => [
+          caseId,
+          renderRichText(`$${limitCases[caseId].tex}$`),
+        ]),
       ),
     };
   }

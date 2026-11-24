@@ -193,26 +193,28 @@ requires: [limits-intuition, slope-of-a-line]
 estimatedMinutes: 12
 ---
 
-<Step title="See it">
+<Step kind="see" title="Zoom in until it's straight">
   Imagine zooming into a curve until it looks straight…
   <Interactive id="tangent-zoom" props={{ fn: "x^2", x0: 1 }} />
 </Step>
 
-<Step title="Do it">
+<Step kind="do" title="Find some slopes yourself">
   <Question id="calc.deriv.slope-at-point" />
 </Step>
 
-<Step title="Check it">
+<Step kind="check" title="Make sure it stuck">
   <Question id="calc.deriv.concept-check-1" />
 </Step>
 
-<ConnectIt
-  concepts={["velocity"]}
-  explainers={["how-do-rockets-reach-orbit"]}
-/>
+<Step kind="connect" title="Where this goes next">
+  <ConnectIt
+    concepts={["velocity"]}
+    explainers={["how-does-a-rocket-reach-orbit"]}
+  />
+</Step>
 ```
 
-Every lesson follows the rhythm **See it → Do it → Check it → Connect it**.
+Every lesson follows the rhythm **See it → Do it → Check it → Connect it**. Each `<Step>` declares its `kind` (`see`, `do`, `check`, `connect`) and a unique title; the validator enforces the order. Lessons and explainers that are planned but not written have `status: coming-soon` in their frontmatter and no body.
 
 ### 8.4 Questions (`content/questions/**/*.yaml`)
 
@@ -247,7 +249,7 @@ solution: |
 
 ### 8.5 Interactive registry
 
-`components/interactives/registry.ts` maps ids to lazy-loaded React components with a Zod schema for their props. MDX uses `<Interactive id="…" props={…} />`; unknown ids or invalid props fail content validation. Each interactive must:
+`components/interactives/registry.tsx` maps ids to lazy-loaded React components with a Zod schema for their props. MDX uses `<Interactive id="…" props={…} />`; unknown ids or invalid props fail content validation. Each interactive must:
 
 - work with mouse, touch and keyboard (sliders reachable by Tab, arrow keys adjust)
 - respect `prefers-reduced-motion`

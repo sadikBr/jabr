@@ -2,11 +2,14 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
 // In development, rebuild content whenever a file under /content changes.
-// Production builds run `velite build` first (see package.json).
-if (process.argv.includes("dev") && !process.env.VELITE_STARTED) {
+// The first build happens before Next starts (`velite build &&` in the dev
+// and build scripts), so .velite always exists by the time pages compile.
+if (process.env.NODE_ENV === "development" && !process.env.VELITE_STARTED) {
   process.env.VELITE_STARTED = "1";
   void import("velite").then(({ build }) =>
-    build({ watch: true, clean: false }),
+    // Not strict here: a typo while editing should print an issue, not
+    // stop the watcher. The scripts and CI build with --strict.
+    build({ watch: true, clean: false, strict: false }),
   );
 }
 

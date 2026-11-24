@@ -52,8 +52,11 @@ the database holds user state only.
 ## Content
 
 Content is YAML and MDX under `/content`, built by Velite into `.velite/`
-(git-ignored). `bun run dev` rebuilds it on change; `build`, `test`,
-`typecheck` and `lint` build it first.
+(git-ignored), so it must be built before anything imports it. Every script
+does that first: `dev` builds once and then rebuilds on change; `build`,
+`test`, `typecheck`, `lint` and `content:check` build with `--strict`, which
+fails on any schema error. Without `--strict` Velite only prints the error
+and drops the bad entry, so never remove the flag from those scripts.
 
 - `velite.config.ts` holds the **shape** of each file (one schema per kind).
 - `lib/content/validate.ts` holds every rule that spans files: references,
@@ -142,25 +145,26 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 
 ## Decisions
 
-| Date       | Decision                                                                   | Why                                                                                                  |
-| ---------- | -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| 2026-11-24 | Bun instead of pnpm                                                        | The repo was scaffolded with Bun                                                                     |
-| 2026-11-24 | Docs live in `AGENTS.md`; `CLAUDE.md` points here                          | Next.js generates and re-adds the block at the top of `AGENTS.md`                                    |
-| 2026-11-24 | Installable web app (PWA) is a core requirement                            | Must work as a desktop app and on phones without native apps                                         |
-| 2026-11-24 | No service worker until Phase 2                                            | Install needs only the manifest; offline caching arrives with the content and Pyodide it must cache  |
-| 2026-11-24 | Prisma 7 (pinned), `prisma-client` generator, `pg` driver adapter          | `bun add prisma` resolved to a Prisma 8 release candidate with a different CLI; 7 is the stable line |
-| 2026-11-24 | Generated Prisma client is git-ignored, built on `postinstall`             | Keeps generated code out of review                                                                   |
-| 2026-11-24 | Status columns are Postgres enums, not free strings                        | The database rejects invalid states                                                                  |
-| 2026-11-24 | Own theme switcher (system / light / dark) instead of `next-themes`        | Follows the Next 16 flash-prevention guide; about 60 lines, no dependency                            |
-| 2026-11-24 | UI primitives are written in shadcn style on the `radix-ui` package        | Same conventions as the shadcn CLI; `components.json` is set up so the CLI can add more              |
-| 2026-11-24 | e2e runs against the production build                                      | It is what ships, and prerendering and the manifest only behave as deployed there                    |
-| 2026-11-24 | Auth providers enable themselves from env vars; demo sign-in behind flag   | Easy local and preview testing without OAuth apps (Phase 3)                                          |
-| 2026-11-24 | Planned: Velite, CodeMirror 6, random-point expression checking            | See `PROJECT_BRIEF.md` section 6                                                                     |
-| 2026-11-24 | Velite checks file shapes; our own pure validator checks everything else   | Cross-file rules need the whole bundle and must be unit-testable on fixtures                         |
-| 2026-11-24 | `<Step>` declares a `kind`; lessons are paged one step at a time           | Lets the validator enforce the lesson rhythm and gives each step its own identity                    |
-| 2026-11-24 | Explainer layers reveal cumulatively; the depth is kept in the URL hash    | The reader decides where to stop, and a link can point at a depth                                    |
-| 2026-11-24 | `tangent-zoom` built in Phase 1 instead of Phase 2                         | The sample lesson needed a real interactive to be judged                                             |
-| 2026-11-24 | Interactives take a named function from a fixed list, not a formula string | Keeps mathjs (large) off the client and gives exact derivatives                                      |
+| Date       | Decision                                                                                 | Why                                                                                                  |
+| ---------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| 2026-11-24 | Bun instead of pnpm                                                                      | The repo was scaffolded with Bun                                                                     |
+| 2026-11-24 | Docs live in `AGENTS.md`; `CLAUDE.md` points here                                        | Next.js generates and re-adds the block at the top of `AGENTS.md`                                    |
+| 2026-11-24 | Installable web app (PWA) is a core requirement                                          | Must work as a desktop app and on phones without native apps                                         |
+| 2026-11-24 | No service worker until Phase 2                                                          | Install needs only the manifest; offline caching arrives with the content and Pyodide it must cache  |
+| 2026-11-24 | Prisma 7 (pinned), `prisma-client` generator, `pg` driver adapter                        | `bun add prisma` resolved to a Prisma 8 release candidate with a different CLI; 7 is the stable line |
+| 2026-11-24 | Generated Prisma client is git-ignored, built on `postinstall`                           | Keeps generated code out of review                                                                   |
+| 2026-11-24 | Status columns are Postgres enums, not free strings                                      | The database rejects invalid states                                                                  |
+| 2026-11-24 | Own theme switcher (system / light / dark) instead of `next-themes`                      | Follows the Next 16 flash-prevention guide; about 60 lines, no dependency                            |
+| 2026-11-24 | UI primitives are written in shadcn style on the `radix-ui` package                      | Same conventions as the shadcn CLI; `components.json` is set up so the CLI can add more              |
+| 2026-11-24 | e2e runs against the production build                                                    | It is what ships, and prerendering and the manifest only behave as deployed there                    |
+| 2026-11-24 | Auth providers enable themselves from env vars; demo sign-in behind flag                 | Easy local and preview testing without OAuth apps (Phase 3)                                          |
+| 2026-11-24 | Planned: Velite, CodeMirror 6, random-point expression checking                          | See `PROJECT_BRIEF.md` section 6                                                                     |
+| 2026-11-24 | Velite checks file shapes; our own pure validator checks everything else                 | Cross-file rules need the whole bundle and must be unit-testable on fixtures                         |
+| 2026-11-24 | `<Step>` declares a `kind`; lessons are paged one step at a time                         | Lets the validator enforce the lesson rhythm and gives each step its own identity                    |
+| 2026-11-24 | Explainer layers reveal cumulatively; the depth is kept in the URL hash                  | The reader decides where to stop, and a link can point at a depth                                    |
+| 2026-11-24 | `tangent-zoom` built in Phase 1 instead of Phase 2                                       | The sample lesson needed a real interactive to be judged                                             |
+| 2026-11-24 | Interactives take a named function from a fixed list, not a formula string               | Keeps mathjs (large) off the client and gives exact derivatives                                      |
+| 2026-11-24 | Content builds use `velite build --strict`; unwritten files carry a one-line MDX comment | Plain builds silently drop invalid entries, and strict mode rejects an empty MDX body                |
 
 ## Known limitations
 

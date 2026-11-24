@@ -24,7 +24,7 @@ Working rules:
 
 Jabr is a place where anyone can **understand how things work** and **learn subjects properly**: maths, physics, biology, engineering and software. It rests on three pillars:
 
-1. **Learning by doing.** Every concept is taught with something to manipulate: a simulation with sliders, a live code cell, a step-by-step problem with feedback. Reading alone is never the whole lesson.
+1. **Learning by doing.** Every concept is taught with something to manipulate: a simulation with sliders, a live code cell, a step-by-step problem with feedback. Reading alone is never the whole lesson. This is the product's first rule, not a nice-to-have: every lesson and every explainer must contain an interactive, a question or a code lab (the content validator warns when one does not), explainers open with something to try before the explanation, and the landing page starts with a playable simulation.
 2. **A shared knowledge graph.** Every concept (e.g. _derivative_, _vector_, _Newton's second law_, _for loop_) exists once in a graph with prerequisites. Courses, explainers and projects all reference the same concepts, so mastery carries over across subjects and gaps are visible.
 3. **Project-based learning.** Real projects that combine several subjects (e.g. _build a rocket flight simulator_ = calculus + mechanics + Python), split into milestones that link back to the concepts they need.
 
@@ -96,7 +96,7 @@ Explainers are layered by depth, and the learner chooses where to stop:
 - **Database:** PostgreSQL + Prisma. Local Postgres via `docker-compose.yml`.
 - **Auth:** Auth.js (NextAuth v5) with GitHub and Google. Each provider is enabled only when its credentials are set in the environment, so the app runs with no providers configured. A demo sign-in behind `AUTH_DEMO_LOGIN` (never on in production) makes accounts testable without OAuth setup. Email magic links come later, when there are more users. Guests can read and try everything; progress is saved after sign-in.
 - **Maths checking:** `mathjs` for numeric evaluation, plus expression equivalence by seeded random-point numeric comparison (predictable and easy to test); CortexJS Compute Engine may be added later as a second opinion. Put this behind a single `checkExpression()` interface.
-- **Code labs:** Pyodide running in a Web Worker (with numpy and matplotlib), plus a CodeMirror 6 editor (lighter than Monaco and usable on phones). Tests run in the worker; results come back as structured pass/fail.
+- **Code labs:** Pyodide running in a module Web Worker (runtime self-hosted from the npm package; numpy and matplotlib loaded from the Pyodide CDN on first use), plus a CodeMirror 6 editor (lighter than Monaco and usable on phones). Tests run in the worker; results come back as structured pass/fail.
 - **Simulations:** React + `<canvas>` or SVG, with no heavy physics engine unless a sim really needs one.
 - **Graph visualisation:** React Flow (`@xyflow/react`) with automatic layout (dagre or elkjs).
 - **Spaced repetition:** `ts-fsrs`.
@@ -223,7 +223,7 @@ Questions are **never shipped to the client with their answers**. The client rec
 Supported types for the MVP:
 
 - `multiple-choice` (single or multi-select)
-- `numeric`: value + tolerance (absolute or relative) + optional unit
+- `numeric`: value + tolerance (absolute or relative) + optional unit. Numeric and parametrised questions may list `commonMistakes`: known wrong answers, each with the feedback a learner who gives it should see
 - `expression`: symbolic equivalence (`2(x+1)` ≡ `2x+2`), variables declared
 - `parametrised`: numeric or expression with randomised `params` (seeded per attempt so a reload doesn't reroll; the answer is a formula of the params)
 - `code`: Python tests run in the Pyodide worker. For code, the tests run client-side and the server records the result (acceptable for MVP; note it as a known limitation).

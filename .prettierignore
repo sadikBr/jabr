@@ -7,3 +7,5 @@ playwright-report
 test-results
 public
 next-env.d.ts
+.velite
+content/ids.lock.json

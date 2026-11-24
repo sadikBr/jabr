@@ -396,6 +396,183 @@
       "goal": "Stop the clock at the very top of the flight.",
       "goalReached": "That's the top. The velocity is zero, but the acceleration is still {acceleration} m/s².",
       "live": "Time {time} seconds. Height {height} metres. Velocity {velocity} metres per second."
+    },
+    "vectors": {
+      "description": "A grid with two arrows placed tip to tail: the first is {a}, the second is {b}. A third arrow from the start to the end is their sum, {sum}.",
+      "componentsDescription": "A grid with one arrow, {a}, and dashed arrows showing its horizontal and vertical parts.",
+      "size": "{name}: size",
+      "direction": "{name}: direction",
+      "showParts": "Show the horizontal and vertical parts",
+      "resultDirection": "Direction",
+      "partX": "Horizontal part",
+      "partY": "Vertical part",
+      "goalComponents": "Make a vector with a horizontal part of {x} and a vertical part of {y}.",
+      "drag": "Drag an arrow's tip, or use the sliders.",
+      "live": "Result: size {size}, direction {direction}.",
+      "generic": {
+        "a": "A",
+        "b": "B",
+        "sum": "A + B",
+        "goalDirection": "Make A + B point at {direction}.",
+        "goalReached": "Done. A + B has size {sum}.",
+        "size": "Size of A + B"
+      },
+      "boat": {
+        "a": "Your rowing",
+        "b": "The current",
+        "sum": "Where you actually go",
+        "goalDirection": "Row so that you travel straight across the river.",
+        "goalReached": "Straight across, at {sum}. You had to aim at {angle} to do it.",
+        "size": "Speed over the ground"
+      },
+      "sizeOfA": "Size of A",
+      "componentsReached": "That's it. Its size is {sum}: the two parts and the vector make a right-angled triangle."
+    },
+    "braking": {
+      "sceneDescription": "A road seen from the side. A car travelling at {speed} kilometres per hour, and a fallen tree across the road {obstacle} metres ahead.",
+      "graphDescription": "A graph of the car's speed against time during the stop: flat while the driver reacts, then a straight line down to zero. The area under it is the distance travelled.",
+      "distanceAxis": "distance (m)",
+      "speedAxis": "speed (km/h)",
+      "timeAxis": "time (s)",
+      "speed": "Speed",
+      "reaction": "Reaction time",
+      "road": "Road",
+      "surfaces": {
+        "dry": "Dry",
+        "wet": "Wet",
+        "icy": "Icy"
+      },
+      "brake": "Brake!",
+      "reset": "Reset",
+      "prompt": "A tree has fallen across the road {obstacle} m ahead. Will you stop in time?",
+      "stopped": "Stopped, with {margin} m to spare.",
+      "hit": "Too fast. The car is still doing {speed} km/h when it reaches the tree.",
+      "goal": "Find the fastest speed that still stops before the tree.",
+      "goalReached": "{speed} km/h is the limit. Just 5 km/h more and you would not stop in time.",
+      "thinking": "Thinking distance",
+      "braking": "Braking distance",
+      "stopping": "Stopping distance",
+      "legendThinking": "While reacting",
+      "legendBraking": "While braking"
+    },
+    "push": {
+      "sceneDescription": "A {mass} kilogram block on a level surface, about to be pushed to the right with a force of {force} newtons.",
+      "graphDescription": "A graph of the block's speed against time. The shaded band is the time the push lasts.",
+      "distanceAxis": "distance (m)",
+      "speedAxis": "speed (m/s)",
+      "timeAxis": "time (s)",
+      "force": "Push force",
+      "mass": "Mass",
+      "duration": "Push for",
+      "surface": "Surface",
+      "surfaces": {
+        "ice": "Ice (no friction)",
+        "carpet": "Carpet"
+      },
+      "push": "Push",
+      "reset": "Reset",
+      "acceleration": "Acceleration while pushed",
+      "released": "Speed when let go",
+      "now": "Speed now",
+      "shaded": "The shaded band on the graph is the push. Watch what the speed does when it ends.",
+      "afterIce": "After the push ends, nothing acts along the ice, and the block keeps its speed.",
+      "afterCarpet": "After the push ends, friction is the only force along the floor, and it slows the block to a stop.",
+      "stuck": "The push is too weak to beat friction, so the block does not move.",
+      "goal": "Let go of the block at exactly {speed} m/s.",
+      "goalReached": "There it is: {speed} m/s. There is more than one way to do it."
+    },
+    "freeBody": {
+      "description": "A diagram of the object with an arrow for each force chosen so far: {forces}.",
+      "none": "none yet",
+      "choose": "Situation",
+      "question": "Which forces act on it? Tick every one.",
+      "check": "Check my diagram",
+      "right": "That is the complete diagram.",
+      "notThere": "{force} does not belong.",
+      "missing": "{count, plural, one {One force is missing.} other {# forces are missing.}}",
+      "forces": {
+        "weight": "Weight",
+        "normal": "Normal force",
+        "tension": "Tension",
+        "friction": "Friction",
+        "drag": "Air drag",
+        "thrust": "Thrust",
+        "motion": "Force of motion"
+      },
+      "hint": {
+        "weight": "Gravity pulls on everything that has mass, and it never switches off.",
+        "normal": "It is resting on a surface. What stops it sinking in?",
+        "tension": "There is a rope attached, and it is pulled tight.",
+        "friction": "Is it sliding against something rough?",
+        "drag": "It is moving fast through the air, and air pushes back.",
+        "thrust": "Its engine is firing.",
+        "motion": "There is no such force."
+      },
+      "extra": {
+        "weight": {
+          "default": "Weight always acts."
+        },
+        "normal": {
+          "default": "It is not touching a surface, so there is nothing to push back on it."
+        },
+        "tension": {
+          "default": "Nothing is tied to it, so nothing can pull on it."
+        },
+        "friction": {
+          "default": "It is not sliding against a surface.",
+          "book": "Friction only appears when something slides, or tries to. Nothing is pushing the book sideways.",
+          "sled": "The ice is taken to be perfectly slippery here.",
+          "ramp": "The ramp is taken to be perfectly smooth here."
+        },
+        "drag": {
+          "default": "We are ignoring the air here.",
+          "book": "The book is not moving through the air.",
+          "ball": "There is no air on the Moon."
+        },
+        "thrust": {
+          "default": "It has no engine."
+        },
+        "motion": {
+          "default": "There is no such force. Moving things do not need a force to keep them moving, only to change how they move.",
+          "book": "The book is not even moving. And if it were, it would not need a force to keep going.",
+          "skydiver": "Steady motion needs no force at all: that is Newton's first law. The real forces here balance each other.",
+          "ramp": "Nothing pushes the block along the slope. It speeds up because its weight and the normal force do not cancel.",
+          "rocket": "The thrust is the real upward force. There is no extra force of motion on top of it."
+        }
+      },
+      "situations": {
+        "book": {
+          "name": "Book",
+          "description": "A book lying still on a table.",
+          "outcome": "The two forces cancel, so the net force is zero and the book stays at rest."
+        },
+        "ball": {
+          "name": "Falling ball",
+          "description": "A ball dropped by an astronaut on the Moon, on its way down.",
+          "outcome": "Its weight is the only force, so that is the net force. The ball accelerates downwards."
+        },
+        "skydiver": {
+          "name": "Skydiver",
+          "description": "A skydiver falling at a steady speed, before opening the parachute.",
+          "outcome": "Drag has grown to match the weight. The net force is zero, so the speed stays the same. This is terminal velocity."
+        },
+        "sled": {
+          "name": "Sled",
+          "description": "A sled being pulled along smooth ice by a level rope. Ignore friction and the air.",
+          "outcome": "Weight and the normal force cancel. The rope's pull is left over, so the sled accelerates forwards."
+        },
+        "ramp": {
+          "name": "Ramp",
+          "description": "A block sliding down a smooth ramp tilted at 30°. Ignore friction and the air.",
+          "outcome": "The two forces do not cancel. What is left over points down the slope, so that is the way the block accelerates."
+        },
+        "rocket": {
+          "name": "Rocket",
+          "description": "A rocket just after lift-off, engine firing. It is still slow, so ignore the air.",
+          "outcome": "Thrust is bigger than weight. The net force points up, so the rocket accelerates upwards."
+        }
+      },
+      "net": "Net force"
     }
   },
   "questions": {

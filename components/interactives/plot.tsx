@@ -46,6 +46,8 @@ export function Plot({
   x,
   y,
   shape = DEFAULT_SHAPE,
+  square = false,
+  axes = true,
   pad,
   label,
   xTicks,
@@ -62,6 +64,14 @@ export function Plot({
   y: readonly [number, number];
   /** Aspect-ratio classes that give the graph its shape at each screen size. */
   shape?: string;
+  /**
+   * Use the same scale on both axes, so angles and lengths look true. The
+   * vertical range is then worked out from the shape, centred on the middle
+   * of `y`.
+   */
+  square?: boolean;
+  /** Draw the lines x = 0 and y = 0. Turn off for a picture that is not a graph. */
+  axes?: boolean;
   pad?: Partial<PlotFrame["pad"]>;
   /** Describes the graph to screen readers. */
   label: string;
@@ -99,6 +109,13 @@ export function Plot({
   const padding = { ...DEFAULT_PAD, ...pad };
   // Room for the name of the horizontal axis, under its numbers.
   if (xLabel) padding.bottom += 16;
+  if (square) {
+    const across = width - padding.left - padding.right;
+    const down = height - padding.top - padding.bottom;
+    const span = ((x[1] - x[0]) * down) / across;
+    const middle = (y[0] + y[1]) / 2;
+    y = [middle - span / 2, middle + span / 2];
+  }
   const frame: PlotFrame = { width, height, pad: padding, x, y };
   const scale = createScale(frame);
   const view = { frame, scale };
@@ -199,7 +216,7 @@ export function Plot({
 
       {/* The axes themselves, where they are in view. */}
       <g className="stroke-muted-foreground" strokeWidth="1.25">
-        {y[0] <= 0 && y[1] >= 0 ? (
+        {axes && y[0] <= 0 && y[1] >= 0 ? (
           <line
             x1={frame.pad.left}
             x2={right}
@@ -207,7 +224,7 @@ export function Plot({
             y2={scale.toY(0)}
           />
         ) : null}
-        {x[0] <= 0 && x[1] >= 0 ? (
+        {axes && x[0] <= 0 && x[1] >= 0 ? (
           <line
             x1={scale.toX(0)}
             x2={scale.toX(0)}
@@ -264,6 +281,60 @@ export function Curve({
       strokeLinejoin="round"
     />
   ));
+}
+
+/**
+ * An arrow between two points on screen, in the current text colour: set it
+ * with a `text-…` class. Too short to draw, it becomes a dot.
+ */
+export function Arrow({
+  from,
+  to,
+  className,
+  width = 3.5,
+  dashed = false,
+}: {
+  from: { x: number; y: number };
+  to: { x: number; y: number };
+  className?: string;
+  width?: number;
+  dashed?: boolean;
+}) {
+  const length = Math.hypot(to.x - from.x, to.y - from.y);
+  const head = Math.min(12, length * 0.6);
+  if (length < 3) {
+    return (
+      <circle
+        cx={from.x}
+        cy={from.y}
+        r={width}
+        className={cn("fill-current", className)}
+      />
+    );
+  }
+  const ux = (to.x - from.x) / length;
+  const uy = (to.y - from.y) / length;
+  // The shaft stops at the base of the head, so the tip stays sharp.
+  const base = { x: to.x - ux * head, y: to.y - uy * head };
+  const half = head * 0.45;
+  return (
+    <g className={className}>
+      <line
+        x1={from.x}
+        y1={from.y}
+        x2={base.x}
+        y2={base.y}
+        className="stroke-current"
+        strokeWidth={width}
+        strokeLinecap="round"
+        strokeDasharray={dashed ? "5 5" : undefined}
+      />
+      <polygon
+        points={`${to.x},${to.y} ${base.x - uy * half},${base.y + ux * half} ${base.x + uy * half},${base.y - ux * half}`}
+        className="fill-current"
+      />
+    </g>
+  );
 }
 
 /** A point on a graph: something the learner moves, or a value being read. */

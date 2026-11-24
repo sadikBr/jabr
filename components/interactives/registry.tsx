@@ -43,6 +43,18 @@ const interactiveComponents: {
   "motion-graphs": dynamic(() =>
     import("./motion-graphs").then((module) => module.MotionGraphs),
   ),
+  "vector-add": dynamic(() =>
+    import("./vector-add").then((module) => module.VectorAdd),
+  ),
+  "braking-distance": dynamic(() =>
+    import("./braking-distance").then((module) => module.BrakingDistance),
+  ),
+  "push-lab": dynamic(() =>
+    import("./push-lab").then((module) => module.PushLab),
+  ),
+  "free-body-builder": dynamic(() =>
+    import("./free-body-builder").then((module) => module.FreeBodyBuilder),
+  ),
 };
 
 /**

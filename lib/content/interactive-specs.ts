@@ -3,6 +3,7 @@ import { z } from "zod";
 import { datasetIds } from "@/lib/maths/datasets";
 import { limitCaseIds } from "@/lib/maths/limits";
 import { odeProblemIds } from "@/lib/sim/euler";
+import { situationIds } from "@/lib/sim/free-body";
 
 /**
  * Prop schemas for every interactive, keyed by id. Kept free of React so the
@@ -103,6 +104,91 @@ export const interactiveSpecs = {
       speed: z.number().int().min(5).max(25).default(15),
       /** Goal mode: stop the clock at the top of the flight. */
       goal: z.enum(["peak"]).optional(),
+    }),
+  },
+  "vector-add": {
+    title: "Vector workbench",
+    props: z.strictObject({
+      /** "add" puts two vectors tip to tail; "components" splits one into parts. */
+      mode: z.enum(["add", "components"]).default("add"),
+      a: z
+        .strictObject({
+          magnitude: z.number().min(0).max(5),
+          angle: z.number().min(0).max(360),
+        })
+        .default({ magnitude: 3, angle: 30 }),
+      b: z
+        .strictObject({
+          magnitude: z.number().min(0).max(3),
+          angle: z.number().min(0).max(360),
+        })
+        .default({ magnitude: 2, angle: 120 }),
+      /** Keeps the second vector fixed: a current the learner cannot change. */
+      lockB: z.boolean().default(false),
+      /** "boat" words it as rowing across a river with a current. */
+      labels: z.enum(["generic", "boat"]).default("generic"),
+      unit: z.string().optional(),
+      /**
+       * Goal mode. With `direction`, the result must point that way (in
+       * degrees) to within `tolerance` degrees. With `x` and `y`, the vector's
+       * components must match to within `tolerance`.
+       */
+      goal: z
+        .union([
+          z.strictObject({
+            direction: z.number().min(0).max(360),
+            tolerance: z.number().positive().max(20).default(2),
+          }),
+          z.strictObject({
+            x: z.number(),
+            y: z.number(),
+            tolerance: z.number().positive().max(1).default(0.15),
+          }),
+        ])
+        .optional(),
+    }),
+  },
+  "braking-distance": {
+    title: "Emergency stop",
+    props: z.strictObject({
+      /** Speed in km/h. */
+      speed: z.number().int().min(20).max(130).multipleOf(5).default(50),
+      /** The driver's reaction time, in seconds. */
+      reaction: z.number().min(0.5).max(2.5).default(1),
+      surface: z.enum(["dry", "wet", "icy"]).default("dry"),
+      /** How far ahead the obstacle is, in metres. */
+      obstacle: z.number().min(20).max(150).default(60),
+      /** Goal mode: find the fastest speed that still stops in time. */
+      goal: z.boolean().default(false),
+    }),
+  },
+  "push-lab": {
+    title: "Push lab",
+    props: z.strictObject({
+      /** Mass of the block, in kg. */
+      mass: z.number().int().min(1).max(10).default(2),
+      /** The pushing force, in N. */
+      force: z.number().int().min(0).max(20).default(6),
+      /** How long the push lasts, in s. */
+      duration: z.number().min(0.5).max(3).multipleOf(0.5).default(2),
+      surface: z.enum(["ice", "carpet"]).default("ice"),
+      /** Goal mode: let go of the block at this speed, in m/s. */
+      goal: z
+        .strictObject({
+          speed: z.number().positive(),
+          tolerance: z.number().positive().default(0.05),
+        })
+        .optional(),
+    }),
+  },
+  "free-body-builder": {
+    title: "Free-body diagram builder",
+    props: z.strictObject({
+      /** The situations on offer. The first is shown to begin with. */
+      situations: z
+        .array(z.enum(situationIds))
+        .min(1)
+        .default(["book", "ball", "skydiver", "sled", "ramp", "rocket"]),
     }),
   },
 } as const;

@@ -43,7 +43,7 @@ export async function ConnectIt({
   ].filter((item) => item !== null);
 
   return (
-    <div className="space-y-4 rounded-xl border bg-card p-5">
+    <div className="not-prose space-y-4 rounded-2xl border bg-card p-5">
       <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
         {t("blocks.connectTitle")}
       </p>

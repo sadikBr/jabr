@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Bricolage_Grotesque, Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { MobileTabBar } from "@/components/layout/nav-links";
 import { SiteHeader } from "@/components/layout/site-header";
+import { ServiceWorker } from "@/components/pwa/service-worker";
 import { localeDirection } from "@/i18n/config";
 import { appleStartupImages } from "@/lib/pwa";
 import { site } from "@/lib/site";
@@ -16,6 +17,11 @@ import "./globals.css";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+// Display face for headings.
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
 });
 
@@ -55,7 +61,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       dir={localeDirection(locale)}
       data-theme="light"
       suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${bricolage.variable} h-full antialiased`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
@@ -76,6 +82,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             {site.name} · {t("footer.tagline")}
           </footer>
           <MobileTabBar />
+          <ServiceWorker />
         </NextIntlClientProvider>
       </body>
     </html>

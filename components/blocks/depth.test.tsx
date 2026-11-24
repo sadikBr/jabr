@@ -36,7 +36,7 @@ describe("explainer depth", () => {
 
   it("reveals one more layer with Go deeper, keeping the earlier ones", () => {
     renderExplainer();
-    fireEvent.click(screen.getByRole("button", { name: "Go deeper" }));
+    fireEvent.click(screen.getByRole("button", { name: /Go deeper/ }));
     expect(screen.getByText("Text for intuition")).toBeVisible();
     expect(screen.getByText("Text for mechanism")).toBeVisible();
     expect(screen.getByText("Text for maths")).not.toBeVisible();
@@ -60,7 +60,7 @@ describe("explainer depth", () => {
   it("celebrates reaching the last layer and offers nothing deeper", () => {
     renderExplainer();
     fireEvent.click(screen.getByRole("button", { name: "Maths & science" }));
-    expect(screen.queryByRole("button", { name: "Go deeper" })).toBeNull();
+    expect(screen.queryByRole("button", { name: /Go deeper/ })).toBeNull();
     expect(screen.getByText(/reached the bottom/)).toBeVisible();
   });
 

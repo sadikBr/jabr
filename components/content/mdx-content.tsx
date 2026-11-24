@@ -6,7 +6,7 @@ import { ConnectIt } from "@/components/blocks/connect-it";
 import { Figure } from "@/components/blocks/figure";
 import { Interactive } from "@/components/blocks/interactive";
 import { Layer } from "@/components/blocks/layer";
-import { Question } from "@/components/blocks/question";
+import { CodeLab, Question } from "@/components/blocks/question";
 import { Step } from "@/components/blocks/step";
 import { WorkedExample } from "@/components/blocks/worked-example";
 import type { mdxComponentNames } from "@/lib/content/vocabulary";
@@ -23,6 +23,7 @@ const components: Record<MdxComponentName, ComponentType<any>> = {
   ConnectIt,
   Interactive,
   Question,
+  CodeLab,
   Figure,
 };
 

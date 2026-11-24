@@ -20,12 +20,10 @@
   },
   "home": {
     "eyebrow": "Maths · Physics · Engineering · Software",
-    "title": "Understand how things work, by doing.",
+    "title": "Understand how things work, <mark>by doing</mark>.",
     "lead": "Jabr teaches every idea with something you can touch: a simulation to steer, code to run, a problem to crack. Then it connects the ideas, so what you learn in one subject carries into the next.",
     "primaryCta": "Start exploring",
     "secondaryCta": "Browse courses",
-    "figureAlt": "A curve with a tangent line touching it at one point, showing the slope at that point.",
-    "figureCaption": "The slope of the tangent is the derivative.",
     "pathsTitle": "Three ways in",
     "paths": {
       "explore": {
@@ -55,7 +53,11 @@
         "title": "Real projects",
         "body": "Projects combine several subjects and link every milestone back to the concepts it uses."
       }
-    }
+    },
+    "tryTitle": "Try it: hit the target",
+    "tryCaption": "No sign-up. Change the speed and angle, then launch.",
+    "questionsTitle": "Start with a question",
+    "questionsAll": "All explainers"
   },
   "explore": {
     "title": "Explore",
@@ -142,11 +144,12 @@
     "layerOf": "Layer {current} of {total}",
     "goDeeper": "Go deeper",
     "goDeeperTo": "Next: {name}",
-    "reachedEnd": "You've reached the bottom. Nicely done.",
+    "reachedEnd": "You've reached the bottom. Nicely done!",
     "concepts": "Concepts in this explainer",
     "related": "You might also wonder…",
     "comingSoonTitle": "This explainer is being written",
-    "comingSoonBody": "It will arrive with all four layers, from intuition to building it yourself."
+    "comingSoonBody": "It will arrive with all four layers, from intuition to building it yourself.",
+    "depthShort": "Depth"
   },
   "lesson": {
     "steps": {
@@ -194,18 +197,6 @@
     "hideSolution": "Hide the working",
     "tryFirst": "Try it yourself first, then check.",
     "connectTitle": "This connects to",
-    "question": {
-      "label": "Practice",
-      "types": {
-        "multiple-choice": "Multiple choice",
-        "numeric": "Number",
-        "expression": "Expression",
-        "parametrised": "Number",
-        "code": "Code",
-        "self-check": "In your own words"
-      },
-      "soon": "Answering and feedback arrive in the next update."
-    },
     "interactive": {
       "label": "Try it"
     }
@@ -224,6 +215,151 @@
       "curve": "curve",
       "secant": "secant",
       "straight": "At this zoom the curve and the line are almost indistinguishable. That line is the tangent."
+    },
+    "projectile": {
+      "description": "A launcher on flat ground firing a ball at {speed} metres per second, {angle} degrees above the horizontal. Target distance: {target}.",
+      "speed": "Launch speed",
+      "angle": "Launch angle",
+      "launch": "Launch",
+      "air": "Air resistance",
+      "airHint": "Drag slows the ball",
+      "goal": "Land the ball on the flag at {target} m.",
+      "hit": "Bullseye! It landed at {distance} m, on shot {shots}.",
+      "short": "{by} m short. More speed, or a better angle?",
+      "long": "{by} m too far. Ease off a little.",
+      "moveTarget": "Move the target",
+      "range": "Landed at",
+      "height": "Peak height",
+      "time": "Flight time",
+      "offScene": "It flew out of view."
+    },
+    "dropTest": {
+      "description": "A hammer and a feather held at the same height on {place}, {air}, ready to be dropped together.",
+      "withAir": "with air",
+      "withoutAir": "with no air",
+      "where": "Where",
+      "places": {
+        "moon": "The Moon",
+        "earth": "Earth"
+      },
+      "air": "Air",
+      "noAirOnMoon": "The Moon has none",
+      "objects": {
+        "hammer": "Hammer",
+        "feather": "Feather"
+      },
+      "drop": "Drop them",
+      "dropAgain": "Drop again",
+      "reset": "Reset",
+      "landsAfter": "{object} lands after",
+      "prompt": "Which one hits the ground first? Make a guess, then drop them.",
+      "slowMotion": "On Earth the drop is over in half a second, so this plays in slow motion.",
+      "resultTie": "A tie. With nothing in the way, mass makes no difference.",
+      "resultApart": "The feather lands {gap} s later. Air is the only thing that changed."
+    },
+    "euler": {
+      "description": "A graph of the exact solution and the path Euler's method takes in {steps} steps. A dashed line at the right shows the gap between them.",
+      "exact": "Exact solution",
+      "euler": "Euler's method",
+      "gap": "Error at the end",
+      "steps": "Number of steps",
+      "stepSize": "Step size",
+      "eulerEnd": "Euler's final value",
+      "error": "Error",
+      "goal": "Add steps until the error is {maxError} or less.",
+      "goalReached": "Done: {steps} steps is enough.",
+      "live": "{steps} steps. Error {error}."
     }
+  },
+  "questions": {
+    "types": {
+      "multiple-choice": "Choose one",
+      "numeric": "Work it out",
+      "expression": "Write the expression",
+      "parametrised": "Work it out",
+      "code": "Code it",
+      "self-check": "In your own words"
+    },
+    "check": "Check",
+    "checking": "Checking…",
+    "tryAgain": "Check again",
+    "hint": "Give me a hint",
+    "anotherHint": "Another hint",
+    "hintOf": "Hint {current} of {total}",
+    "showSolution": "Show the solution",
+    "solution": "Worked solution",
+    "answer": "Answer:",
+    "newNumbers": "New numbers",
+    "correct": "Correct!",
+    "correctAfterRetry": "Correct. Sticking with it paid off.",
+    "incorrect": "Not quite. Have another go.",
+    "placeholders": {
+      "number": "Your answer",
+      "expression": "e.g. 3x^2 + 2x",
+      "selfCheck": "Write your answer here. It stays on your device."
+    },
+    "expressionHelp": "Write it in terms of {variables}. Use ^ for powers, and 2x or 2*x for multiplication.",
+    "selfCheck": {
+      "compare": "Compare with a model answer",
+      "legend": "Tick what your answer covered",
+      "save": "Save my self-check",
+      "saved": "Saved: {met} of {total} points covered."
+    },
+    "problems": {
+      "offline": "You're offline. Reconnect to check your answer; everything else on this page still works.",
+      "failed": "That didn't go through. Please try again."
+    },
+    "feedback": {
+      "invalid-response": "That answer couldn't be read. Please try again.",
+      "nothing-selected": "Pick an answer first.",
+      "select-more": "Everything you picked is right, but there is more to select.",
+      "input-empty": "Type an answer first.",
+      "input-too-long": "That is too long to be the answer. Simplify it first.",
+      "input-syntax": "That doesn't read as maths yet. Check for a missing bracket or operator, and write functions with brackets, like sin(x).",
+      "input-unknown-symbol": "There is a letter or symbol in there that doesn't belong. Check the question for what to use.",
+      "input-unknown-function": "That uses a function this checker doesn't know. Available: sin, cos, tan, sqrt, exp, ln, abs.",
+      "input-ambiguous-log": "Write ln(x) for the natural logarithm, or log10(x) for base ten.",
+      "input-not-allowed": "Use only numbers, the variables in the question and + − × ÷ ^.",
+      "input-not-a-number": "That doesn't work out to a number.",
+      "sign-error": "Right size, wrong sign. Which direction is positive here?",
+      "power-of-ten": "The digits look right, but it's out by a power of ten. Check your units.",
+      "radians-mode": "This looks like a calculator in radians mode. The angle is in degrees.",
+      "tests-failed": "Some checks didn't pass yet. Read their messages and try again."
+    }
+  },
+  "codelab": {
+    "editorLabel": "Python code editor",
+    "run": "Run",
+    "runAndCheck": "Run and check",
+    "stop": "Stop",
+    "reset": "Reset",
+    "output": "Output",
+    "empty": "Press Run to see what your code does.",
+    "shortcut": "Ctrl/⌘ + Enter runs it.",
+    "smallScreen": "Easier on a bigger screen, but it works here too.",
+    "tabHint": "Tab indents; press Esc then Tab to leave the editor.",
+    "status": {
+      "starting": "Starting…",
+      "loading-python": "Starting Python. The first time takes a few seconds…",
+      "loading-packages": "Loading packages…",
+      "running": "Running…"
+    },
+    "errorOnLine": "{type} on line {line}",
+    "plotAlt": "Plot {number} produced by your code",
+    "notices": {
+      "stopped": "Stopped.",
+      "timed-out": "Stopped after 30 seconds. Is there a loop that never ends?",
+      "unavailable": "Python couldn't start. If you're offline, connect once so it can download; after that it works offline."
+    },
+    "testsPassed": "{passed} of {total} checks passed",
+    "allPassed": "All checks passed. Nice work!",
+    "passed": "Passed",
+    "failed": "Failed",
+    "solution": "See a reference solution"
+  },
+  "offline": {
+    "title": "You're offline",
+    "body": "This page hasn't been saved on this device yet. Pages you have already opened still work, and so do their simulations and code labs.",
+    "retry": "Try again"
   }
 }

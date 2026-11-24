@@ -84,12 +84,17 @@ export function LessonDeck({
     [steps.length],
   );
 
-  // Restore the step from the URL hash after hydration.
+  // Follow the step named in the URL hash, on load and when it changes.
   useEffect(() => {
-    const match = /^#step-(\d+)$/.exec(window.location.hash);
-    const index = match ? Number(match[1]) - 1 : 0;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- the hash only exists in the browser
-    if (index > 0 && index <= steps.length) setCurrent(index);
+    function openFromHash() {
+      const match = /^#step-(\d+)$/.exec(window.location.hash);
+      if (!match) return;
+      const index = Number(match[1]) - 1;
+      if (index >= 0 && index <= steps.length) setCurrent(index);
+    }
+    openFromHash();
+    window.addEventListener("hashchange", openFromHash);
+    return () => window.removeEventListener("hashchange", openFromHash);
   }, [steps.length]);
 
   // After a step change, bring the new step to the top and move focus to it.

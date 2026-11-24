@@ -27,3 +27,71 @@ export const test = base.extend({
     await provide(page);
   },
 });
+
+const DAY = 86_400_000;
+
+/** A review card as the app stores it, due `dueInDays` from now. */
+export function reviewCard(dueInDays: number) {
+  const now = Date.now();
+  return {
+    due: now + dueInDays * DAY,
+    fsrs: {
+      stability: 2.3,
+      difficulty: 2.1,
+      elapsed_days: 0,
+      scheduled_days: 3,
+      reps: 1,
+      lapses: 0,
+      learning_steps: 0,
+      state: 2,
+      last_review: now - 3 * DAY,
+    },
+  };
+}
+
+/**
+ * Starts the browser with saved progress, as if the learner had used the app
+ * before. Only set when nothing is stored yet, so what the app saves during
+ * the test survives a reload.
+ */
+export async function seedProgress(
+  page: import("@playwright/test").Page,
+  progress: {
+    mastery?: Record<string, number>;
+    reviews?: Record<string, ReturnType<typeof reviewCard>>;
+    completedLessons?: string[];
+  },
+) {
+  const now = Date.now();
+  const value = {
+    version: 1,
+    mastery: Object.fromEntries(
+      Object.entries(progress.mastery ?? {}).map(([id, score]) => [
+        id,
+        { score, updatedAt: now, masteredAt: score >= 0.8 ? now : undefined },
+      ]),
+    ),
+    questions: {},
+    lessons: Object.fromEntries(
+      (progress.completedLessons ?? []).map((key) => [
+        key,
+        {
+          status: "completed",
+          lastStep: 0,
+          startedAt: now,
+          updatedAt: now,
+          completedAt: now,
+        },
+      ]),
+    ),
+    goals: {},
+    reviews: progress.reviews ?? {},
+    attempts: [],
+    events: [],
+  };
+  await page.addInitScript((json) => {
+    if (!localStorage.getItem("jabr:progress")) {
+      localStorage.setItem("jabr:progress", json);
+    }
+  }, JSON.stringify(value));
+}

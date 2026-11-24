@@ -12,10 +12,13 @@ test.describe("answering questions", () => {
     await page.goto(`${lesson}#step-2`);
     const card = question(page, "calc.deriv.slope-at-point");
     // "…tangent line to f(x) = x² at x = a": the slope is 2a.
-    const prompt = await card.locator(".rich").first().innerText();
-    const a = Number(
-      /x\s*=\s*(-?[\d.]+)\s*\?/.exec(prompt.replace(/−/g, "-"))?.[1],
-    );
+    // The number is read from the TeX source KaTeX keeps beside the formula.
+    const tex = await card
+      .locator(".rich")
+      .first()
+      .locator("annotation")
+      .allTextContents();
+    const a = Number(/x\s*=\s*(-?[\d.]+)/.exec(tex.at(-1) ?? "")?.[1]);
     expect(Number.isFinite(a)).toBe(true);
 
     await card.getByRole("textbox").fill(String(2 * a + 1));

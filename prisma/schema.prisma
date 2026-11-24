@@ -1,0 +1,161 @@
+// The database stores USER STATE only. Learning content lives in /content and
+// is referenced here by stable content ids (questionId, conceptId, lessonKey…).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/db/generated"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  locale        String    @default("en")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts        Account[]
+  sessions        Session[]
+  attempts        Attempt[]
+  mastery         ConceptMastery[]
+  reviewCards     ReviewCard[]
+  lessonProgress  LessonProgress[]
+  projectProgress MilestoneProgress[]
+}
+
+// --- Auth.js (NextAuth v5) adapter models ---
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+// --- Learning state ---
+
+model Attempt {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String // content id
+  contextId  String // lesson / milestone / review id
+  seed       Int? // for parametrised questions
+  response   Json
+  correct    Boolean
+  score      Float
+  hintsUsed  Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, questionId])
+  @@index([userId, createdAt])
+}
+
+enum MasteryStatus {
+  new
+  learning
+  practicing
+  mastered
+}
+
+model ConceptMastery {
+  userId    String
+  conceptId String // content id
+  score     Float         @default(0)
+  status    MasteryStatus @default(new)
+  updatedAt DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, conceptId])
+}
+
+model ReviewCard {
+  userId    String
+  conceptId String // content id
+  fsrs      Json
+  due       DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, conceptId])
+  @@index([userId, due])
+}
+
+enum LessonStatus {
+  started
+  completed
+}
+
+model LessonProgress {
+  userId      String
+  lessonKey   String // course/module/lesson
+  status      LessonStatus
+  lastStep    Int          @default(0)
+  completedAt DateTime?
+  updatedAt   DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, lessonKey])
+}
+
+enum MilestoneStatus {
+  locked
+  in_progress
+  passed
+}
+
+model MilestoneProgress {
+  userId      String
+  projectId   String // content id
+  milestoneId String // content id
+  status      MilestoneStatus
+  submission  Json?
+  updatedAt   DateTime        @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, projectId, milestoneId])
+}

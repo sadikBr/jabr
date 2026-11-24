@@ -1,6 +1,8 @@
 import {
   applyAttempt,
   applyGoal,
+  applyMilestonePassed,
+  applyMilestoneStarted,
   applyReview,
   applyLessonCompleted,
   applyLessonStep,
@@ -92,6 +94,26 @@ export function recordLessonCompleted(lessonKey: string): void {
 
 export function recordReview(conceptId: string, rating: ReviewRating): void {
   commit(applyReview(getProgress(), conceptId, rating, Date.now()));
+}
+
+export function recordMilestoneStarted(milestoneKey: string): void {
+  commit(applyMilestoneStarted(getProgress(), milestoneKey, Date.now()));
+}
+
+export function recordMilestonePassed(
+  milestoneKey: string,
+  projectId: string,
+  projectMilestoneKeys: string[],
+): void {
+  commit(
+    applyMilestonePassed(
+      getProgress(),
+      milestoneKey,
+      projectId,
+      projectMilestoneKeys,
+      Date.now(),
+    ),
+  );
 }
 
 export function recordGoal(contextId: string, interactiveId: string): void {

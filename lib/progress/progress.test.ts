@@ -5,6 +5,8 @@ import {
   applyGoal,
   applyLessonCompleted,
   applyLessonStep,
+  applyMilestonePassed,
+  applyMilestoneStarted,
   applyReveal,
   applyReview,
   type AttemptInput,
@@ -31,6 +33,8 @@ import {
   countByStatus,
   courseProgress,
   lessonState,
+  milestoneState,
+  projectProgress,
   progressTotals,
 } from "./summary";
 
@@ -315,6 +319,100 @@ describe("lessons and goals", () => {
     progress = applyGoal(progress, "/explore/x", "projectile-sim", 300);
     expect(Object.keys(progress.goals)).toHaveLength(2);
     expect(progress.events.map((e) => e.kind)).toEqual(["goal", "goal"]);
+  });
+});
+
+describe("milestones", () => {
+  const keys = ["rocket/a", "rocket/b"];
+
+  it("tracks a milestone from opened to passed", () => {
+    let progress = applyMilestoneStarted(EMPTY_PROGRESS, "rocket/a", 100);
+    expect(milestoneState(progress, "rocket/a")).toBe("in-progress");
+    expect(applyMilestoneStarted(progress, "rocket/a", 200)).toBe(progress);
+
+    progress = applyMilestonePassed(progress, "rocket/a", "rocket", keys, 300);
+    expect(progress.milestones["rocket/a"]).toEqual({
+      status: "passed",
+      startedAt: 100,
+      updatedAt: 300,
+      passedAt: 300,
+    });
+    expect(progress.events).toEqual([
+      { kind: "milestone-passed", id: "rocket/a", at: 300 },
+    ]);
+  });
+
+  it("passing again changes nothing, and opening a passed milestone keeps it passed", () => {
+    const passed = applyMilestonePassed(
+      EMPTY_PROGRESS,
+      "rocket/a",
+      "rocket",
+      keys,
+      300,
+    );
+    expect(applyMilestonePassed(passed, "rocket/a", "rocket", keys, 400)).toBe(
+      passed,
+    );
+    expect(applyMilestoneStarted(passed, "rocket/a", 500)).toBe(passed);
+  });
+
+  it("marks the project complete with its last milestone, once", () => {
+    let progress = applyMilestonePassed(
+      EMPTY_PROGRESS,
+      "rocket/b",
+      "rocket",
+      keys,
+      100,
+    );
+    expect(progress.events.map((e) => e.kind)).toEqual(["milestone-passed"]);
+    progress = applyMilestonePassed(progress, "rocket/a", "rocket", keys, 200);
+    expect(progress.events.at(-1)).toEqual({
+      kind: "project-completed",
+      id: "rocket",
+      at: 200,
+    });
+    expect(
+      progress.events.filter((e) => e.kind === "project-completed"),
+    ).toHaveLength(1);
+  });
+
+  it("summarises progress through a project", () => {
+    expect(projectProgress(EMPTY_PROGRESS, keys)).toEqual({
+      passed: 0,
+      total: 2,
+      fraction: 0,
+      started: false,
+      nextKey: "rocket/a",
+    });
+    let progress = applyMilestonePassed(
+      EMPTY_PROGRESS,
+      "rocket/a",
+      "rocket",
+      keys,
+      100,
+    );
+    expect(projectProgress(progress, keys)).toMatchObject({
+      passed: 1,
+      fraction: 0.5,
+      started: true,
+      nextKey: "rocket/b",
+    });
+    progress = applyMilestonePassed(progress, "rocket/b", "rocket", keys, 200);
+    expect(projectProgress(progress, keys)).toMatchObject({
+      passed: 2,
+      fraction: 1,
+      nextKey: null,
+    });
+    expect(projectProgress(EMPTY_PROGRESS, [])).toMatchObject({
+      fraction: 0,
+      nextKey: null,
+    });
+  });
+
+  it("loads progress saved before projects existed", () => {
+    const old = JSON.parse(JSON.stringify(EMPTY_PROGRESS));
+    delete old.milestones;
+    expect(parseProgress(old)?.milestones).toEqual({});
   });
 });
 

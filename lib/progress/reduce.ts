@@ -216,6 +216,57 @@ export function applyReview(
   };
 }
 
+/** Records that the learner has opened a milestone. */
+export function applyMilestoneStarted(
+  progress: Progress,
+  milestoneKey: string,
+  now: number,
+): Progress {
+  if (progress.milestones[milestoneKey]) return progress;
+  return {
+    ...progress,
+    milestones: {
+      ...progress.milestones,
+      [milestoneKey]: { status: "in_progress", startedAt: now, updatedAt: now },
+    },
+  };
+}
+
+/**
+ * Records that a milestone's checks all passed. `projectMilestoneKeys` is
+ * every milestone of the project, so finishing the last one can be marked
+ * as finishing the project. Passing again changes nothing.
+ */
+export function applyMilestonePassed(
+  progress: Progress,
+  milestoneKey: string,
+  projectId: string,
+  projectMilestoneKeys: string[],
+  now: number,
+): Progress {
+  const previous = progress.milestones[milestoneKey];
+  if (previous?.status === "passed") return progress;
+  const milestones = {
+    ...progress.milestones,
+    [milestoneKey]: {
+      status: "passed" as const,
+      startedAt: previous?.startedAt ?? now,
+      updatedAt: now,
+      passedAt: now,
+    },
+  };
+  const events: ProgressEvent[] = [
+    { kind: "milestone-passed", id: milestoneKey, at: now },
+  ];
+  if (
+    projectMilestoneKeys.length > 0 &&
+    projectMilestoneKeys.every((key) => milestones[key]?.status === "passed")
+  ) {
+    events.push({ kind: "project-completed", id: projectId, at: now });
+  }
+  return withEvents({ ...progress, milestones }, events);
+}
+
 /** Records the first time an interactive's goal is reached on a page. */
 export function applyGoal(
   progress: Progress,

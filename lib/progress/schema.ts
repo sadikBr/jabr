@@ -56,10 +56,23 @@ const lessonSchema = z.object({
 });
 
 const eventSchema = z.object({
-  kind: z.enum(["mastered", "lesson-completed", "goal"]),
-  /** A concept id, a lesson key, or an interactive id. */
+  kind: z.enum([
+    "mastered",
+    "lesson-completed",
+    "goal",
+    "milestone-passed",
+    "project-completed",
+  ]),
+  /** A concept id, a lesson key, an interactive id, a milestone key or a project id. */
   id: z.string(),
   at: timestamp,
+});
+
+const milestoneSchema = z.object({
+  status: z.enum(["in_progress", "passed"]),
+  startedAt: timestamp,
+  updatedAt: timestamp,
+  passedAt: timestamp.optional(),
 });
 
 const reviewCardSchema = z.object({
@@ -90,6 +103,12 @@ export const progressSchema = z.object({
    * existed still loads.
    */
   reviews: z.record(z.string(), reviewCardSchema).default({}),
+  /**
+   * Project milestones by `<project>/<milestone>`. Like `reviews`, optional
+   * in stored data so older progress still loads. The code itself is kept
+   * by the code lab, under its question id.
+   */
+  milestones: z.record(z.string(), milestoneSchema).default({}),
   attempts: z.array(attemptSchema),
   events: z.array(eventSchema),
 });
@@ -107,6 +126,7 @@ export const EMPTY_PROGRESS: Progress = Object.freeze({
   lessons: {},
   goals: {},
   reviews: {},
+  milestones: {},
   attempts: [],
   events: [],
 });
@@ -122,6 +142,7 @@ export function isEmptyProgress(progress: Progress): boolean {
     progress.attempts.length === 0 &&
     Object.keys(progress.lessons).length === 0 &&
     Object.keys(progress.goals).length === 0 &&
+    Object.keys(progress.milestones).length === 0 &&
     Object.keys(progress.mastery).length === 0
   );
 }

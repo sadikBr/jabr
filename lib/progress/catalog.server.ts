@@ -2,6 +2,11 @@ import "server-only";
 
 import type { LearnLink, ProgressCatalog } from "@/components/progress/catalog";
 import { interactiveSpecs } from "@/lib/content/interactive-specs";
+import {
+  milestoneHref,
+  projectHref,
+  projectMilestones,
+} from "@/lib/content/projects";
 import { courseLessons, lessonHref } from "@/lib/content/queries";
 import { content } from "@/lib/content/source";
 
@@ -54,11 +59,18 @@ export function buildProgressCatalog(): ProgressCatalog {
       prerequisites,
     })),
     questionsByConcept,
-    projects: content.projects.map(({ id, title, concepts }) => ({
-      id,
-      title,
-      concepts,
-    })),
+    projects: content.projects
+      .filter((project) => project.status === "ready")
+      .map((project) => ({
+        id: project.id,
+        title: project.title,
+        href: projectHref(project),
+        milestones: projectMilestones(content, project).map((milestone) => ({
+          key: milestone.key,
+          title: milestone.title,
+          href: milestoneHref(milestone),
+        })),
+      })),
     interactives: Object.fromEntries(
       Object.entries(interactiveSpecs).map(([id, spec]) => [id, spec.title]),
     ),

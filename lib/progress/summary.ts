@@ -53,6 +53,52 @@ export function countByStatus(
   return counts;
 }
 
+export type MilestoneState = "not-started" | "in-progress" | "passed";
+
+export function milestoneState(
+  progress: Progress,
+  milestoneKey: string,
+): MilestoneState {
+  const status = progress.milestones[milestoneKey]?.status;
+  return status === "passed"
+    ? "passed"
+    : status === "in_progress"
+      ? "in-progress"
+      : "not-started";
+}
+
+export interface ProjectProgress {
+  passed: number;
+  total: number;
+  /** 0 to 1. */
+  fraction: number;
+  /** True once any milestone has been opened. */
+  started: boolean;
+  /** The first milestone not yet passed, or null when all are. */
+  nextKey: string | null;
+}
+
+/** Progress through a project's milestones, given in order. */
+export function projectProgress(
+  progress: Progress,
+  milestoneKeys: string[],
+): ProjectProgress {
+  const passed = milestoneKeys.filter(
+    (key) => milestoneState(progress, key) === "passed",
+  ).length;
+  return {
+    passed,
+    total: milestoneKeys.length,
+    fraction: milestoneKeys.length === 0 ? 0 : passed / milestoneKeys.length,
+    started: milestoneKeys.some(
+      (key) => progress.milestones[key] !== undefined,
+    ),
+    nextKey:
+      milestoneKeys.find((key) => milestoneState(progress, key) !== "passed") ??
+      null,
+  };
+}
+
 export interface ProgressTotals {
   questionsAnswered: number;
   questionsSolved: number;

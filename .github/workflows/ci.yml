@@ -9,7 +9,7 @@ concurrency:
 
 jobs:
   check:
-    name: Lint, types, unit tests
+    name: Lint, types, unit tests, content
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -21,6 +21,7 @@ jobs:
       - run: bun run format:check
       - run: bun run typecheck
       - run: bun run test
+      - run: bun run content:check
 
   database:
     name: Database migrations

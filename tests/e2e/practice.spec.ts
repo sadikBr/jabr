@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "./fixtures";
+import { choose, expect, type Page, test } from "./fixtures";
 
 const lesson = "/courses/calculus-essentials/derivatives/what-is-a-derivative";
 const explainer =
@@ -53,11 +53,11 @@ test.describe("answering questions", () => {
   test("a multiple-choice question explains a wrong pick", async ({ page }) => {
     await page.goto(`${lesson}#step-2`);
     const card = question(page, "calc.deriv.shrinking-h");
-    await card.getByRole("radio").nth(1).check({ force: true });
+    await choose(card.getByRole("radio").nth(1));
     await card.getByRole("button", { name: "Check" }).click();
     await expect(card.getByText(/That is the slope for/)).toBeVisible();
 
-    await card.getByRole("radio").nth(0).check({ force: true });
+    await choose(card.getByRole("radio").nth(0));
     await card.getByRole("button", { name: /^Check/ }).click();
     await expect(card.getByText(/Correct/)).toBeVisible();
   });
@@ -97,8 +97,8 @@ test.describe("answering questions", () => {
     await card
       .getByRole("button", { name: /Compare with a model answer/ })
       .click();
-    await card.getByRole("checkbox").first().check();
-    await card.getByRole("checkbox").nth(1).check();
+    await choose(card.getByRole("checkbox").first());
+    await choose(card.getByRole("checkbox").nth(1));
     await card.getByRole("button", { name: "Save my self-check" }).click();
     await expect(card.getByText("Saved: 2 of 3 points covered.")).toBeVisible();
   });
@@ -115,7 +115,7 @@ test.describe("answering questions", () => {
     });
     await page.goto(`${lesson}#step-2`);
     const card = question(page, "calc.deriv.shrinking-h");
-    await card.getByRole("radio").nth(2).check({ force: true });
+    await choose(card.getByRole("radio").nth(2));
     await card.getByRole("button", { name: "Check" }).click();
     await expect(card.getByText(/Not quite/)).toBeVisible();
     await page.waitForLoadState("networkidle");
@@ -271,7 +271,7 @@ test.describe("simulations", () => {
     }).toPass();
 
     await sim.getByText("Earth", { exact: true }).click();
-    await sim.getByRole("switch", { name: /Air/ }).check({ force: true });
+    await choose(sim.getByRole("switch", { name: /Air/ }));
     await sim.getByRole("button", { name: /Drop/ }).click();
     await expect(sim.getByTestId("drop-hammer")).toHaveText("0.57 s");
     await expect(sim.getByTestId("drop-feather")).toHaveText("1.05 s");

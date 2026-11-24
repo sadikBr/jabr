@@ -1,4 +1,11 @@
-import { expect, type Page, reviewCard, seedProgress, test } from "./fixtures";
+import {
+  choose,
+  expect,
+  type Page,
+  reviewCard,
+  seedProgress,
+  test,
+} from "./fixtures";
 
 const lesson = "/courses/calculus-essentials/derivatives/what-is-a-derivative";
 
@@ -148,7 +155,7 @@ test.describe("review", () => {
     await seedProgress(page, { mastery: { "derivative-definition": 0.75 } });
     await page.goto(`${lesson}#step-2`);
     const card = page.locator('[data-question="calc.deriv.shrinking-h"]');
-    await card.getByRole("radio").first().check({ force: true });
+    await choose(card.getByRole("radio").first());
     await card.getByRole("button", { name: "Check" }).click();
     await expect(card.getByTestId("mastery-changes")).toContainText(
       "Mastered!",

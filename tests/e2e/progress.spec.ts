@@ -1,4 +1,4 @@
-import { expect, type Page, test } from "./fixtures";
+import { choose, expect, type Page, test } from "./fixtures";
 
 const lesson = "/courses/calculus-essentials/derivatives/what-is-a-derivative";
 
@@ -10,7 +10,7 @@ async function answerChoice(page: Page, id: string, indexes: number[]) {
   // By role, so this waits until the step holding the question is showing.
   const options = card.getByRole("radio").or(card.getByRole("checkbox"));
   for (const index of indexes) {
-    await options.nth(index).check({ force: true });
+    await choose(options.nth(index));
   }
   await card.getByRole("button", { name: /^Check/ }).click();
   await expect(card.getByText(/Correct/)).toBeVisible();

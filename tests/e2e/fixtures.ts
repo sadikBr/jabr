@@ -1,6 +1,18 @@
-import { test as base } from "@playwright/test";
+import { expect, type Locator, test as base } from "@playwright/test";
 
 export { expect, type Page } from "@playwright/test";
+
+/**
+ * Ticks a radio button, checkbox or switch from the keyboard. The real inputs
+ * are visually hidden behind their styled labels, so a mouse click aimed at
+ * one can land on whatever is drawn over that spot instead: on a phone, the
+ * fixed bar at the bottom of the screen. The keyboard has no such problem.
+ */
+export async function choose(option: Locator) {
+  // Like `check()`: leave it alone if it is already ticked.
+  if (!(await option.isChecked())) await option.press("Space");
+  await expect(option).toBeChecked();
+}
 
 /**
  * `page.goto` and `page.reload` here also wait until the page is interactive

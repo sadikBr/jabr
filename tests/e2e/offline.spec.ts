@@ -1,4 +1,4 @@
-import { expect, test } from "./fixtures";
+import { choose, expect, test } from "./fixtures";
 
 const lesson = "/courses/calculus-essentials/derivatives/what-is-a-derivative";
 
@@ -48,7 +48,7 @@ test.describe("offline", () => {
     // Questions need the server, and say so.
     await page.getByRole("button", { name: /Step 2 of 4/ }).click();
     const card = page.locator('[data-question="calc.deriv.shrinking-h"]');
-    await card.getByRole("radio").first().check({ force: true });
+    await choose(card.getByRole("radio").first());
     await card.getByRole("button", { name: "Check" }).click();
     await expect(card.getByText(/You're offline/)).toBeVisible();
 

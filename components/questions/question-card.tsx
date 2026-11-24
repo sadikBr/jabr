@@ -52,7 +52,20 @@ function readStoredSeed(id: string): number | null {
  * checking an answer is a round trip to the server, which is why it needs a
  * connection.
  */
-export function QuestionCard({ initial }: { initial: QuestionView }) {
+export function QuestionCard({
+  initial,
+  onSettled,
+  fixed = false,
+}: {
+  initial: QuestionView;
+  /**
+   * Called once the question is finished with: answered correctly, or the
+   * solution shown. `correct` means right at the first attempt.
+   */
+  onSettled?: (result: { correct: boolean; hintsUsed: number }) => void;
+  /** Keep the numbers as given: no stored variant, no "New numbers". */
+  fixed?: boolean;
+}) {
   const t = useTranslations("questions");
   const formId = useId();
   const [view, setView] = useState(initial);
@@ -76,7 +89,7 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
 
   // A learner who asked for new numbers keeps them after a reload.
   useEffect(() => {
-    const stored = readStoredSeed(initial.id);
+    const stored = fixed ? null : readStoredSeed(initial.id);
     if (stored === null || stored === initial.seed) return;
     let cancelled = false;
     getQuestionVariant({ questionId: initial.id, seed: stored })
@@ -89,7 +102,7 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
     return () => {
       cancelled = true;
     };
-  }, [initial.id, initial.seed]);
+  }, [initial.id, initial.seed, fixed]);
 
   function reset(next: QuestionView) {
     setView(next);
@@ -157,11 +170,13 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
     if (isSelfCheck) {
       // A self-check is a reflection, not a pass/fail: it is done once saved.
       setStatus(result.correct ? "correct" : "revealed");
+      onSettled?.({ correct: result.correct, hintsUsed: hintsShown });
       return;
     }
     if (result.correct) {
       setSolution(result.solution ?? null);
       setStatus("correct");
+      onSettled?.({ correct: attempts === 0, hintsUsed: hintsShown });
     } else {
       setStatus("incorrect");
     }
@@ -177,6 +192,7 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
     // For a self-check, revealing the model answer is the next step, not the end.
     if (isSelfCheck) return;
     setStatus("revealed");
+    onSettled?.({ correct: false, hintsUsed: hintsShown });
     setChanges(
       recordReveal({
         questionId: view.id,
@@ -252,13 +268,13 @@ export function QuestionCard({ initial }: { initial: QuestionView }) {
         <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
           {t(`types.${view.type}`)}
         </p>
-        {solvedBefore && status === "idle" ? (
+        {solvedBefore && !fixed && status === "idle" ? (
           <span className="flex items-center gap-1 rounded-full bg-success-soft px-2 py-0.5 text-xs font-semibold text-success">
             <Check aria-hidden="true" className="size-3" strokeWidth={3} />
             {t("solvedBefore")}
           </span>
         ) : null}
-        {view.canVary && (settled || attempts > 0) ? (
+        {view.canVary && !fixed && (settled || attempts > 0) ? (
           <Button
             variant="ghost"
             className="ms-auto -me-2 h-8 px-2 text-xs"

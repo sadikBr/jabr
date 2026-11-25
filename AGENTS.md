@@ -16,12 +16,14 @@ plan. This file records how the repo works. Keep it current.
 
 **Status:** Phases 0 to 5 are done: foundations, content pipeline, interactivity
 and grading, progress on this device, knowledge map and review, projects.
-Phase 6 (content) is in progress. All three courses are written: Calculus
-essentials (eight lessons; its Integrals module is coming soon), Classical
-mechanics (seven lessons; its Energy and momentum module is coming soon) and
-Python for scientists (seven lessons). `content:check` passes with no
-warnings. Still to write: two explainers (rocket to orbit, video game
-physics) and the mini projects. Accounts are deferred: see the brief.
+Phase 6 (content) is complete. Three courses are written: Calculus essentials
+(eight lessons; its Integrals module is coming soon), Classical mechanics
+(seven lessons; its Energy and momentum module is coming soon) and Python for
+scientists (seven lessons). So are three explainers and three projects: the
+rocket capstone and two mini projects. `content:check` passes with no
+warnings and every code lab has a verified reference solution. Next is
+Phase 7 (the optional AI tutor) or Phase 8 (polish and deploy). Accounts are
+deferred: see the brief.
 
 ## Commands
 
@@ -391,6 +393,9 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 | 2026-11-25 | A short "Functions and slopes" lesson opens the calculus course                                                 | Two foundation concepts were assumed but taught nowhere; a newcomer needs somewhere to start                                          |
 | 2026-11-25 | The Python course teaches with the code editor rather than new simulations                                      | Writing and running code is the interaction; every lesson opens with a program to run and change                                      |
 | 2026-11-25 | Graph geometry lives in `graph-view.ts`, apart from the layout in `graph-layout.ts`                             | The browser needs node sizes and fitting, not the layout library                                                                      |
+| 2026-11-25 | The orbit explainer fires from 400 km, not from the ground                                                      | It is the Space Station's height, so the answers (7.67 km/s, 92 minutes) are ones a learner can check                                 |
+| 2026-11-25 | The game-loop interactive asks the learner to break the game first                                              | Causing tunnelling on purpose teaches what it is faster than being told                                                               |
+| 2026-11-25 | Mini projects solve by search (bisection, Newton) rather than by formula                                        | They reuse the numerical methods from the lessons, and keep working when the physics has no formula                                   |
 | 2026-11-24 | Lessons may have more than one step of the same kind                                                            | A long lesson (derivative rules) reads better as two "see" steps with a question after each rule                                      |
 
 ## Known limitations
@@ -412,16 +417,15 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   beyond the app itself.
 - The first Python run takes a few seconds (about 14 MB of runtime).
 - Ctrl/⌘+Enter runs code on desktop only; phones use the Run button.
-- Twenty-two lessons and one explainer are written. Six lessons (the
-  Integrals and the Energy and momentum modules) and four explainers are
-  listed as coming soon.
+- Twenty-two lessons, three explainers and three projects are written. Six
+  lessons (the Integrals and the Energy and momentum modules) and two
+  explainers (phone orientation, how a calculator computes sin) are listed
+  as coming soon, as the brief specifies.
 - The Python course's later lessons use NumPy and matplotlib, which are
   downloaded from a CDN the first time a lab that imports them is run.
 - A graph is drawn at a default size on the server and re-drawn at its real
   size once measured in the browser. Its box does not move, but the drawing
   inside can visibly sharpen on first load.
-- One project is written (the rocket capstone). The tangent line explorer is
-  listed as coming soon.
 - The last capstone milestone plots with matplotlib, so its first run needs a
   connection to download it.
 - An unknown lesson, explainer or concept URL shows the not-found page with a

@@ -1,27 +1,9 @@
 import dagre from "@dagrejs/dagre";
 
+import { type GraphLayout, NODE_HEIGHT, NODE_WIDTH } from "./graph-view";
 import type { Concept } from "./types";
-import type { Subject } from "./vocabulary";
 
 /** Positions for drawing the concept graph, prerequisites above what they lead to. */
-
-export const NODE_WIDTH = 184;
-export const NODE_HEIGHT = 60;
-
-export interface GraphLayout {
-  nodes: {
-    id: string;
-    title: string;
-    subject: Subject;
-    /** Top-left corner. */
-    x: number;
-    y: number;
-  }[];
-  /** From a prerequisite to the concept that needs it. */
-  edges: { source: string; target: string }[];
-  width: number;
-  height: number;
-}
 
 export function layoutConceptGraph(concepts: Concept[]): GraphLayout {
   const graph = new dagre.graphlib.Graph();

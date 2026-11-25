@@ -9,7 +9,7 @@ import { ConceptChips } from "@/components/content/concept-chip";
 import { subjectIcons } from "@/components/content/subject";
 import type { ProgressCatalog } from "@/components/progress/catalog";
 import { MasteryIcon } from "@/components/progress/mastery-icon";
-import type { GraphLayout } from "@/lib/content/graph-layout";
+import type { GraphLayout } from "@/lib/content/graph-view";
 import { type Subject, subjects } from "@/lib/content/vocabulary";
 import { MASTERED_FROM } from "@/lib/mastery/constants";
 import { masteryStatuses } from "@/lib/mastery/mastery";
@@ -95,17 +95,12 @@ export function MapView({
           concept.prerequisites.some((id) => ids.includes(id)),
         )
         .map((concept) => concept.id);
-    // Two steps onwards, so the view is filled with where this leads rather
-    // than with the empty space around a concept at the edge of the map.
+    // Up to two steps onwards, so the view is filled with where this leads
+    // rather than with the empty space around a concept at the map's edge.
     const next = leadsTo([anchor.id]);
-    return [
-      ...new Set([
-        anchor.id,
-        ...anchor.prerequisites,
-        ...next,
-        ...leadsTo(next),
-      ]),
-    ];
+    const near = [...new Set([anchor.id, ...anchor.prerequisites, ...next])];
+    // Most generous first: the map shows the first of these that fits.
+    return [[...new Set([...near, ...leadsTo(next)])], near, [anchor.id]];
   }, [catalog.concepts, progress.mastery, ready]);
 
   const shown = catalog.concepts.filter(

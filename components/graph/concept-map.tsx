@@ -20,10 +20,11 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 import { MasteryIcon } from "@/components/progress/mastery-icon";
 import {
+  firstGroupThatFits,
   type GraphLayout,
   NODE_HEIGHT,
   NODE_WIDTH,
-} from "@/lib/content/graph-layout";
+} from "@/lib/content/graph-view";
 import { masteryStatus } from "@/lib/mastery/mastery";
 import { useProgress } from "@/lib/progress/use-progress";
 import { cn } from "@/lib/utils";
@@ -136,8 +137,11 @@ export default function ConceptMap({
   layout: GraphLayout;
   highlighted: ReadonlySet<string> | null;
   ready: ReadonlySet<string>;
-  /** What to show first when the whole map would be too small to read. */
-  start: string[];
+  /**
+   * What to show first when the whole map would be too small to read:
+   * groups of concepts, most generous first. The first that fits is shown.
+   */
+  start: string[][];
 }) {
   const t = useTranslations("map");
   const [active, setActive] = useState<string | null>(null);
@@ -241,7 +245,13 @@ export default function ConceptMap({
                     // neighbourhood named by `start`, and the learner pans.
                     nodes: (fitsWhole
                       ? layout.nodes.map((n) => n.id)
-                      : start
+                      : firstGroupThatFits(
+                          layout,
+                          start,
+                          box,
+                          MIN_READABLE_ZOOM,
+                          PADDING,
+                        )
                     ).map((id) => ({ id })),
                     padding: PADDING,
                     minZoom: MIN_READABLE_ZOOM,

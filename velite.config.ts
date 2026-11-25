@@ -48,6 +48,8 @@ const courses = defineCollection({
     subject: s.enum(subjects),
     level: s.enum(levels),
     summary: s.string(),
+    /** Where the course comes in the catalog: 1 is first. */
+    order: s.number().int().positive(),
     status,
     modules: s
       .array(

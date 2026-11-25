@@ -16,11 +16,11 @@ plan. This file records how the repo works. Keep it current.
 
 **Status:** Phases 0 to 5 are done: foundations, content pipeline, interactivity
 and grading, progress on this device, knowledge map and review, projects.
-Phase 6 (content) is in progress, one course at a time. Calculus essentials
-has its first two modules and Euler's method written (seven lessons); its
-Integrals module is still coming soon. Next: Classical mechanics, then Python
-for scientists and the remaining explainers. Accounts are deferred: see the
-brief.
+Phase 6 (content) is in progress, one course at a time. Written so far:
+Calculus essentials (seven lessons; its Integrals module is coming soon) and
+Classical mechanics (seven lessons; its Energy and momentum module is coming
+soon). Next: Python for scientists, the remaining explainers and the mini
+projects. Accounts are deferred: see the brief.
 
 ## Commands
 
@@ -72,6 +72,11 @@ and drops the bad entry, so never remove the flag from those scripts.
   is `server-only`. **Never import content into a client component**:
   questions carry their answers. Pass client components just the fields they
   render. An e2e test checks that answers do not reach the browser.
+- The build writes its files in whatever order it read them, which varies
+  from run to run. `lib/content/order.ts` puts everything in a fixed order as
+  it is loaded: courses by the `order` in their `course.yaml` (required),
+  concepts by subject and then as written, the rest by id. Never rely on the
+  order of the raw `.velite/*.json` files.
 - `lib/content/queries.ts` has the pure lookups pages use.
 - `content/ids.lock.json` records every id. Removing or renaming an id makes
   `content:check` warn, because saved progress refers to ids. If the removal
@@ -100,6 +105,10 @@ Writing content:
   measured. Curves and handles are render functions that receive the scale.
   A graph that can be dragged (`onDrag`) must also have a slider for each
   thing the drag moves.
+- A visually hidden input (`sr-only`) is absolutely positioned. Give its
+  label `relative`, or an input that has scrolled out of a narrow container
+  is placed against the page instead and makes the whole page scroll
+  sideways. `Segmented` and `Toggle` already do this.
 - Lessons can use Markdown tables. Put the labels in the header row and the
   data underneath: the header row is styled smaller.
 - Every formula, number and code sample must be checked before it is
@@ -133,7 +142,9 @@ Writing content:
   it returns the params and the derived values together. Avoid naming a
   param or derived value `end`: mathjs reserves it. Any `{name}` in the text
   is replaced, so do not give a value the same name as a TeX argument you
-  write literally. The page is prerendered with the question's
+  write literally: a step size called `dt` would also replace the `dt` in
+  `\frac{dy}{dt}`. The validator rejects a lone `}{name}`; write `}{{name}}`
+  when the replacement is meant. The page is prerendered with the question's
   default seed; "New numbers" asks the server for another and remembers it in
   `localStorage`.
 - The browser only ever gets a `QuestionView` (`lib/questions/view.ts`):
@@ -294,6 +305,8 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 - e2e specs import `test` and `expect` from `tests/e2e/fixtures.ts`, not from
   Playwright directly. Its `page.goto` and `page.reload` wait for the
   `data-hydrated` marker, so clicks never race the page's scripts.
+- In e2e tests, tick radio buttons, checkboxes and switches with `choose`
+  from the fixtures, not `check({ force: true })`.
 - Save state in the event handler that causes it, not in a later effect: an
   effect can be skipped if the learner leaves the page at once.
 - Add `not-prose` to any card or widget rendered inside a `prose` container,
@@ -361,6 +374,10 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 | 2026-11-24 | Questions can show values derived from their random numbers                                                     | A table of readings or a worked intermediate step has to change with the numbers                                                      |
 | 2026-11-24 | Graphs are drawn one unit per pixel, shaped by CSS aspect ratios                                                | Scaled-down graphs had unreadable labels on phones; a CSS shape means measuring never moves the page                                  |
 | 2026-11-24 | The ball in `motion-graphs` uses g = 9.8, not 9.81                                                              | So the graphs agree exactly with h = v₀t − 4.9t² as the lessons and questions write it                                                |
+| 2026-11-24 | Free fall builds on constant acceleration, not on weight                                                        | Kinematics comes before forces in the course, and uses g long before it can explain it                                                |
+| 2026-11-24 | The free-body builder always offers a "force of motion"                                                         | It is the most common wrong idea in mechanics; choosing it and being told why not teaches more than never seeing it                   |
+| 2026-11-24 | E2E tests tick options with the keyboard (`choose` in tests/e2e/fixtures.ts)                                    | A forced click on a hidden input lands on whatever covers it, which on a phone can be the bottom bar                                  |
+| 2026-11-24 | Map tests read their expected counts from `.velite/concepts.json`                                               | The counts change with every course; the behaviour being tested does not                                                              |
 | 2026-11-24 | Lessons may have more than one step of the same kind                                                            | A long lesson (derivative rules) reads better as two "see" steps with a question after each rule                                      |
 
 ## Known limitations
@@ -370,10 +387,12 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   import on the progress page are the workaround.
 - Mastery is computed in the browser from graded results, so it can be
   edited by anyone who opens the developer tools. That only fools themselves.
-- Reviews and recommendations draw on the seven written calculus lessons
-  only. They widen as each course is written (Phase 6).
-- The map lays out about 25 concepts comfortably. Past roughly 80 it will
-  need grouping by subject or course; revisit when the content gets there.
+- Reviews and recommendations draw on the fourteen written lessons. They
+  widen as each course is written (Phase 6).
+- The map has 36 concepts, which no longer fit on screen at a readable size,
+  so it opens on the neighbourhood of what the learner is working on and is
+  panned from there (or filtered by subject or course). Past roughly 80
+  concepts it will need grouping; revisit when the content gets there.
 - Code lab test results are computed in the browser and reported to the
   server, so a determined learner could fake a pass. Accepted for the MVP.
 - numpy and matplotlib need a connection the first time they are used; after
@@ -381,12 +400,10 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   beyond the app itself.
 - The first Python run takes a few seconds (about 14 MB of runtime).
 - Ctrl/⌘+Enter runs code on desktop only; phones use the Run button.
-- Seven lessons and one explainer are written; the rest are listed as coming
-  soon, including the three Integrals lessons. `content:check` warns about
-  nine concepts no lesson teaches yet (the mechanics course and two
-  foundations concepts).
-- `projectile-sim` is used on the landing page only, not yet in a lesson
-  (it belongs to the mechanics course).
+- Fourteen lessons and one explainer are written; the rest are listed as
+  coming soon, including the Integrals and the Energy and momentum modules.
+  `content:check` warns about two foundation concepts no lesson teaches yet
+  (functions, slope of a line).
 - A graph is drawn at a default size on the server and re-drawn at its real
   size once measured in the browser. Its box does not move, but the drawing
   inside can visibly sharpen on first load.

@@ -2,6 +2,7 @@ id: calculus-essentials
 title: Calculus essentials
 subject: maths
 level: university-year-1
+order: 1
 summary: Limits, derivatives and integrals, built through interaction — and the bridge from calculus to simulation.
 modules:
   - id: change-and-limits

@@ -26,6 +26,8 @@ export interface Course {
   subject: Subject;
   level: Level;
   summary: string;
+  /** Where the course comes in the catalog: 1 is first. */
+  order: number;
   status: ContentStatus;
   modules: CourseModule[];
   capstone?: string;

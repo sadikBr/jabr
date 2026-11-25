@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
 import {
   choose,
   expect,
@@ -42,6 +45,12 @@ async function answerCorrectly(page: Page) {
   await expect(card.getByText("Correct!")).toBeVisible();
 }
 
+// The concepts as built from /content, so the counts below follow the
+// content as it grows. (The build runs before these tests.)
+const concepts = JSON.parse(
+  readFileSync(path.join(process.cwd(), ".velite/concepts.json"), "utf8"),
+) as { id: string; subject: string; prerequisites: string[] }[];
+
 test.describe("knowledge map", () => {
   test("shows every concept, coloured by mastery, with what is ready next", async ({
     page,
@@ -55,8 +64,10 @@ test.describe("knowledge map", () => {
     });
     await page.goto("/map");
     const map = page.getByTestId("concept-map");
-    await expect(map.locator("[data-concept]")).toHaveCount(24);
-    await expect(map.locator(".react-flow__edge")).toHaveCount(31);
+    await expect(map.locator("[data-concept]")).toHaveCount(concepts.length);
+    await expect(map.locator(".react-flow__edge")).toHaveCount(
+      concepts.reduce((sum, concept) => sum + concept.prerequisites.length, 0),
+    );
 
     await expect(map.locator('[data-concept="functions"]')).toHaveAttribute(
       "data-mastery",
@@ -86,7 +97,10 @@ test.describe("knowledge map", () => {
 
     const legend = page.getByTestId("map-legend");
     await expect(legend).toContainText(/Mastered\s*1/);
-    await expect(legend).toContainText(/Not started\s*21/);
+    // Everything except the three concepts given some mastery above.
+    await expect(legend).toContainText(
+      new RegExp(`Not started\\s*${concepts.length - 3}`),
+    );
   });
 
   test("highlights a subject, lists the concepts, and opens a concept", async ({
@@ -95,8 +109,9 @@ test.describe("knowledge map", () => {
     await page.goto("/map");
     const map = page.getByTestId("concept-map");
     await page.getByRole("button", { name: "Physics" }).click();
+    const physics = concepts.filter((concept) => concept.subject === "physics");
     await expect(page.getByTestId("map-legend")).toContainText(
-      /Not started\s*9/,
+      new RegExp(`Not started\\s*${physics.length}`),
     );
     await expect(map.locator('[data-concept="velocity"]')).not.toHaveClass(
       /opacity-25/,

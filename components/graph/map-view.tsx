@@ -72,7 +72,7 @@ export function MapView({
   );
 
   // Where the map opens when it is too big to show whole at a readable size:
-  // on one concept and its neighbours. That concept is the one the learner
+  // on one concept, what it builds on and what it leads to. That concept is the one the learner
   // is furthest into without having mastered, or else the first they could
   // start on.
   const start = useMemo(() => {
@@ -89,12 +89,22 @@ export function MapView({
       catalog.concepts.find((concept) => ready.has(concept.id)) ??
       catalog.concepts[0];
     if (!anchor) return [];
+    const leadsTo = (ids: string[]) =>
+      catalog.concepts
+        .filter((concept) =>
+          concept.prerequisites.some((id) => ids.includes(id)),
+        )
+        .map((concept) => concept.id);
+    // Two steps onwards, so the view is filled with where this leads rather
+    // than with the empty space around a concept at the edge of the map.
+    const next = leadsTo([anchor.id]);
     return [
-      anchor.id,
-      ...anchor.prerequisites,
-      ...catalog.concepts
-        .filter((concept) => concept.prerequisites.includes(anchor.id))
-        .map((concept) => concept.id),
+      ...new Set([
+        anchor.id,
+        ...anchor.prerequisites,
+        ...next,
+        ...leadsTo(next),
+      ]),
     ];
   }, [catalog.concepts, progress.mastery, ready]);
 

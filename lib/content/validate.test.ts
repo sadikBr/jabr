@@ -94,6 +94,7 @@ function validBundle(): ContentBundle {
         title: "Calculus",
         subject: "maths",
         level: "university-year-1",
+        order: 1,
         summary: "",
         status: "ready",
         modules: [

@@ -121,7 +121,10 @@ export function Segmented<Value extends string>({
           <label
             key={option.value}
             className={cn(
-              "cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring",
+              // `relative` keeps the hidden radio button inside its label. Left
+              // to itself it is positioned against the page, and one that has
+              // scrolled out of a narrow container would widen the page.
+              "relative cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold whitespace-nowrap transition-colors has-focus-visible:ring-2 has-focus-visible:ring-ring",
               value === option.value
                 ? "bg-card text-foreground shadow-sm"
                 : "text-muted-foreground hover:text-foreground",
@@ -158,7 +161,7 @@ export function Toggle({
   return (
     <label
       className={cn(
-        "flex cursor-pointer items-center gap-3 text-sm font-medium",
+        "relative flex cursor-pointer items-center gap-3 text-sm font-medium",
         disabled && "cursor-not-allowed opacity-60",
       )}
     >

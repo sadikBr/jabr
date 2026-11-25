@@ -1,0 +1,125 @@
+---
+id: functions-and-slopes
+title: "Functions and slopes"
+summary: "The two ideas the whole course stands on: a rule that turns inputs into outputs, and a number that says how steep a line is."
+teaches: [functions, slope-of-a-line]
+requires: []
+estimatedMinutes: 10
+---
+
+<Step kind="see" title="A rule, and its picture">
+
+A taxi charges €3 the moment you get in, and then €2 for every kilometre.
+Tell me how far you are going and I can tell you the fare: 5 km costs
+$2 \times 5 + 3 = 13$ euros.
+
+That is a **function**: a rule that takes an input (the distance) and gives
+back exactly one output (the fare). We give the rule a name, say $f$, and
+write
+
+$$
+f(x) = 2x + 3
+$$
+
+Read $f(x)$ as "$f$ of $x$": the output when the input is $x$. So $f(5) = 13$.
+
+<Callout kind="definition" title="Function">
+
+A **function** is a rule that assigns to each input exactly one output.
+
+Its **graph** is the picture you get by plotting every input along the
+horizontal axis and the matching output up the vertical axis.
+
+</Callout>
+
+The graph of the taxi fare is a straight line. Here it is, with two points
+marked on it. Move them anywhere you like and watch the three numbers
+underneath.
+
+<Interactive
+  id="secant-explorer"
+  title="How steep is the fare?"
+  props={{
+    fn: "2x + 3",
+    domain: [0, 4],
+    a: 1,
+    b: 3,
+    units: { x: "km", y: "€" },
+  }}
+/>
+
+The run and the rise change as you move the points. Their ratio never does:
+it is always 2 euros per kilometre. That number is the **slope** of the line,
+and it is exactly the "€2 for every kilometre" in the fare.
+
+<Callout kind="definition" title="Slope of a line">
+
+The **slope** of a line is the change in height divided by the change in
+horizontal position between any two of its points:
+
+$$
+\text{slope} = \frac{\text{rise}}{\text{run}} = \frac{y_2 - y_1}{x_2 - x_1}
+$$
+
+- A **positive** slope goes uphill from left to right.
+- A **negative** slope goes downhill.
+- A slope of **zero** is flat.
+
+A line with slope $m$ that crosses the vertical axis at height $c$ has the
+equation $y = mx + c$.
+
+</Callout>
+
+A straight line is the _only_ kind of graph where the slope is the same
+everywhere. Try the same thing on a curve, and the answer depends on which
+two points you choose.
+
+<Interactive
+  id="secant-explorer"
+  title="A curve has no single slope"
+  props={{ fn: "x^2", domain: [0, 4], a: 1, b: 3 }}
+/>
+
+Working out what "the slope" of a curve should mean is the first big question
+of calculus. This course answers it.
+
+</Step>
+
+<Step kind="do" title="Evaluate and measure">
+
+<Question id="calc.fn.evaluate" />
+
+Take care with negative inputs: the whole input gets squared, sign included.
+
+<Question id="calc.fn.negative-input" />
+
+<Question id="calc.fn.slope" />
+
+<Question id="calc.fn.meaning" />
+
+<CodeLab id="calc.fn.code-slope" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="calc.fn.downhill" />
+
+<Question id="calc.fn.not-a-function" />
+
+<Question id="calc.fn.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Slope is "how fast the output changes as the input changes". For the taxi
+that rate is always the same. For most things in the world it is not: a
+sprinter speeds up, a cup of coffee cools quickly and then slowly.
+
+The next lesson measures rates of change from real data, where the slope
+between two points depends very much on which two you pick.
+
+<ConnectIt concepts={["average-rate-of-change", "derivative-definition"]} />
+
+</Step>

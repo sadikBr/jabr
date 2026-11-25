@@ -1,0 +1,16 @@
+id: python-for-scientists
+title: Python for scientists
+subject: computing
+level: foundations
+order: 3
+summary: Learn to program by making the computer do your physics and maths — no experience needed. Every lesson runs real Python in your browser.
+modules:
+  - id: basics
+    title: Basics
+    summary: Variables, arithmetic, functions, loops and lists — the handful of ideas every program is built from.
+    lessons: [numbers-and-names, functions, loops-and-decisions, lists]
+  - id: scientific-python
+    title: Scientific Python
+    summary: Arrays, graphs and simulations — the tools working scientists reach for every day.
+    lessons: [numpy-arrays, plotting, simulation-loop]
+capstone: rocket-flight-simulator

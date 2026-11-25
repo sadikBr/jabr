@@ -1,0 +1,182 @@
+- id: calc.fn.evaluate
+  type: parametrised
+  concepts: [functions]
+  params:
+    m: { choices: [2, 3, 4, 5] }
+    c: { min: 1, max: 9, step: 1 }
+    a: { min: 2, max: 7, step: 1 }
+  prompt: "A function is given by $f(x) = {m}x + {c}$. What is $f({a})$?"
+  answer: "m * a + c"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "m * a"
+      feedback: "You multiplied correctly. Now add the {c}."
+    - answer: "m + a + c"
+      feedback: "${m}x$ means {m} times $x$, not {m} plus $x$."
+  hints:
+    - "$f({a})$ means: put {a} in place of $x$."
+    - "${m} \\times {a} + {c}$."
+  solution: |
+    Replace $x$ with {a}:
+
+    $$f({a}) = {m} \times {a} + {c}$$
+
+- id: calc.fn.negative-input
+  type: parametrised
+  concepts: [functions]
+  params:
+    a: { choices: [2, 3, 4, 5] }
+    c: { choices: [1, 3, 6] }
+  derived:
+    square: "a^2"
+  prompt: "A function is given by $g(x) = x^2 - {c}$. What is $g(-{a})$?"
+  answer: "a^2 - c"
+  tolerance: { absolute: 0.001 }
+  commonMistakes:
+    - answer: "-(a^2) - c"
+      feedback: "The input is $-{a}$, and the whole of it is squared: $(-{a})^2 = +{square}$. A negative number times itself is positive."
+  hints:
+    - "Put $-{a}$ in place of $x$, in brackets: $(-{a})^2 - {c}$."
+    - "$(-{a})^2 = {square}$."
+  solution: |
+    $$g(-{a}) = (-{a})^2 - {c} = {square} - {c}$$
+
+    The brackets matter: $(-{a})^2$ is $(-{a}) \times (-{a}) = {square}$.
+
+- id: calc.fn.slope
+  type: parametrised
+  concepts: [slope-of-a-line]
+  params:
+    x1: { choices: [1, 2] }
+    x2: { choices: [4, 5, 6] }
+    y1: { choices: [2, 3, 5] }
+    rise: { choices: [-6, -3, 3, 6, 9] }
+  derived:
+    y2: "y1 + rise"
+    run: "x2 - x1"
+  prompt: "A straight line passes through the points $({x1},\\ {y1})$ and $({x2},\\ {y2})$. What is its slope?"
+  answer: "rise / (x2 - x1)"
+  tolerance: { absolute: 0.01 }
+  commonMistakes:
+    - answer: "(x2 - x1) / rise"
+      feedback: "That is run over rise. Slope is the other way up: the change in $y$ divided by the change in $x$."
+    - answer: "-rise / (x2 - x1)"
+      feedback: "Check the sign. Subtract in the same order on the top and the bottom: second point minus first."
+  hints:
+    - "Slope is rise over run: $\\dfrac{y_2 - y_1}{x_2 - x_1}$."
+    - "The rise is ${y2} - {y1} = {rise}$ and the run is ${x2} - {x1} = {run}$."
+  solution: |
+    $$\text{slope} = \frac{y_2 - y_1}{x_2 - x_1} = \frac{{y2} - {y1}}{{x2} - {x1}} = \frac{{rise}}{{run}}$$
+
+    A negative answer means the line goes downhill from left to right.
+
+- id: calc.fn.meaning
+  type: multiple-choice
+  concepts: [slope-of-a-line, functions]
+  prompt: "A phone plan costs $C(x) = 0.1x + 8$ euros in a month when you use $x$ gigabytes of data. What does the $0.1$ tell you?"
+  choices:
+    - id: per-gb
+      text: "Each extra gigabyte costs €0.10"
+      correct: true
+    - id: fixed
+      text: "The plan costs €0.10 before you use any data"
+      feedback: "The cost with no data, $C(0)$, is the 8. The 0.1 multiplies the amount of data."
+    - id: total
+      text: "The total bill is €0.10"
+      feedback: "The total depends on $x$. The 0.1 is only part of the rule."
+    - id: limit
+      text: "You can use at most 0.1 gigabytes"
+      feedback: "Nothing in the rule limits $x$. The 0.1 is a rate: euros per gigabyte."
+  hints:
+    - "Compare with $y = mx + c$. Which part is the slope, and what does a slope measure?"
+  solution: |
+    In $C(x) = 0.1x + 8$ the slope is $0.1$: every extra gigabyte adds €0.10 to the bill. The $8$ is where the line starts, the fixed monthly charge.
+
+- id: calc.fn.code-slope
+  type: code
+  concepts: [slope-of-a-line]
+  prompt: "Lessons in this course often end with a few lines of Python, which runs right here in the page (the first run takes a few seconds to load). Complete `slope` so that it returns the slope of the line through two points."
+  starter: |
+    def slope(x1, y1, x2, y2):
+        """The slope of the straight line through (x1, y1) and (x2, y2)."""
+        # Replace the next line: rise over run.
+        return 0
+
+    print("Taxi fare, from 1 km to 3 km:", slope(1, 5, 3, 9), "euros per km")
+    print("A hill that drops 30 m over 200 m:", slope(0, 30, 200, 0))
+  tests: |
+    def test_the_taxi():
+        assert slope(1, 5, 3, 9) == 2, "From (1, 5) to (3, 9) the fare rises by 4 over a run of 2: a slope of 2."
+
+    def test_downhill():
+        assert abs(slope(0, 30, 200, 0) + 0.15) < 1e-9, "Dropping 30 over a run of 200 is a slope of -0.15."
+
+    def test_flat():
+        assert slope(-2, 7, 5, 7) == 0, "A line through two points at the same height is flat: slope 0."
+
+    def test_order_of_the_points():
+        assert slope(3, 9, 1, 5) == 2, "Swapping the two points should not change the slope."
+  hints:
+    - "The rise is `y2 - y1` and the run is `x2 - x1`."
+    - "`return (y2 - y1) / (x2 - x1)`"
+  solution: |
+    `return (y2 - y1) / (x2 - x1)`
+
+    The brackets are essential: without them Python would do the division first. Swapping the two points changes the sign of both the rise and the run, so the slope stays the same.
+
+- id: calc.fn.downhill
+  type: multiple-choice
+  concepts: [slope-of-a-line]
+  prompt: "Which of these lines goes downhill from left to right?"
+  choices:
+    - id: negative
+      text: "$y = -3x + 10$"
+      correct: true
+    - id: positive-low
+      text: "$y = 3x - 10$"
+      feedback: "The $-10$ only moves the line down. Its slope is $+3$, so it climbs."
+    - id: flat
+      text: "$y = 10$"
+      feedback: "This line has slope $0$: it is flat."
+    - id: small
+      text: "$y = 0.01x$"
+      feedback: "A small positive slope still climbs, just gently."
+  hints:
+    - "In $y = mx + c$, which number is the slope?"
+  solution: |
+    The slope is the number multiplying $x$. Only $y = -3x + 10$ has a negative one: for each step of 1 to the right it drops by 3.
+
+- id: calc.fn.not-a-function
+  type: multiple-choice
+  concepts: [functions]
+  prompt: "Which of these rules is **not** a function of $x$?"
+  choices:
+    - id: roots
+      text: '"A number whose square is $x$"'
+      correct: true
+    - id: area
+      text: '"The area of a square with side $x$"'
+      feedback: "Each side length gives exactly one area, $x^2$. That is a function."
+    - id: double
+      text: '"Twice $x$, plus one"'
+      feedback: "Each input gives exactly one output, $2x + 1$."
+    - id: constant
+      text: '"Seven, whatever $x$ is"'
+      feedback: "Unusual, but allowed: every input gives exactly one output, which happens to be the same each time."
+  hints:
+    - "A function must give exactly one output for each input. Try $x = 9$ in each rule."
+  solution: |
+    For $x = 9$ there are two numbers whose square is 9: $3$ and $-3$. A rule that gives two outputs for one input is not a function. (Choosing the positive one each time gives $\sqrt{x}$, which is.)
+
+- id: calc.fn.explain
+  type: self-check
+  concepts: [slope-of-a-line, functions]
+  prompt: "On the taxi graph, every pair of points gave a slope of 2. On the curve, different pairs gave different slopes. Explain what that difference means for the taxi fare, and for a quantity whose graph is curved."
+  rubric:
+    - "You said a constant slope means the output changes at a steady rate: every kilometre costs the same."
+    - "You said a curve's slope depends on where you measure it, so its rate of change is not steady."
+    - "You gave or implied an example: something that speeds up or slows down."
+  solution: |
+    A straight line means a steady rate: the fare goes up by €2 for each kilometre, whether it is your first kilometre or your fiftieth.
+
+    On a curve the rate itself changes. Between some pairs of points the output climbs quickly and between others slowly, like a car accelerating away from traffic lights. Describing that changing rate is what the rest of this course is about.

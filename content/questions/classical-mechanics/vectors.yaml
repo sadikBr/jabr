@@ -189,8 +189,10 @@
   solution: |
     Each vector contributes its two components:
 
-    `total_x += magnitude * math.cos(math.radians(angle))`
-    `total_y += magnitude * math.sin(math.radians(angle))`
+    ```
+    total_x += magnitude * math.cos(math.radians(angle))
+    total_y += magnitude * math.sin(math.radians(angle))
+    ```
 
     For the boat the output is 2.24 m/s at 90.0 degrees: straight across, exactly as the workbench showed.
 

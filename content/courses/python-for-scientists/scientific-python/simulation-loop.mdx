@@ -1,0 +1,105 @@
+---
+id: simulation-loop
+title: "The simulation loop"
+summary: "Follow a system through time in small steps. One short loop, and the physics lives in a single line of it."
+teaches: [simulation-loop]
+requires: [py-loops, py-lists, eulers-method]
+estimatedMinutes: 20
+---
+
+<Step kind="see" title="Step through time">
+
+Everything in this course has been leading here. You have variables to hold
+the state of a system, a loop to repeat a step, lists to record what happens,
+and plots to see it. Put them together and you can simulate.
+
+This program drops a ball from 20 metres and follows it down in steps of a
+tenth of a second. Run it, and read it carefully: every simulation you will
+ever write has this shape.
+
+<CodeLab id="py.sim.playground" />
+
+<Callout kind="definition" title="The simulation loop">
+
+1. **Set up the state:** the quantities that describe the system right now
+   (here time `t`, height `y` and velocity `v`), and a small time step `dt`.
+2. **Repeat:**
+   - work out the **acceleration** from the forces,
+   - use it to update the **velocity**,
+   - use that to update the **position**,
+   - move the **clock** on by `dt`,
+   - **record** the new state.
+3. **Stop** when something happens (the ball lands) or time runs out.
+
+</Callout>
+
+The two update lines are Euler's method from the calculus course, used twice:
+new value = old value + rate of change × time step. Velocity is the rate of
+change of position; acceleration is the rate of change of velocity.
+
+<Callout kind="insight" title="The physics lives in one line">
+
+Look at the line `a = -g`. That is the only place the program says anything
+about _what kind of world_ the ball is in. Replace it with a different rule
+(add air drag, a spring, a rocket engine) and the same loop simulates
+something else entirely. Nothing else needs to change.
+
+</Callout>
+
+The step `dt` is a trade. In the program above, try `dt = 0.5` and then
+`dt = 0.01`, and compare the landing time with the exact answer, 2.02 s. A
+smaller step follows the true motion more closely and takes more passes round
+the loop to get there.
+
+</Step>
+
+<Step kind="do" title="Write the loop, then change the physics">
+
+First, the core of it: the two update lines.
+
+<CodeLab id="py.sim.code-drop" />
+
+<Question id="py.sim.step" />
+
+Now use the same loop for a system you have not met in these courses: a mass
+bouncing on a spring. A spring pulls back towards its rest position with a
+force proportional to how far it has been stretched, $F = -kx$. By the second
+law, the acceleration is that force divided by the mass. That is all you need
+to know.
+
+<CodeLab id="py.sim.code-spring" />
+
+No formula for the motion was ever written down. One line of physics, the
+loop you already had, and the mass oscillates.
+
+<Question id="py.sim.physics-line" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="py.sim.smaller-step" />
+
+<Question id="py.sim.record" />
+
+<Question id="py.sim.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+That is the whole of Python for scientists: from `g = 9.8` to a working
+simulation.
+
+The capstone project puts it to use. You will build a rocket flight simulator
+one milestone at a time: constant velocity, then gravity, a launch angle,
+thrust with burning fuel, and air drag. Every milestone is this loop with a
+richer line of physics.
+
+<ConnectIt
+  concepts={["eulers-method", "newtons-second-law", "air-drag"]}
+  explainers={["how-do-video-games-simulate-physics"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Step>

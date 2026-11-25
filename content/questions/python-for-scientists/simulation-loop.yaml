@@ -1,0 +1,248 @@
+- id: py.sim.playground
+  type: code
+  concepts: [simulation-loop, eulers-method]
+  prompt: "A ball dropped from 20 m, followed step by step until it lands. Run it, then try a bigger and a smaller `dt`."
+  starter: |
+    import matplotlib.pyplot as plt
+
+    g = 9.8
+    dt = 0.1                      # the time step, in seconds
+
+    t, y, v = 0.0, 20.0, 0.0      # the state: time, height and velocity
+    times, heights = [t], [y]
+
+    while y > 0:
+        a = -g                    # the acceleration, from the forces
+        v = v + a * dt            # update the velocity
+        y = y + v * dt            # update the position
+        t = t + dt                # move the clock on
+        times.append(t)           # record the new state
+        heights.append(y)
+
+    print(f"It lands after about {t:.2f} s (exact answer: 2.02 s)")
+
+    plt.plot(times, heights, "o-")
+    plt.xlabel("time (s)")
+    plt.ylabel("height (m)")
+    plt.grid(True)
+    plt.show()
+
+- id: py.sim.code-drop
+  type: code
+  concepts: [simulation-loop, eulers-method]
+  prompt: "Complete `drop` by writing the two update lines: the velocity changes by the acceleration times the time step, and then the position changes by the velocity times the time step. The function follows a dropped ball for a fixed length of time and returns two lists, the times and the heights."
+  starter: |
+    def drop(height, total_time, dt=0.01):
+        """A dropped ball, step by step. Returns the times and the heights."""
+        g = 9.8
+        t, y, v = 0.0, height, 0.0
+        times, heights = [t], [y]
+        for _ in range(round(total_time / dt)):
+            a = -g
+            # Replace the next two lines: update the velocity, then the position.
+            v = v
+            y = y
+            t = t + dt
+            times.append(t)
+            heights.append(y)
+        return times, heights
+
+    times, heights = drop(20, 1.0)
+    print(f"After {times[-1]:.2f} s the ball is at {heights[-1]:.2f} m")
+    print("The exact answer is 20 - 4.9 × 1² = 15.10 m")
+  tests: |
+    def test_one_reading_per_step():
+        times, heights = drop(20, 1.0, dt=0.1)
+        assert len(times) == 11 and len(heights) == 11, "Ten steps give eleven readings, counting the start."
+        assert abs(times[-1] - 1.0) < 1e-9, "The last time should be 1.0 s."
+
+    def test_starts_where_it_was_dropped():
+        times, heights = drop(20, 1.0)
+        assert heights[0] == 20, "The first height recorded should be the starting height."
+
+    def test_falls_the_right_distance():
+        times, heights = drop(20, 1.0)
+        assert abs(heights[-1] - 15.1) < 0.1, "After 1 s the ball should have fallen about 4.9 m, to 15.1 m."
+
+    def test_a_smaller_step_is_closer():
+        coarse = abs(drop(20, 1.0, dt=0.1)[1][-1] - 15.1)
+        fine = abs(drop(20, 1.0, dt=0.001)[1][-1] - 15.1)
+        assert fine < coarse and fine < 0.01, "With dt = 0.001 the answer should be within 1 cm of 15.1 m, and closer than with dt = 0.1."
+  hints:
+    - "New value = old value + rate of change × time step."
+    - "`v = v + a * dt`, and then `y = y + v * dt`."
+  solution: |
+    ```
+    v = v + a * dt
+    y = y + v * dt
+    ```
+
+    With the default step of 0.01 s the ball is at 15.05 m after one second, against an exact 15.10 m. With a step of 0.001 s the error shrinks to half a centimetre.
+
+- id: py.sim.step
+  type: multiple-choice
+  concepts: [simulation-loop, eulers-method]
+  prompt: |
+    In a simulation, the velocity is currently `v = 4.0` m/s and the acceleration is `a = -10.0` m/s². The time step is `dt = 0.1` s. What is `v` after the line `v = v + a * dt`?
+  choices:
+    - id: three
+      text: "`3.0`"
+      correct: true
+    - id: minus-six
+      text: "`-6.0`"
+      feedback: "That adds the whole acceleration. Over a step of 0.1 s the velocity only changes by `a * dt`, which is −1."
+    - id: five
+      text: "`5.0`"
+      feedback: "Check the sign: the acceleration is negative, so the velocity goes down."
+    - id: four
+      text: "`4.0`"
+      feedback: "The velocity does change: by the acceleration times the time step."
+  hints:
+    - "Work out `a * dt` first."
+  solution: |
+    `a * dt` is $-10 \times 0.1 = -1$, so the new velocity is $4.0 - 1.0 = 3.0$ m/s. Each pass round the loop makes one small change like this.
+
+- id: py.sim.code-spring
+  type: code
+  concepts: [simulation-loop, newtons-second-law]
+  prompt: |
+    A mass on a spring is pulled a little way from its rest position and let go. The spring's force is $F = -kx$, where $x$ is how far the mass is from rest and $k$ is the spring's stiffness. Write the one line that gives the acceleration. Everything else is the loop you already know. Then run it and look at the graph.
+  starter: |
+    import math
+    import matplotlib.pyplot as plt
+
+    def oscillate(mass, stiffness, x0, total_time, dt=0.001):
+        """Positions of a mass on a spring, released from rest at x0."""
+        x, v = x0, 0.0
+        positions = [x]
+        for _ in range(round(total_time / dt)):
+            # Replace the next line: the spring's force, -stiffness * x, divided by the mass.
+            a = 0
+            v = v + a * dt
+            x = x + v * dt
+            positions.append(x)
+        return positions
+
+    mass, stiffness = 0.5, 8.0     # kg, and newtons per metre
+    positions = oscillate(mass, stiffness, x0=0.1, total_time=4)
+    times = [i * 0.001 for i in range(len(positions))]
+
+    plt.plot(times, positions)
+    plt.xlabel("time (s)")
+    plt.ylabel("position (m)")
+    plt.grid(True)
+    plt.show()
+
+    print(f"Theory says each swing takes {2 * math.pi * math.sqrt(mass / stiffness):.3f} s")
+  tests: |
+    def test_starts_where_it_was_released():
+        assert oscillate(0.5, 8, 0.1, 1)[0] == 0.1, "The first position should be x0."
+
+    def test_swings_to_the_other_side():
+        positions = oscillate(0.5, 8, 0.1, 0.7854)
+        assert abs(positions[-1] + 0.1) < 2e-3, "Half a swing later (0.785 s) the mass should be at about -0.1 m, the same distance on the other side."
+
+    def test_comes_back_after_one_period():
+        positions = oscillate(0.5, 8, 0.1, 1.5708)
+        assert abs(positions[-1] - 0.1) < 2e-3, "After one full swing (1.571 s) the mass should be back near 0.1 m."
+
+    def test_never_goes_further_than_it_started():
+        positions = oscillate(0.5, 8, 0.1, 10)
+        assert max(abs(x) for x in positions) < 0.101, "With no energy added, the mass should never get further than 0.1 m from rest."
+
+    def test_a_stiffer_spring_is_faster():
+        positions = oscillate(0.5, 32, 0.1, 0.7854)
+        assert abs(positions[-1] - 0.1) < 2e-3, "A spring four times as stiff swings twice as fast: a full swing in 0.785 s."
+  hints:
+    - "The second law: acceleration = force ÷ mass."
+    - "`a = -stiffness * x / mass`"
+  solution: |
+    `a = -stiffness * x / mass`
+
+    The graph is a smooth wave: the mass swings back and forth between +0.1 m and −0.1 m, taking 1.571 s each time, exactly as the theory printed underneath says. You did not need that theory. The loop found the motion from the force alone.
+
+- id: py.sim.physics-line
+  type: multiple-choice
+  concepts: [simulation-loop]
+  prompt: "You have a working simulation of a ball falling with no air. You now want to include air drag. Which part of the loop has to change?"
+  choices:
+    - id: acceleration
+      text: "The line that works out the acceleration"
+      correct: true
+    - id: velocity
+      text: "The line that updates the velocity"
+      feedback: "That line says the velocity changes by the acceleration times the time step. It is true whatever the forces are."
+    - id: position
+      text: "The line that updates the position"
+      feedback: "That line says the position changes by the velocity times the time step. Drag does not alter that."
+    - id: all
+      text: "Every line: it is a different problem"
+      feedback: "The structure of the loop is the same for every problem. Only the rule for the forces changes."
+  hints:
+    - "Drag is a force. Which line turns forces into motion?"
+  solution: |
+    Drag is an extra force, so it changes the acceleration: for a falling ball, something like `a = -g + (k / m) * v**2`. The two update lines and the bookkeeping stay exactly as they were.
+
+- id: py.sim.smaller-step
+  type: multiple-choice
+  concepts: [simulation-loop, eulers-method]
+  prompt: "A simulation covers 10 seconds with a time step of 0.01 s. You change the step to 0.001 s. What happens?"
+  choices:
+    - id: both
+      text: "The loop runs ten times as often, and the result is more accurate"
+      correct: true
+    - id: faster
+      text: "It runs faster, because each step is smaller"
+      feedback: "Each step covers less time, so more of them are needed to reach 10 seconds: ten thousand instead of one thousand."
+    - id: same
+      text: "The result is the same, only slower to arrive"
+      feedback: "It is slower, but not the same. Smaller steps follow the true motion more closely."
+    - id: worse
+      text: "The result is less accurate, because more steps mean more errors"
+      feedback: "There are more steps, but the error in each shrinks faster than their number grows."
+  hints:
+    - "How many steps of 0.01 s make 10 s? How many of 0.001 s?"
+  solution: |
+    Ten seconds is 1000 steps of 0.01 s but 10 000 steps of 0.001 s. Each step treats the rates of change as constant for a shorter time, so the result is closer to the truth. Accuracy is bought with computing time.
+
+- id: py.sim.record
+  type: multiple-choice
+  concepts: [simulation-loop, py-lists]
+  prompt: "Inside the loop, a simulation appends the time and the height to two lists on every pass. What are those lists for?"
+  choices:
+    - id: plot
+      text: "To keep the whole history, so it can be plotted or examined afterwards"
+      correct: true
+    - id: needed
+      text: "The loop needs them to work out the next step"
+      feedback: "The next step only uses the current values of `t`, `y` and `v`. The simulation would run without the lists; you just could not see what happened."
+    - id: speed
+      text: "They make the loop run faster"
+      feedback: "Recording takes a little extra time and memory. It is worth it to see the result."
+    - id: accuracy
+      text: "They make the result more accurate"
+      feedback: "Accuracy depends on the time step. The lists only remember what the loop computed."
+  hints:
+    - "After the loop ends, what do the variables `t` and `y` hold? What has been lost?"
+  solution: |
+    The variables `t`, `y` and `v` are overwritten on every pass, so at the end they hold only the final state. The lists keep every state along the way, which is what you need to draw the graph.
+
+- id: py.sim.explain
+  type: self-check
+  concepts: [simulation-loop]
+  prompt: "Describe, in your own words, what a simulation of a rocket launch would do on each pass round its loop. Mention the forces involved."
+  rubric:
+    - "Work out the forces on the rocket at this moment: thrust, weight and air drag."
+    - "Divide the net force by the mass to get the acceleration (and note that the mass falls as fuel burns)."
+    - "Update the velocity using the acceleration, and the position using the velocity, each times the time step."
+    - "Move the clock on and record the state."
+  solution: |
+    On every pass:
+
+    1. **Forces.** Thrust from the engine (while there is fuel), weight downwards, and drag opposing the motion.
+    2. **Acceleration.** Net force divided by the current mass, which is shrinking as fuel burns.
+    3. **Velocity.** Add the acceleration times `dt`.
+    4. **Position.** Add the velocity times `dt`.
+    5. **Bookkeeping.** Advance the time, reduce the fuel, and append the state to the lists.
+
+    Then check whether to stop: the rocket has landed, or the time is up. That is the capstone project.

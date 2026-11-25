@@ -26,7 +26,7 @@ test.describe("progress on this device", () => {
     await expect(page.getByText("Nothing here yet")).toBeVisible();
     await page.getByRole("link", { name: "Start the first lesson" }).click();
     await expect(page).toHaveURL(
-      "/courses/calculus-essentials/change-and-limits/rates-of-change-from-data",
+      "/courses/calculus-essentials/change-and-limits/functions-and-slopes",
     );
   });
 
@@ -132,7 +132,7 @@ test.describe("progress on this device", () => {
     await expect(page.locator('[data-lesson-state="completed"]')).toHaveCount(
       1,
     );
-    await expect(page.getByText("1 of 7 lessons finished")).toBeVisible();
+    await expect(page.getByText("1 of 8 lessons finished")).toBeVisible();
 
     await page.goto("/dashboard");
     await expect(page.getByTestId("stat-lessons")).toContainText("1");

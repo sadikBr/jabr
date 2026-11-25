@@ -1,0 +1,124 @@
+---
+id: functions
+title: "Functions"
+summary: "Wrap a calculation up, give it a name, and use it with any inputs you like."
+teaches: [py-functions]
+requires: [py-variables, py-arithmetic]
+estimatedMinutes: 15
+---
+
+<Step kind="see" title="A calculation with a name">
+
+In the last lesson, finding how far a ball falls in a different time meant
+editing the program. That does not scale. What you want is to write the
+calculation once and then ask it questions.
+
+Run this, then add a line of your own to find the distance after 10 seconds.
+
+<CodeLab id="py.func.playground" />
+
+The first three lines **define** a function. Nothing is calculated at that
+point: Python just learns a new word, `fall_distance`. The `print` lines then
+**call** it, each time with a different value in the brackets.
+
+<Callout kind="definition" title="Defining a function">
+
+```python
+def name(inputs):
+    """What it does, in a sentence."""
+    work = something_with(inputs)
+    return work
+```
+
+- `def` starts the definition, and the first line ends with a colon.
+- The **parameters** in the brackets are names for the inputs. They exist
+  only inside the function.
+- The body is **indented** by four spaces. The indentation is not decoration:
+  it is how Python knows which lines belong to the function.
+- `return` hands a value back to whoever called the function, and ends it.
+- The text in triple quotes is a **docstring**: an optional note saying what
+  the function is for.
+
+</Callout>
+
+Calling a function is like using one in maths. Wherever you write
+`fall_distance(2)`, Python runs the body with `t` equal to 2 and puts the
+returned value in its place. So calls can go inside calculations, or inside
+other calls:
+
+```python
+total = fall_distance(1) + fall_distance(2)
+```
+
+<Callout kind="warning" title="return is not print">
+
+`print` shows a value to a person. `return` gives a value back to the
+program, so it can be stored or used in more calculations. A function that
+prints its answer instead of returning it looks fine on screen and is useless
+as a building block.
+
+</Callout>
+
+Python comes with a library of ready-made mathematical functions. To use
+them, **import** the `math` module at the top of your program:
+
+```python
+import math
+
+print(math.sqrt(2))        # square root
+print(math.sin(math.pi))   # sine, in radians
+```
+
+A parameter can also be given a **default value**, used when the caller does
+not supply one:
+
+```python
+def weight(mass, g=9.8):
+    return mass * g
+
+weight(70)          # uses g = 9.8
+weight(70, 1.62)    # on the Moon
+```
+
+</Step>
+
+<Step kind="do" title="Write three functions">
+
+<CodeLab id="py.func.code-energy" />
+
+<Question id="py.func.return-or-print" />
+
+Functions can use other functions. That is how big programs are built: small
+pieces, each doing one job, stacked on top of each other.
+
+<CodeLab id="py.func.code-distance" />
+
+<CodeLab id="py.func.code-period" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="py.func.nested" />
+
+<Question id="py.func.scope" />
+
+<Question id="py.func.indent" />
+
+<Question id="py.func.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Every formula in the physics and calculus courses can now become a function:
+give it a name, give it inputs, and call it whenever you need it. That is
+exactly how the code labs in those courses are set up.
+
+What you cannot do yet is make the computer do something _many times_: fill
+in a whole table, or step a simulation forwards a thousand steps. That needs
+a loop.
+
+<ConnectIt concepts={["py-loops", "py-conditionals", "functions"]} />
+
+</Step>

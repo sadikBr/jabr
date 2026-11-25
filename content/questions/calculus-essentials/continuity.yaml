@@ -146,10 +146,12 @@
   solution: |
     Keep whichever half still has a sign change:
 
-    `if f(lo) * f(mid) <= 0:`
-    `    hi = mid`
-    `else:`
-    `    lo = mid`
+    ```
+    if f(lo) * f(mid) <= 0:
+        hi = mid
+    else:
+        lo = mid
+    ```
 
     Each pass halves the interval, so twenty passes shrink it a million times. The root comes out as $1.52138$, and $f$ there is as close to zero as the tolerance allows.
 

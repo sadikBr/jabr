@@ -16,11 +16,12 @@ plan. This file records how the repo works. Keep it current.
 
 **Status:** Phases 0 to 5 are done: foundations, content pipeline, interactivity
 and grading, progress on this device, knowledge map and review, projects.
-Phase 6 (content) is in progress, one course at a time. Written so far:
-Calculus essentials (seven lessons; its Integrals module is coming soon) and
-Classical mechanics (seven lessons; its Energy and momentum module is coming
-soon). Next: Python for scientists, the remaining explainers and the mini
-projects. Accounts are deferred: see the brief.
+Phase 6 (content) is in progress. All three courses are written: Calculus
+essentials (eight lessons; its Integrals module is coming soon), Classical
+mechanics (seven lessons; its Energy and momentum module is coming soon) and
+Python for scientists (seven lessons). `content:check` passes with no
+warnings. Still to write: two explainers (rocket to orbit, video game
+physics) and the mini projects. Accounts are deferred: see the brief.
 
 ## Commands
 
@@ -111,6 +112,14 @@ Writing content:
   sideways. `Segmented` and `Toggle` already do this.
 - Lessons can use Markdown tables. Put the labels in the header row and the
   data underneath: the header row is styled smaller.
+- Text in YAML (question prompts, hints, solutions, feedback) is rendered by
+  `lib/content/rich-text.ts`: paragraphs, `$maths$`, `**bold**`, `` `code` ``
+  and fenced code blocks. Use a fenced block for any program of more than one
+  line.
+- A code lab's starter must finish on its own, because the verifier runs it.
+  Never leave a `while` loop in a starter whose missing lines are what would
+  end it: use a `for` loop over a fixed number of steps, or give a complete
+  loop and ask for a change to it.
 - Every formula, number and code sample must be checked before it is
   committed. Run code samples and paste their real output.
 - **Reading alone is never the whole lesson.** Every lesson and explainer
@@ -378,6 +387,10 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
 | 2026-11-24 | The free-body builder always offers a "force of motion"                                                         | It is the most common wrong idea in mechanics; choosing it and being told why not teaches more than never seeing it                   |
 | 2026-11-24 | E2E tests tick options with the keyboard (`choose` in tests/e2e/fixtures.ts)                                    | A forced click on a hidden input lands on whatever covers it, which on a phone can be the bottom bar                                  |
 | 2026-11-24 | Map tests read their expected counts from `.velite/concepts.json`                                               | The counts change with every course; the behaviour being tested does not                                                              |
+| 2026-11-25 | Courses carry an explicit `order`; content is sorted as it is loaded                                            | The build tool's output order changes between runs, and "the first course" changed with it                                            |
+| 2026-11-25 | A short "Functions and slopes" lesson opens the calculus course                                                 | Two foundation concepts were assumed but taught nowhere; a newcomer needs somewhere to start                                          |
+| 2026-11-25 | The Python course teaches with the code editor rather than new simulations                                      | Writing and running code is the interaction; every lesson opens with a program to run and change                                      |
+| 2026-11-25 | Graph geometry lives in `graph-view.ts`, apart from the layout in `graph-layout.ts`                             | The browser needs node sizes and fitting, not the layout library                                                                      |
 | 2026-11-24 | Lessons may have more than one step of the same kind                                                            | A long lesson (derivative rules) reads better as two "see" steps with a question after each rule                                      |
 
 ## Known limitations
@@ -387,12 +400,11 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   import on the progress page are the workaround.
 - Mastery is computed in the browser from graded results, so it can be
   edited by anyone who opens the developer tools. That only fools themselves.
-- Reviews and recommendations draw on the fourteen written lessons. They
-  widen as each course is written (Phase 6).
-- The map has 36 concepts, which no longer fit on screen at a readable size,
-  so it opens on the neighbourhood of what the learner is working on and is
-  panned from there (or filtered by subject or course). Past roughly 80
-  concepts it will need grouping; revisit when the content gets there.
+- The map has 45 concepts, which do not fit on screen at a readable size.
+  It opens on the widest neighbourhood of the learner's current concept that
+  does fit (`firstGroupThatFits` in `lib/content/graph-view.ts`) and is
+  panned or filtered from there. Past roughly 80 concepts it will need
+  grouping; revisit when the content gets there.
 - Code lab test results are computed in the browser and reported to the
   server, so a determined learner could fake a pass. Accepted for the MVP.
 - numpy and matplotlib need a connection the first time they are used; after
@@ -400,10 +412,11 @@ tests/unit/     Vitest setup and helpers; unit tests sit next to their source
   beyond the app itself.
 - The first Python run takes a few seconds (about 14 MB of runtime).
 - Ctrl/⌘+Enter runs code on desktop only; phones use the Run button.
-- Fourteen lessons and one explainer are written; the rest are listed as
-  coming soon, including the Integrals and the Energy and momentum modules.
-  `content:check` warns about two foundation concepts no lesson teaches yet
-  (functions, slope of a line).
+- Twenty-two lessons and one explainer are written. Six lessons (the
+  Integrals and the Energy and momentum modules) and four explainers are
+  listed as coming soon.
+- The Python course's later lessons use NumPy and matplotlib, which are
+  downloaded from a CDN the first time a lab that imports them is run.
 - A graph is drawn at a default size on the server and re-drawn at its real
   size once measured in the browser. Its box does not move, but the drawing
   inside can visibly sharpen on first load.

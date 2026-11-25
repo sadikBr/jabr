@@ -1,0 +1,61 @@
+- id: py-variables
+  title: Variables
+  subject: computing
+  summary: Names for values, so a program can remember a number and use it again.
+  lesson: python-for-scientists/basics/numbers-and-names
+
+- id: py-arithmetic
+  title: Arithmetic in code
+  subject: computing
+  summary: Adding, multiplying, powers and remainders, and the order in which Python works them out.
+  prerequisites: [py-variables]
+  lesson: python-for-scientists/basics/numbers-and-names
+
+- id: py-functions
+  title: Functions in code
+  subject: computing
+  summary: A calculation with a name and inputs, written once and used as often as needed.
+  prerequisites: [py-variables, py-arithmetic]
+  lesson: python-for-scientists/basics/functions
+
+- id: py-conditionals
+  title: Making decisions
+  subject: computing
+  summary: Running different code depending on whether something is true, with if, elif and else.
+  prerequisites: [py-arithmetic]
+  lesson: python-for-scientists/basics/loops-and-decisions
+
+- id: py-loops
+  title: Loops
+  subject: computing
+  summary: Repeating a block of code, a set number of times or until something happens.
+  prerequisites: [py-variables]
+  lesson: python-for-scientists/basics/loops-and-decisions
+
+- id: py-lists
+  title: Lists
+  subject: computing
+  summary: Many values kept in order under one name, such as a column of measurements.
+  prerequisites: [py-loops]
+  lesson: python-for-scientists/basics/lists
+
+- id: numpy-arrays
+  title: NumPy arrays
+  subject: computing
+  summary: Lists of numbers that can be calculated with all at once, without writing a loop.
+  prerequisites: [py-lists, py-functions]
+  lesson: python-for-scientists/scientific-python/numpy-arrays
+
+- id: plotting
+  title: Plotting data
+  subject: computing
+  summary: Turning columns of numbers into a labelled graph with matplotlib.
+  prerequisites: [numpy-arrays]
+  lesson: python-for-scientists/scientific-python/plotting
+
+- id: simulation-loop
+  title: The simulation loop
+  subject: computing
+  summary: Following a system through time in small steps — work out the rates of change, update, record, repeat.
+  prerequisites: [py-loops, py-lists, eulers-method]
+  lesson: python-for-scientists/scientific-python/simulation-loop

@@ -184,8 +184,10 @@
   solution: |
     Two lines, one for each stage:
 
-    `thinking = speed * reaction_time`
-    `braking = speed**2 / (2 * deceleration)`
+    ```
+    thinking = speed * reaction_time
+    braking = speed**2 / (2 * deceleration)
+    ```
 
     The table shows what the formula means on the road: about 28 m to stop from 50 km/h, but 97 m from 110 km/h. That is three and a half times the distance for a little over twice the speed.
 

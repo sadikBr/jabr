@@ -1,0 +1,114 @@
+---
+id: plotting
+title: "Plotting data"
+summary: "Turn columns of numbers into a clear, labelled graph with matplotlib."
+teaches: [plotting]
+requires: [numpy-arrays]
+estimatedMinutes: 15
+---
+
+<Step kind="see" title="A graph in six lines">
+
+A table of a hundred numbers tells you very little. The same numbers as a
+graph can be read in a second. In Python the standard tool for drawing them
+is **matplotlib**.
+
+Run this. Then change the 20 in the formula to 30 and run it again.
+
+<CodeLab id="py.plot.playground" />
+
+The whole recipe is there: make an array of $x$ values, compute the $y$
+values from them, and hand the pair to `plt.plot`.
+
+<Callout kind="definition" title="The plotting recipe">
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.linspace(0, 10, 200)       # where to evaluate
+y = np.sin(x)                     # what to plot
+
+plt.plot(x, y, label="sin(x)")    # draw a line through the points
+plt.xlabel("x")                   # name the axes
+plt.ylabel("y")
+plt.title("A sine wave")
+plt.legend()                      # show the labels
+plt.grid(True)
+plt.show()                        # display the finished figure
+```
+
+Call `plt.plot` more than once before `plt.show()` to put several curves on
+the same axes.
+
+</Callout>
+
+A curve on screen is really a set of straight lines between points. With 200
+points it looks smooth; with 5 it would look like a bent wire. If a graph
+looks jagged, ask `linspace` for more points.
+
+A third argument to `plt.plot` changes how the data is drawn:
+
+| Format string | Draws                             |
+| ------------- | --------------------------------- |
+| `"-"`         | a solid line (the default)        |
+| `"--"`        | a dashed line                     |
+| `"o"`         | a dot at each point, with no line |
+| `"o-"`        | dots joined by a line             |
+
+Use a line for a formula, which exists everywhere, and dots for measurements,
+which only exist where you took them.
+
+<Callout kind="insight" title="A graph without labels is a picture, not a result">
+
+Always name both axes and give the units. The reader should never have to
+guess whether the horizontal axis is seconds or minutes. In this course's
+physics, that reader is usually you, checking whether a simulation is doing
+what you meant.
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Draw some physics">
+
+The checks here look at the data your function produces. The graph is for
+you: use it to see whether the numbers make sense.
+
+<CodeLab id="py.plot.code-trajectory" />
+
+<Question id="py.plot.legend" />
+
+Measured data and a theoretical curve belong on the same axes: that is how
+you see whether theory and experiment agree.
+
+<CodeLab id="py.plot.code-fit" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="py.plot.jagged" />
+
+<Question id="py.plot.lengths" />
+
+<Question id="py.plot.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+You can now compute with arrays and see the results. One thing is still
+missing. Every curve so far came from a formula: put in $t$, get out $h$. But
+the most interesting systems have no formula, only a rule for how they
+_change_ from one moment to the next.
+
+To follow those you need a loop that steps through time, updating as it goes
+and recording each state for plotting afterwards. That is a simulation, and
+it brings together everything in this course.
+
+<ConnectIt
+  concepts={["simulation-loop", "projectile-motion", "eulers-method"]}
+/>
+
+</Step>

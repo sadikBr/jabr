@@ -8,7 +8,13 @@ modules:
   - id: change-and-limits
     title: Change and limits
     summary: Measure how fast things change, and what it means to get arbitrarily close.
-    lessons: [rates-of-change-from-data, limits-intuition, continuity]
+    lessons:
+      [
+        functions-and-slopes,
+        rates-of-change-from-data,
+        limits-intuition,
+        continuity,
+      ]
   - id: derivatives
     title: Derivatives
     summary: The rate of change at a single instant, and the rules for computing it.

@@ -1,0 +1,204 @@
+- id: py.numpy.playground
+  type: code
+  concepts: [numpy-arrays]
+  prompt: "Five times, and the height of a thrown ball at each of them, with no loop in sight. Run it, then change the 5 to 11 for a finer table."
+  starter: |
+    import numpy as np
+
+    t = np.linspace(0, 4, 5)        # 5 times from 0 to 4 seconds
+    h = 20 * t - 4.9 * t**2         # the height at every one of them
+
+    print("times:  ", t)
+    print("heights:", h)
+    print("highest:", h.max(), "m")
+
+- id: py.numpy.linspace
+  type: multiple-choice
+  concepts: [numpy-arrays]
+  prompt: "What does `np.linspace(0, 10, 5)` produce?"
+  choices:
+    - id: right
+      text: "0, 2.5, 5, 7.5, 10"
+      correct: true
+    - id: steps-of-five
+      text: "0, 5, 10"
+      feedback: "The third number is how many values you want, not the size of the step. Five values from 0 to 10 are 2.5 apart."
+    - id: excludes-end
+      text: "0, 2, 4, 6, 8"
+      feedback: "`linspace` includes the end value. It is `range` and `np.arange` that stop before it."
+    - id: ten-values
+      text: "0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10"
+      feedback: "That is eleven values. The third argument asks for exactly five."
+  hints:
+    - "Five values, evenly spaced, with 0 as the first and 10 as the last."
+  solution: |
+    `linspace(start, stop, count)` gives `count` evenly spaced values including both ends. Five values spanning 0 to 10 have four gaps of 2.5 between them.
+
+- id: py.numpy.code-peak
+  type: code
+  concepts: [numpy-arrays, py-functions]
+  prompt: |
+    A ball is thrown straight up at `speed` m/s, so its height is $h = \text{speed} \cdot t - 4.9t^2$ and it lands after $\text{speed} / 4.9$ seconds. Complete `peak` so that it returns the greatest height the ball reaches, found by computing the height at 1001 evenly spaced times and taking the largest.
+  starter: |
+    import numpy as np
+
+    def peak(speed):
+        """The greatest height reached by a ball thrown upwards at `speed` m/s."""
+        t = np.linspace(0, speed / 4.9, 1001)
+        # Replace the next two lines: the array of heights, then its largest value.
+        h = t
+        return 0
+
+    for speed in [10, 20, 30]:
+        print(f"Thrown at {speed} m/s, it reaches {peak(speed):.2f} m")
+  tests: |
+    def test_twenty_metres_per_second():
+        assert abs(peak(20) - 20.408) < 1e-3, "At 20 m/s the ball reaches 20² ÷ 19.6 = 20.41 m."
+
+    def test_ten_metres_per_second():
+        assert abs(peak(10) - 5.102) < 1e-3, "At 10 m/s the ball reaches 10² ÷ 19.6 = 5.10 m."
+
+    def test_twice_as_fast_four_times_as_high():
+        assert abs(peak(30) - 9 * peak(10)) < 1e-6, "Three times the speed should give nine times the height."
+  hints:
+    - "The heights are the formula applied to the whole array: `h = speed * t - 4.9 * t**2`."
+    - "Then `return h.max()`."
+  solution: |
+    ```
+    h = speed * t - 4.9 * t**2
+    return h.max()
+    ```
+
+    One line computes all 1001 heights. The results, 5.10 m, 20.41 m and 45.92 m, agree with the formula from the mechanics course, $\frac{u^2}{2g}$, and go up with the square of the speed.
+
+- id: py.numpy.code-speeds
+  type: code
+  concepts: [numpy-arrays, average-rate-of-change]
+  prompt: "Complete `average_speeds` using `np.diff`, which returns the change from each item of an array to the next. No loop is needed: divide the changes in distance by the changes in time."
+  starter: |
+    import numpy as np
+
+    def average_speeds(times, distances):
+        """The average speed between each reading and the next, as an array."""
+        # Replace the next line.
+        return np.zeros(len(times) - 1)
+
+    times = np.array([0, 1.89, 2.88, 3.78, 4.64, 5.47, 6.29, 7.10, 7.92, 8.75, 9.58])
+    distances = np.arange(0, 101, 10)
+
+    speeds = average_speeds(times, distances)
+    print(np.round(speeds, 2))
+    print("Fastest:", speeds.max().round(2), "m/s, in stretch number", np.argmax(speeds) + 1)
+  tests: |
+    def test_steady_motion():
+        result = average_speeds(np.array([0, 2, 4]), np.array([0, 10, 20]))
+        assert np.allclose(result, [5, 5]), "10 m every 2 s is 5 m/s on both stretches."
+
+    def test_uneven_readings():
+        result = average_speeds(np.array([0, 1, 4]), np.array([0, 3, 9]))
+        assert np.allclose(result, [3, 2]), "3 m in 1 s, then 6 m in 3 s: speeds of 3 and 2."
+
+    def test_one_fewer_than_the_readings():
+        assert len(average_speeds(times, distances)) == 10, "Eleven readings make ten stretches."
+
+    def test_bolts_fastest_stretch():
+        result = average_speeds(times, distances)
+        assert abs(result.max() - 12.35) < 0.01 and np.argmax(result) == 6, "The fastest stretch should be the seventh (position 6), at about 12.35 m/s."
+  hints:
+    - "`np.diff(distances)` is the distance covered in each stretch."
+    - "`return np.diff(distances) / np.diff(times)`"
+  solution: |
+    `return np.diff(distances) / np.diff(times)`
+
+    Ten lines of loop from the calculus course, replaced by one. The result is the same: a top speed of 12.35 m/s in the seventh stretch, from 60 m to 70 m.
+
+- id: py.numpy.list-or-array
+  type: multiple-choice
+  concepts: [numpy-arrays, py-lists]
+  prompt: |
+    What does this program print?
+
+    ```
+    import numpy as np
+
+    readings = [1, 2, 3]
+    print(readings * 2)
+    print(np.array(readings) * 2)
+    ```
+  choices:
+    - id: both
+      text: "`[1, 2, 3, 1, 2, 3]` and then `[2 4 6]`"
+      correct: true
+    - id: doubled-twice
+      text: "`[2, 4, 6]` and then `[2 4 6]`"
+      feedback: "For a plain list, `* 2` does not multiply the numbers. It repeats the list."
+    - id: repeated-twice
+      text: "`[1, 2, 3, 1, 2, 3]` both times"
+      feedback: "Converting to an array changes what `*` means: arrays do arithmetic element by element."
+    - id: error
+      text: "An error: a list cannot be multiplied"
+      feedback: "It can, but the result is repetition rather than arithmetic."
+  hints:
+    - "What does `*` mean for a list? And for an array?"
+  solution: |
+    Multiplying a list repeats it: `[1, 2, 3, 1, 2, 3]`. Multiplying an array multiplies each element: `[2 4 6]`. (Arrays print without commas, which is a handy way to tell the two apart.)
+
+- id: py.numpy.elementwise
+  type: multiple-choice
+  concepts: [numpy-arrays]
+  prompt: |
+    With `a = np.array([1, 2, 3])` and `b = np.array([10, 20, 30])`, what is `a * b`?
+  choices:
+    - id: elementwise
+      text: "`[10 40 90]`"
+      correct: true
+    - id: dot
+      text: "`140`"
+      feedback: "That is the sum of the products (the dot product). `*` gives the products themselves, one per pair of elements."
+    - id: joined
+      text: "`[1 2 3 10 20 30]`"
+      feedback: "Joining is not what `*` does. It multiplies matching elements."
+    - id: sum
+      text: "`[11 22 33]`"
+      feedback: "That is `a + b`."
+  hints:
+    - "Array arithmetic works element by element: first with first, second with second…"
+  solution: |
+    Each element of `a` is multiplied by the matching element of `b`: $1 \times 10$, $2 \times 20$, $3 \times 30$, giving `[10 40 90]`.
+
+- id: py.numpy.arange
+  type: multiple-choice
+  concepts: [numpy-arrays]
+  prompt: "How many values are in `np.arange(0, 1, 0.25)`?"
+  choices:
+    - id: four
+      text: "Four: 0, 0.25, 0.5, 0.75"
+      correct: true
+    - id: five
+      text: "Five: 0, 0.25, 0.5, 0.75, 1"
+      feedback: "Like `range`, `np.arange` stops before the end value. To include 1, use `np.linspace(0, 1, 5)`."
+    - id: twenty-five
+      text: "Twenty-five"
+      feedback: "0.25 is the size of each step, not a count."
+    - id: one
+      text: "One: just 0.25"
+      feedback: "The three arguments are start, stop and step."
+  hints:
+    - "`np.arange(start, stop, step)` behaves like `range`."
+  solution: |
+    `np.arange` starts at 0, goes up in steps of 0.25 and stops **before** 1, giving four values. `np.linspace` is the one that includes the end.
+
+- id: py.numpy.explain
+  type: self-check
+  concepts: [numpy-arrays]
+  prompt: "You have a list of a thousand temperatures in Celsius and want them in Fahrenheit ($F = 1.8C + 32$). Describe how you would do it with a plain list and with a NumPy array, and say why scientists prefer the array."
+  rubric:
+    - "With a list: loop over the values (or use a list comprehension), converting each one and appending it to a new list."
+    - "With an array: write the formula once, `1.8 * celsius + 32`, and it applies to every element."
+    - "You gave a reason arrays are preferred: the code reads like the formula, or it is much faster for large amounts of data."
+  solution: |
+    **List:** `fahrenheit = [1.8 * c + 32 for c in celsius]`, or the same thing as a loop with `append`.
+
+    **Array:** `fahrenheit = 1.8 * celsius + 32`.
+
+    The array version is the formula itself, with no loop to get wrong, and NumPy does the arithmetic in fast compiled code. For a thousand values the difference is invisible; for a hundred million it is the difference between seconds and minutes.

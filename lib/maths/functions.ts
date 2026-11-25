@@ -23,6 +23,13 @@ export const functionDefinitions: Record<
   PlottableFunction,
   FunctionDefinition
 > = {
+  "2x + 3": {
+    label: "2x + 3",
+    derivativeLabel: "2",
+    f: (x) => 2 * x + 3,
+    derivative: () => 2,
+    view: { x: [-3, 3], y: [-4, 10], slope: [-1, 4] },
+  },
   "x^2": {
     label: "x²",
     derivativeLabel: "2x",

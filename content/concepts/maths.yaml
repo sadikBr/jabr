@@ -2,11 +2,13 @@
   title: Functions
   subject: maths
   summary: A rule that turns each input into exactly one output, often drawn as a graph.
+  lesson: calculus-essentials/change-and-limits/functions-and-slopes
 
 - id: slope-of-a-line
   title: Slope of a line
   subject: maths
   summary: How steep a line is — the rise divided by the run between any two of its points.
+  lesson: calculus-essentials/change-and-limits/functions-and-slopes
 
 - id: average-rate-of-change
   title: Average rate of change

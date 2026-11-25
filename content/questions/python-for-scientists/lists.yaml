@@ -1,0 +1,250 @@
+- id: py.lists.playground
+  type: code
+  concepts: [py-lists]
+  prompt: "A list of temperatures recorded through one day. Run the program, then add another reading to the list and run it again."
+  starter: |
+    temperatures = [14.5, 16.0, 19.5, 21.0, 18.5]
+
+    print("Number of readings:", len(temperatures))
+    print("First:", temperatures[0])
+    print("Last:", temperatures[-1])
+    print("Warmest:", max(temperatures))
+
+    for value in temperatures:
+        print(value, "°C is", value * 9 / 5 + 32, "°F")
+
+- id: py.lists.index
+  type: multiple-choice
+  concepts: [py-lists]
+  prompt: |
+    Given `masses = [10, 20, 30, 40]`, what is `masses[1]`?
+  choices:
+    - id: twenty
+      text: "`20`"
+      correct: true
+    - id: ten
+      text: "`10`"
+      feedback: "That is `masses[0]`. Positions are counted from zero, so position 1 is the second item."
+    - id: thirty
+      text: "`30`"
+      feedback: "That is `masses[2]`."
+    - id: error
+      text: "It is an error"
+      feedback: "Position 1 exists: the valid positions here are 0, 1, 2 and 3."
+  hints:
+    - "The first item is at position 0."
+  solution: |
+    Positions start at zero: `masses[0]` is 10, `masses[1]` is 20, `masses[2]` is 30 and `masses[3]` is 40.
+
+- id: py.lists.code-mean
+  type: code
+  concepts: [py-lists, py-loops]
+  prompt: "Complete `mean` so that it returns the average of a list of numbers: their total divided by how many there are. Use the loop to add them up."
+  starter: |
+    def mean(values):
+        """The average of a list of numbers."""
+        total = 0
+        for value in values:
+            # Replace the next line: add this value to the total.
+            total = total
+        # Replace the next line: divide by the number of values.
+        return total
+
+    times = [9.58, 9.63, 9.69, 9.72, 9.74]
+    print("Mean time:", mean(times), "s")
+  tests: |
+    def test_simple_average():
+        assert abs(mean([2, 4, 6]) - 4) < 1e-9, "The mean of 2, 4 and 6 is 4."
+
+    def test_one_value():
+        assert abs(mean([7.5]) - 7.5) < 1e-9, "The mean of a single value is that value."
+
+    def test_the_sprint_times():
+        assert abs(mean([9.58, 9.63, 9.69, 9.72, 9.74]) - 9.672) < 1e-9, "Those five times average 9.672 s."
+
+    def test_negative_values():
+        assert abs(mean([-3, 3, -1, 1])) < 1e-9, "Values that cancel out should average zero."
+  hints:
+    - "Inside the loop: `total = total + value`."
+    - "At the end: `return total / len(values)`."
+  solution: |
+    ```
+    total = 0
+    for value in values:
+        total = total + value
+    return total / len(values)
+    ```
+
+    Python's built-in `sum(values) / len(values)` does the same thing. It is worth writing the loop once to see that there is no magic in it.
+
+- id: py.lists.code-changes
+  type: code
+  concepts: [py-lists, py-loops, average-rate-of-change]
+  prompt: "Complete `changes` so that it returns a new list holding the difference between each value and the one before it. A list of five positions should give a list of four changes."
+  starter: |
+    def changes(values):
+        """The change from each value to the next."""
+        result = []
+        for i in range(len(values) - 1):
+            # Replace the next line: append the change from item i to item i + 1.
+            result.append(0)
+        return result
+
+    positions = [0, 3, 8, 15, 24]    # metres, one reading per second
+    print(changes(positions))
+  tests: |
+    def test_the_example():
+        assert changes([0, 3, 8, 15, 24]) == [3, 5, 7, 9], "From 0, 3, 8, 15, 24 the changes are 3, 5, 7, 9."
+
+    def test_one_fewer_than_the_values():
+        assert len(changes([1, 1, 1, 1, 1, 1])) == 5, "Six values have five gaps between them."
+
+    def test_decreasing_values():
+        assert changes([10, 7, 1]) == [-3, -6], "When the values fall, the changes are negative: later minus earlier."
+
+    def test_nothing_to_compare():
+        assert changes([42]) == [], "A single value has no changes: the result should be an empty list."
+  hints:
+    - "Item `i + 1` comes after item `i`. The change is later minus earlier."
+    - "`result.append(values[i + 1] - values[i])`"
+  solution: |
+    `result.append(values[i + 1] - values[i])`
+
+    The loop runs over positions rather than items, because each step needs two neighbours. For the positions given, the changes are 3, 5, 7, 9 metres: the object is speeding up.
+
+- id: py.lists.code-above
+  type: code
+  concepts: [py-lists, py-conditionals]
+  prompt: "Complete `above` so that it returns a new list containing only the values greater than `threshold`, in their original order. You will need an `if` inside the loop."
+  starter: |
+    def above(values, threshold):
+        """The values that are greater than the threshold."""
+        result = []
+        for value in values:
+            # Replace the next line: keep this value only if it is big enough.
+            result.append(value)
+        return result
+
+    speeds = [5.29, 10.10, 11.11, 11.63, 12.05, 12.20, 12.35, 12.20, 12.05, 12.05]
+    print(above(speeds, 12))
+  tests: |
+    def test_keeps_only_the_big_ones():
+        assert above([1, 5, 2, 8, 3], 2.5) == [5, 8, 3], "From 1, 5, 2, 8, 3 the values above 2.5 are 5, 8 and 3, in that order."
+
+    def test_strictly_greater():
+        assert above([1, 2, 3], 2) == [3], "A value equal to the threshold is not above it."
+
+    def test_none_qualify():
+        assert above([1, 2, 3], 10) == [], "If nothing is above the threshold, the result is an empty list."
+
+    def test_leaves_the_original_alone():
+        data = [4, 9, 2]
+        above(data, 3)
+        assert data == [4, 9, 2], "The function should build a new list, not change the one it was given."
+  hints:
+    - "Put the `append` inside an `if`."
+    - "`if value > threshold:` and then, indented once more, `result.append(value)`."
+  solution: |
+    ```
+    for value in values:
+        if value > threshold:
+            result.append(value)
+    ```
+
+    As a list comprehension: `[value for value in values if value > threshold]`. Either way, of Bolt's ten split speeds, six are above 12 m/s.
+
+- id: py.lists.last
+  type: multiple-choice
+  concepts: [py-lists]
+  prompt: |
+    What does this program print?
+
+    ```
+    readings = []
+    for n in range(3):
+        readings.append(n * 10)
+    print(readings[-1])
+    ```
+  choices:
+    - id: twenty
+      text: "`20`"
+      correct: true
+    - id: thirty
+      text: "`30`"
+      feedback: "`range(3)` gives 0, 1, 2, so the largest value appended is `2 * 10`."
+    - id: list
+      text: "`[0, 10, 20]`"
+      feedback: "That is the whole list. `readings[-1]` picks out only its last item."
+    - id: minus
+      text: "`-1`"
+      feedback: '`-1` here is a position, meaning "the last item", not a value.'
+  hints:
+    - "First work out what the list contains after the loop."
+  solution: |
+    The loop appends 0, 10 and 20, so the list is `[0, 10, 20]`. Position `-1` is the last item: 20.
+
+- id: py.lists.out-of-range
+  type: multiple-choice
+  concepts: [py-lists]
+  prompt: |
+    A list has three items: `xs = [5, 6, 7]`. What happens if you ask for `xs[3]`?
+  choices:
+    - id: error
+      text: "An error: there is no position 3"
+      correct: true
+    - id: seven
+      text: "You get `7`"
+      feedback: "7 is at position 2. With three items the positions are 0, 1 and 2."
+    - id: none
+      text: "You get `None`"
+      feedback: "Python does not quietly hand back nothing. It stops with an `IndexError`."
+    - id: wraps
+      text: "It wraps round and gives `5`"
+      feedback: "Positions do not wrap round. Going past the end is an error."
+  hints:
+    - "List the valid positions for a list of three items."
+  solution: |
+    The valid positions are 0, 1 and 2. Asking for position 3 raises `IndexError: list index out of range`, one of the most common errors there is. The last item is always at `len(xs) - 1`, or simply `xs[-1]`.
+
+- id: py.lists.shared
+  type: multiple-choice
+  concepts: [py-lists, py-variables]
+  prompt: |
+    What does this program print?
+
+    ```
+    a = [1, 2, 3]
+    b = a
+    b.append(4)
+    print(a)
+    ```
+  choices:
+    - id: four
+      text: "`[1, 2, 3, 4]`"
+      correct: true
+    - id: three
+      text: "`[1, 2, 3]`"
+      feedback: "With numbers that would be right. But `b = a` does not copy a list: it gives the same list a second name, so a change made through `b` shows up in `a`."
+    - id: error
+      text: "It is an error"
+      feedback: "It runs. The surprise is in what it prints."
+    - id: just-four
+      text: "`[4]`"
+      feedback: "`append` adds to the end of the existing list. It does not replace it."
+  hints:
+    - "Does `b = a` make a second list, or a second name for the same list?"
+  solution: |
+    `b = a` makes `b` another name for the very same list. Appending through `b` changes that one list, so printing `a` shows `[1, 2, 3, 4]`.
+
+    When you want an independent copy, ask for one: `b = a.copy()`.
+
+- id: py.lists.explain
+  type: self-check
+  concepts: [py-lists]
+  prompt: "A list has 12 items. What are the positions of its first and last items, and why does `for i in range(len(items))` visit every item exactly once?"
+  rubric:
+    - "You said the first item is at position 0 and the last at position 11."
+    - "You said `len(items)` is 12, so `range(12)` produces 0 to 11."
+    - "You connected the two: counting from zero and stopping before the length gives exactly the valid positions."
+  solution: |
+    The first item is at position 0 and the last at position 11. `len(items)` is 12, and `range(12)` produces 0, 1, …, 11: starting at zero and stopping before 12. Those are precisely the valid positions, which is why lists and ranges were designed to count the same way.

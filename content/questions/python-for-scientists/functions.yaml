@@ -1,0 +1,265 @@
+- id: py.func.playground
+  type: code
+  concepts: [py-functions]
+  prompt: "This program defines a function and then uses it three times. Run it, then add a fourth `print` line for a time of your own."
+  starter: |
+    def fall_distance(t):
+        """Distance fallen from rest after t seconds, in metres."""
+        return 0.5 * 9.8 * t**2
+
+    print(fall_distance(1))
+    print(fall_distance(2))
+    print(fall_distance(3))
+
+- id: py.func.code-energy
+  type: code
+  concepts: [py-functions]
+  prompt: "Write the body of `kinetic_energy` so that it returns half the mass times the speed squared. The lines underneath use it for three different moving things."
+  starter: |
+    def kinetic_energy(mass, speed):
+        """Kinetic energy in joules, for a mass in kg moving at a speed in m/s."""
+        # Replace the next line.
+        return 0
+
+    print("A tennis serve:", kinetic_energy(0.058, 50), "J")
+    print("A cyclist:     ", kinetic_energy(80, 8), "J")
+    print("A car:         ", kinetic_energy(1200, 25), "J")
+  tests: |
+    def test_the_car():
+        assert kinetic_energy(1200, 25) == 375000, "A 1200 kg car at 25 m/s has 375 000 J of kinetic energy."
+
+    def test_speed_is_squared():
+        assert kinetic_energy(2, 3) == 9, "For a mass of 2 and a speed of 3 the answer is 0.5 × 2 × 3² = 9."
+
+    def test_nothing_moving_has_none():
+        assert kinetic_energy(50, 0) == 0, "Something that is not moving has no kinetic energy."
+  hints:
+    - "Use the parameter names, `mass` and `speed`, in your formula."
+    - "`return 0.5 * mass * speed**2`"
+  solution: |
+    `return 0.5 * mass * speed**2`
+
+    The same three lines of function now serve any object you like. The tennis serve carries 72.5 J, the cyclist 2560 J and the car 375 000 J.
+
+- id: py.func.return-or-print
+  type: multiple-choice
+  concepts: [py-functions]
+  prompt: |
+    What is the value of `y` after this program runs?
+
+    ```
+    def double(x):
+        print(x * 2)
+
+    y = double(3)
+    ```
+  choices:
+    - id: none
+      text: "`None`: the function does not return anything"
+      correct: true
+    - id: six
+      text: "`6`"
+      feedback: "The program shows 6 on the screen, but `print` only displays it. With no `return`, nothing is handed back to be stored in `y`."
+    - id: three
+      text: "`3`"
+      feedback: "3 is the input. The function works out 6 and prints it, but returns nothing."
+    - id: error
+      text: "It is an error"
+      feedback: "It runs without complaint, which is what makes this mistake easy to miss."
+  hints:
+    - "What does `double` hand back to the line that called it? Look for a `return`."
+  solution: |
+    The function prints 6 but has no `return`, so it hands back Python's "nothing" value, `None`, and that is what `y` gets. To fix it, write `return x * 2`.
+
+- id: py.func.code-distance
+  type: code
+  concepts: [py-functions]
+  prompt: "Complete two functions. `hypotenuse` returns the long side of a right-angled triangle from the other two. `distance` returns the straight-line distance between two points, and should do it by calling `hypotenuse`."
+  starter: |
+    import math
+
+    def hypotenuse(a, b):
+        """The long side of a right-angled triangle with short sides a and b."""
+        # Replace the next line. math.sqrt(...) takes a square root.
+        return 0
+
+    def distance(x1, y1, x2, y2):
+        """The straight-line distance between the points (x1, y1) and (x2, y2)."""
+        # Replace the next line: call hypotenuse with the two differences.
+        return 0
+
+    print(hypotenuse(3, 4))
+    print(distance(1, 1, 4, 5))
+  tests: |
+    def test_three_four_five():
+        assert abs(hypotenuse(3, 4) - 5) < 1e-9, "A triangle with short sides 3 and 4 has a hypotenuse of 5."
+
+    def test_another_triangle():
+        assert abs(hypotenuse(1, 1) - 2 ** 0.5) < 1e-9, "Short sides of 1 and 1 give a hypotenuse of √2."
+
+    def test_distance_between_points():
+        assert abs(distance(1, 1, 4, 5) - 5) < 1e-9, "From (1, 1) to (4, 5) is 3 across and 4 up: a distance of 5."
+
+    def test_distance_ignores_direction():
+        assert abs(distance(4, 5, 1, 1) - 5) < 1e-9, "The distance is the same in both directions, even though the differences are negative."
+  hints:
+    - "Pythagoras: `math.sqrt(a**2 + b**2)`."
+    - "The two short sides for `distance` are `x2 - x1` and `y2 - y1`."
+    - "`return hypotenuse(x2 - x1, y2 - y1)`"
+  solution: |
+    ```
+    def hypotenuse(a, b):
+        return math.sqrt(a**2 + b**2)
+
+    def distance(x1, y1, x2, y2):
+        return hypotenuse(x2 - x1, y2 - y1)
+    ```
+
+    `distance` does not repeat the square root. It hands the job to `hypotenuse`, which already knows how.
+
+- id: py.func.code-period
+  type: code
+  concepts: [py-functions]
+  prompt: |
+    A pendulum of length $L$ takes $2\pi\sqrt{L / g}$ seconds for one full swing. Complete `pendulum_period` so that gravity is 9.8 unless the caller says otherwise.
+  starter: |
+    import math
+
+    # Give g a default value of 9.8, then replace the return line.
+    def pendulum_period(length, g):
+        """Seconds for one full swing of a pendulum `length` metres long."""
+        return 0
+
+    print("A 1 m pendulum on Earth:", pendulum_period(1, 9.8), "s")
+    print("The same one on the Moon:", pendulum_period(1, 1.62), "s")
+  tests: |
+    def test_one_metre_on_earth():
+        assert abs(pendulum_period(1, 9.8) - 2.00709) < 1e-4, "A 1 m pendulum where g = 9.8 swings in about 2.007 s."
+
+    def test_gravity_has_a_default():
+        assert abs(pendulum_period(1) - 2.00709) < 1e-4, "pendulum_period(1) should work without a second argument: give g a default of 9.8."
+
+    def test_slower_on_the_moon():
+        assert abs(pendulum_period(1, 1.62) - 4.93654) < 1e-4, "On the Moon (g = 1.62) the same pendulum takes about 4.94 s."
+
+    def test_longer_is_slower():
+        assert abs(pendulum_period(4) - 2 * pendulum_period(1)) < 1e-9, "Four times the length should give exactly twice the period."
+  hints:
+    - "A default goes in the first line: `def pendulum_period(length, g=9.8):`"
+    - "`return 2 * math.pi * math.sqrt(length / g)`"
+  solution: |
+    ```
+    def pendulum_period(length, g=9.8):
+        return 2 * math.pi * math.sqrt(length / g)
+    ```
+
+    A one-metre pendulum swings in almost exactly two seconds on Earth, which is no accident: the metre was once nearly defined that way.
+
+- id: py.func.nested
+  type: multiple-choice
+  concepts: [py-functions]
+  prompt: |
+    What does this program print?
+
+    ```
+    def add(a, b):
+        return a + b
+
+    print(add(2, add(3, 4)))
+    ```
+  choices:
+    - id: nine
+      text: "`9`"
+      correct: true
+    - id: seven
+      text: "`7`"
+      feedback: "That is the inner call, `add(3, 4)`. Its result is then used as the second input of the outer call."
+    - id: five
+      text: "`5`"
+      feedback: "The second input of the outer call is not 3: it is the whole of `add(3, 4)`."
+    - id: error
+      text: "It is an error: a function cannot be used inside its own call"
+      feedback: "It can. Python works out the inner call first and passes its value along."
+  hints:
+    - "Work from the inside out. What is `add(3, 4)`?"
+  solution: |
+    Python evaluates the inner call first: `add(3, 4)` is 7. The outer call is then `add(2, 7)`, which is 9.
+
+- id: py.func.scope
+  type: multiple-choice
+  concepts: [py-functions, py-variables]
+  prompt: |
+    What happens when this program runs?
+
+    ```
+    def area(width, height):
+        result = width * height
+        return result
+
+    area(3, 4)
+    print(result)
+    ```
+  choices:
+    - id: name-error
+      text: "An error: `result` does not exist outside the function"
+      correct: true
+    - id: twelve
+      text: "It prints `12`"
+      feedback: "The function works out 12 and returns it, but nothing catches the returned value, and the name `result` belongs to the function alone."
+    - id: none
+      text: "It prints `None`"
+      feedback: "`result` was never created in the main program, so there is nothing to print, not even `None`."
+    - id: zero
+      text: "It prints `0`"
+      feedback: "Variables have no default value. A name that was never assigned simply does not exist."
+  hints:
+    - "Variables created inside a function live only inside it."
+    - "What would you need to write to keep the value the function returns?"
+  solution: |
+    `result` is created inside `area` and disappears when the function ends. Outside, the name was never defined, so `print(result)` raises a `NameError`.
+
+    To use the answer, store what the function returns: `answer = area(3, 4)`, then `print(answer)`.
+
+- id: py.func.indent
+  type: multiple-choice
+  concepts: [py-functions]
+  prompt: |
+    Python refuses to run this program. Why?
+
+    ```
+    def speed(distance, time):
+        result = distance / time
+    return result
+    ```
+  choices:
+    - id: indent
+      text: "The `return` line is not indented, so Python sees it as outside the function"
+      correct: true
+    - id: order
+      text: "The parameters are in the wrong order"
+      feedback: "The order of the parameters is a choice. It does not stop the function working."
+    - id: name
+      text: "`result` is not a good name"
+      feedback: "The name is fine. Look at where each line starts."
+    - id: division
+      text: "Division needs `//` instead of `/`"
+      feedback: "`/` is ordinary division and is what you want here."
+  hints:
+    - "Which lines are indented, and which are not?"
+  solution: |
+    Indentation decides what is inside the function. The `return` line starts at the left margin, so Python sees it as outside any function and refuses to run the program at all (`'return' outside function`). Indent it to match the line above.
+
+- id: py.func.explain
+  type: self-check
+  concepts: [py-functions]
+  prompt: "You have written the same five-line calculation in three different places in a program. Give two reasons why turning it into a function would be better."
+  rubric:
+    - "You said it only has to be written, and corrected, in one place: fix a mistake once and every use is fixed."
+    - "You said the function has a name, so the code that uses it says what it is doing."
+    - "You mentioned a further benefit: it can be tested on its own, or reused with different inputs."
+  solution: |
+    **One place to get it right.** If the calculation is wrong, or needs to change, you edit one function instead of hunting for three copies and hoping you found them all.
+
+    **A name.** `stopping_distance(speed)` tells the reader what is going on. Five lines of arithmetic do not.
+
+    A function can also be checked on its own with a few known answers, which is exactly what the tests in these code labs do.

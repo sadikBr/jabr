@@ -27,10 +27,10 @@ test("course catalog leads to a course and on to a lesson", async ({
   // A newcomer is sent to the first lesson of the course.
   await page.getByTestId("continue-card").click();
   await expect(page).toHaveURL(
-    "/courses/calculus-essentials/change-and-limits/rates-of-change-from-data",
+    "/courses/calculus-essentials/change-and-limits/functions-and-slopes",
   );
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Rates of change from data",
+    "Functions and slopes",
   );
 });
 

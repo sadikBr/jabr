@@ -1,0 +1,141 @@
+---
+id: loops-and-decisions
+title: "Loops and decisions"
+summary: "Make the computer repeat itself, and choose what to do as it goes."
+teaches: [py-loops, py-conditionals]
+requires: [py-variables, py-arithmetic]
+estimatedMinutes: 20
+---
+
+<Step kind="see" title="Do it again, and again">
+
+Computers are fast, never bored, and never lose count. The way to put that to
+work is a **loop**: a block of code that runs many times.
+
+This program prints a table of how far a ball has fallen after each second.
+Run it. Then change `range(6)` to `range(11)` and run it again.
+
+<CodeLab id="py.loops.playground" />
+
+Two lines of loop did the work of six `print` statements, and would do the
+work of a thousand just as easily.
+
+<Callout kind="definition" title="The for loop">
+
+```python
+for t in range(6):
+    print(t)
+```
+
+`range(6)` produces the whole numbers 0, 1, 2, 3, 4, 5: six of them, starting
+from zero and stopping _before_ 6. The loop runs its indented body once for
+each, with `t` set to that number.
+
+`range(2, 6)` starts at 2 instead: 2, 3, 4, 5. A third number sets the step:
+`range(0, 10, 2)` gives 0, 2, 4, 6, 8.
+
+</Callout>
+
+The most useful thing to do inside a loop is to build something up. Start a
+variable before the loop, and update it on every pass:
+
+```python
+total = 0
+for n in range(1, 5):
+    total = total + n      # 1, then 3, then 6, then 10
+print(total)
+```
+
+That pattern, **start, then accumulate**, is how programs add up totals,
+count things, and (as you will see) step simulations forwards.
+
+Sometimes you do not know in advance how many passes you need. A **while
+loop** keeps going for as long as a condition is true:
+
+```python
+height = 10.0
+bounces = 0
+while height > 1:
+    height = height * 0.6   # each bounce reaches 60% of the last
+    bounces = bounces + 1
+print(bounces)
+```
+
+<Callout kind="warning" title="A while loop must be able to stop">
+
+If the condition never becomes false, the loop runs for ever. Always check
+that something inside the loop changes the thing being tested. (If you do get
+stuck in one here, the **Stop** button will rescue you.)
+
+</Callout>
+
+A program also needs to make decisions. An **if statement** runs a block only
+when a condition is true:
+
+<Callout kind="definition" title="if, elif and else">
+
+```python
+if speed > 30:
+    print("too fast")
+elif speed > 20:
+    print("careful")
+else:
+    print("fine")
+```
+
+Python checks the conditions from the top and runs the first block whose
+condition is true, then skips the rest. `elif` ("else if") and `else` are
+optional.
+
+Conditions are built from comparisons: `<`, `>`, `<=`, `>=`, `==` (equal) and
+`!=` (not equal). Join them with `and`, `or` and `not`.
+
+</Callout>
+
+Notice the double `==`. A single `=` stores a value; a double `==` asks
+whether two values are the same.
+
+</Step>
+
+<Step kind="do" title="Loop, accumulate, decide">
+
+<Question id="py.loops.range" />
+
+<CodeLab id="py.loops.code-total" />
+
+<Question id="py.loops.trace" />
+
+A while loop is the natural tool when you are waiting for something to
+happen.
+
+<CodeLab id="py.loops.code-bounces" />
+
+<CodeLab id="py.loops.code-state" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="py.loops.how-many" />
+
+<Question id="py.loops.forever" />
+
+<Question id="py.loops.equals" />
+
+<Question id="py.loops.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+Loops are what turn a formula into a simulation. Euler's method, from the
+calculus course, is nothing more than a loop that accumulates: start with a
+value, and on every pass add the slope times a small step.
+
+But a loop that only prints its results throws them away. To keep a whole
+column of numbers, for a table or a graph, you need somewhere to put them. In
+Python that is a **list**.
+
+<ConnectIt concepts={["py-lists", "eulers-method", "simulation-loop"]} />
+
+</Step>

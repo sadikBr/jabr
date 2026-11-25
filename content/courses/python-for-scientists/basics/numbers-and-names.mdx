@@ -1,0 +1,121 @@
+---
+id: numbers-and-names
+title: "Numbers and names"
+summary: "Use Python as a calculator that remembers: values, variables and the arithmetic that joins them."
+teaches: [py-variables, py-arithmetic]
+requires: []
+estimatedMinutes: 15
+---
+
+<Step kind="see" title="A calculator that remembers">
+
+You do not need to install anything for this course. Python runs right here in
+the page. Press **Run** on the program below and see what it prints. (The
+first run takes a few seconds while Python loads.)
+
+<CodeLab id="py.vars.playground" />
+
+Four lines, and already a small physics calculation. Here is what each part
+is doing.
+
+**A value** is a piece of data: a number like `9.8` or `3`, or some text in
+quotes like `"metres"`.
+
+**A variable** is a name for a value. The line `g = 9.8` stores the number
+9.8 and labels it `g`. From then on, wherever you write `g`, Python uses 9.8.
+
+**`print(...)`** shows a value on the screen. Without it, Python does the
+calculation and keeps quiet about the result.
+
+**A comment** starts with `#`. Python ignores it; it is a note for whoever
+reads the program, which will often be you, a month later.
+
+Now change the program. Make `t` equal to 5 and run it again. Then try
+changing `g` to 1.62, the strength of gravity on the Moon.
+
+<Callout kind="definition" title="Variables">
+
+`name = value` creates a variable, or changes the value of one that already
+exists. Read the `=` as "becomes", not "equals".
+
+Names can contain letters, digits and underscores, cannot start with a digit,
+and are case-sensitive: `speed`, `Speed` and `SPEED` are three different
+names. Choose names that say what the value means.
+
+</Callout>
+
+<Callout kind="definition" title="Arithmetic">
+
+| To do this…           | …write this | Example     | Result |
+| --------------------- | ----------- | ----------- | ------ |
+| add, subtract         | `+` `-`     | `7 + 2 - 4` | `5`    |
+| multiply              | `*`         | `3 * 4`     | `12`   |
+| divide                | `/`         | `7 / 2`     | `3.5`  |
+| raise to a power      | `**`        | `2 ** 10`   | `1024` |
+| divide and round down | `//`        | `7 // 2`    | `3`    |
+| take the remainder    | `%`         | `7 % 2`     | `1`    |
+
+Python follows the usual order: powers first, then multiplying and dividing,
+then adding and subtracting. Use brackets whenever you want something else, or
+just want to be clear.
+
+</Callout>
+
+<Callout kind="warning" title="Two traps for newcomers">
+
+**Powers are `**`, not `^`.** Writing `2 ^ 10`runs without complaint and
+gives 8, because`^` means something else entirely in Python.
+
+**Multiplication is never implied.** In maths $2x$ means two times $x$. In
+Python you must write `2 * x`.
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Write some of your own">
+
+Each of these gives you a program with a gap in it. Fill the gap, press
+**Run**, and the checks underneath will tell you whether it is right.
+
+<CodeLab id="py.vars.code-energy" />
+
+Because `=` means "becomes", a variable can be updated using its own old
+value. That looks odd as maths and is completely normal as code.
+
+<Question id="py.vars.update" />
+
+<CodeLab id="py.vars.code-units" />
+
+<Question id="py.vars.precedence" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+For each of these, work out the answer in your head before you look at the
+options. Predicting what code will do is the skill underneath all the others.
+
+<Question id="py.vars.copy" />
+
+<Question id="py.vars.power" />
+
+<Question id="py.vars.names" />
+
+<Question id="py.vars.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+You can now make Python do any calculation you could do on a calculator, and
+keep the intermediate results by name.
+
+The next step is to stop repeating yourself. In the first program, finding
+the distance for a different time meant editing a number and running it
+again. A **function** wraps a calculation up so you can use it with any
+inputs you like, as many times as you like.
+
+<ConnectIt concepts={["py-functions", "free-fall"]} />
+
+</Step>

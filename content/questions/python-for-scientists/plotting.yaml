@@ -1,0 +1,214 @@
+- id: py.plot.playground
+  type: code
+  concepts: [plotting, numpy-arrays]
+  prompt: "The height of a ball thrown upwards, drawn as a graph. Run it, then change the throw speed from 20 to 30 and run it again."
+  starter: |
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    t = np.linspace(0, 4, 100)
+    h = 20 * t - 4.9 * t**2
+
+    plt.plot(t, h)
+    plt.xlabel("time (s)")
+    plt.ylabel("height (m)")
+    plt.title("A ball thrown straight up")
+    plt.grid(True)
+    plt.show()
+
+- id: py.plot.code-trajectory
+  type: code
+  concepts: [plotting, numpy-arrays, projectile-motion]
+  prompt: |
+    Complete `trajectory` so that it returns two arrays, the $x$ and $y$ positions of a projectile at 100 evenly spaced times from launch to landing. The flight lasts $2v\sin\theta / g$ seconds. The code underneath then plots three launches on the same axes.
+  starter: |
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    G = 9.8
+
+    def trajectory(speed, angle):
+        """The x and y positions of a projectile, from launch to landing."""
+        theta = np.radians(angle)
+        vx = speed * np.cos(theta)
+        vy = speed * np.sin(theta)
+        t = np.linspace(0, 2 * vy / G, 100)
+        # Replace the next two lines with the position at every time in t.
+        x = t
+        y = t * 0
+        return x, y
+
+    for angle in [30, 45, 60]:
+        x, y = trajectory(20, angle)
+        plt.plot(x, y, label=f"{angle}°")
+
+    plt.xlabel("distance (m)")
+    plt.ylabel("height (m)")
+    plt.title("Three launches at 20 m/s")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+  tests: |
+    def test_starts_and_ends_on_the_ground():
+        x, y = trajectory(20, 45)
+        assert abs(x[0]) < 1e-9 and abs(y[0]) < 1e-9, "The flight should start at (0, 0)."
+        assert abs(y[-1]) < 1e-6, "The last point should be back on the ground, at height 0."
+
+    def test_lands_at_the_range():
+        x, y = trajectory(20, 45)
+        assert abs(x[-1] - 20**2 / 9.8) < 1e-6, "At 20 m/s and 45° the ball should land 20² ÷ 9.8 = 40.8 m away."
+
+    def test_reaches_the_right_height():
+        x, y = trajectory(20, 30)
+        assert abs(y.max() - 5.10) < 0.01, "At 20 m/s and 30° the ball should peak at about 5.10 m."
+
+    def test_a_hundred_points_each():
+        x, y = trajectory(15, 60)
+        assert len(x) == 100 and len(y) == 100, "Both arrays should have 100 values, one for each time."
+  hints:
+    - "Horizontally the velocity is constant: `x = vx * t`."
+    - "Vertically it is free fall: `y = vy * t - 0.5 * G * t**2`."
+  solution: |
+    ```
+    x = vx * t
+    y = vy * t - 0.5 * G * t**2
+    ```
+
+    The graph shows three parabolas. The 30° and 60° launches land in the same place, as the mechanics course predicted, and the 45° launch goes furthest.
+
+- id: py.plot.legend
+  type: multiple-choice
+  concepts: [plotting]
+  prompt: "You have plotted two curves and called `plt.legend()`, but no legend appears. What is the most likely reason?"
+  choices:
+    - id: no-labels
+      text: "The `plt.plot` calls were not given a `label=`"
+      correct: true
+    - id: order
+      text: "`plt.legend()` must be called before `plt.plot`"
+      feedback: "It is the other way round: the legend is built from curves that have already been plotted."
+    - id: one-curve
+      text: "Legends only work with one curve"
+      feedback: "A legend is most useful precisely when there are several curves."
+    - id: show
+      text: "`plt.show()` hides legends"
+      feedback: "`plt.show()` displays the figure as it stands, legend included."
+  hints:
+    - "Where does the legend get its text from?"
+  solution: |
+    The legend lists the `label` of each curve. If none was given, as in `plt.plot(x, y)`, there is nothing to list. Write `plt.plot(x, y, label="height")`.
+
+- id: py.plot.code-fit
+  type: code
+  concepts: [plotting, numpy-arrays, free-fall]
+  prompt: |
+    A student timed a ball dropped from different heights. Theory says the fall time is $t = \sqrt{2h / g}$. Complete `theory` so it returns that for a whole array of heights. The code underneath plots the measurements as dots and your curve as a line, so you can judge how well they agree.
+  starter: |
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    heights = np.array([0.5, 1.0, 1.5, 2.0, 2.5, 3.0])        # metres
+    measured = np.array([0.33, 0.44, 0.56, 0.63, 0.73, 0.78])  # seconds
+
+    def theory(h, g=9.8):
+        """The time to fall h metres from rest, for a number or an array."""
+        # Replace the next line.
+        return h * 0
+
+    smooth = np.linspace(0, 3.2, 100)
+    plt.plot(heights, measured, "o", label="measured")
+    plt.plot(smooth, theory(smooth), label="theory")
+    plt.xlabel("height (m)")
+    plt.ylabel("time to fall (s)")
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+
+    print("Biggest gap:", np.abs(measured - theory(heights)).max().round(3), "s")
+  tests: |
+    def test_a_single_height():
+        assert abs(theory(4.9) - 1) < 1e-9, "Falling 4.9 m with g = 9.8 takes exactly 1 s."
+
+    def test_a_whole_array():
+        result = theory(np.array([4.9, 19.6]))
+        assert np.allclose(result, [1, 2]), "For heights of 4.9 m and 19.6 m the times are 1 s and 2 s."
+
+    def test_other_worlds():
+        assert abs(theory(0.81, g=1.62) - 1) < 1e-9, "On the Moon (g = 1.62), falling 0.81 m takes 1 s."
+
+    def test_agrees_with_the_measurements():
+        assert np.abs(measured - theory(heights)).max() < 0.03, "The theory should be within 0.03 s of every measurement."
+  hints:
+    - "Use NumPy's square root, which works on arrays: `np.sqrt`."
+    - "`return np.sqrt(2 * h / g)`"
+  solution: |
+    `return np.sqrt(2 * h / g)`
+
+    The dots sit close to the curve: the largest gap is about 0.02 s, which is no more than a hand on a stopwatch can manage. Drawing data as dots and theory as a line is the standard way to compare them.
+
+- id: py.plot.jagged
+  type: multiple-choice
+  concepts: [plotting, numpy-arrays]
+  prompt: |
+    A plot of `np.sin(x)` comes out as a jagged zigzag instead of a smooth wave. The $x$ values were made with `np.linspace(0, 20, 12)`. What should you change?
+  choices:
+    - id: more-points
+      text: "Ask for more points, for example `np.linspace(0, 20, 400)`"
+      correct: true
+    - id: thicker
+      text: "Make the line thicker"
+      feedback: "A thicker zigzag is still a zigzag. The corners are where the points are."
+    - id: math
+      text: "Use `math.sin` instead of `np.sin`"
+      feedback: "`math.sin` only accepts a single number, so it would fail on an array. The sine values themselves are fine."
+    - id: range
+      text: "Plot a shorter range of $x$"
+      feedback: "That would help a little, but only by accident. The real problem is too few points for the wave."
+  hints:
+    - "matplotlib joins the points you give it with straight lines. How many points are there?"
+  solution: |
+    With only 12 points across more than three full waves, the straight lines between them cut the corners. A few hundred points make the segments too short to see.
+
+- id: py.plot.lengths
+  type: multiple-choice
+  concepts: [plotting, numpy-arrays]
+  prompt: |
+    What happens when this runs?
+
+    ```
+    t = np.linspace(0, 1, 50)
+    h = np.linspace(0, 5, 40)
+    plt.plot(t, h)
+    ```
+  choices:
+    - id: error
+      text: "An error: the two arrays have different lengths"
+      correct: true
+    - id: truncates
+      text: "It plots the first 40 points and ignores the rest"
+      feedback: "matplotlib does not guess which points you meant. It refuses."
+    - id: stretches
+      text: "It stretches the shorter array to fit"
+      feedback: "Nothing is stretched. Each $x$ value needs exactly one $y$ value."
+    - id: fine
+      text: "It plots normally"
+      feedback: "Point number 45 would have an $x$ value but no $y$ value."
+  hints:
+    - "Each point on the graph needs one value from each array."
+  solution: |
+    `plt.plot(x, y)` pairs the values up, first with first, second with second. With 50 of one and 40 of the other it stops with an error saying the shapes do not match. Computing `h` from `t`, as in `h = 5 * t`, guarantees the lengths agree.
+
+- id: py.plot.explain
+  type: self-check
+  concepts: [plotting]
+  prompt: "You are handed a graph with a single unlabelled curve and no axis labels. List three things you would add before showing it to anyone, and say why each matters."
+  rubric:
+    - "Axis labels saying what each axis measures."
+    - "Units on those labels."
+    - "A title or a legend, so the reader knows what the curve represents."
+  solution: |
+    1. **Axis labels**, so the reader knows what is being plotted against what.
+    2. **Units**, because "time" could be seconds or years and "height" metres or miles.
+    3. **A title or legend**, saying what the curve is, especially once there is more than one.
+
+    A grid helps too, when the reader needs to read values off the graph.

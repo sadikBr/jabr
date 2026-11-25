@@ -2,6 +2,7 @@ import { expect, type Page, test } from "./fixtures";
 
 const course = "/courses/calculus-essentials";
 const lessons = {
+  functions: `${course}/change-and-limits/functions-and-slopes`,
   rates: `${course}/change-and-limits/rates-of-change-from-data`,
   limits: `${course}/change-and-limits/limits-intuition`,
   continuity: `${course}/change-and-limits/continuity`,
@@ -180,15 +181,15 @@ test.describe("calculus essentials", () => {
   test("finishing a lesson moves the course on to the next one", async ({
     page,
   }) => {
-    await page.goto(`${lessons.rates}#step-4`);
+    await page.goto(`${lessons.functions}#step-4`);
     await page.getByRole("button", { name: "Finish lesson" }).click();
     await expect(
       page.getByRole("heading", { level: 2 }).filter({ visible: true }),
     ).toHaveText("That's the lesson!");
 
     await page.goto(course);
-    await expect(page.getByText("1 of 7 lessons finished")).toBeVisible();
+    await expect(page.getByText("1 of 8 lessons finished")).toBeVisible();
     const next = page.getByTestId("continue-card");
-    await expect(next).toContainText("Limits, intuitively");
+    await expect(next).toContainText("Rates of change from data");
   });
 });

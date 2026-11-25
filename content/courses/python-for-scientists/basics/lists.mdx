@@ -1,0 +1,118 @@
+---
+id: lists
+title: "Lists"
+summary: "Keep a whole column of measurements under one name, and work through it with a loop."
+teaches: [py-lists]
+requires: [py-loops]
+estimatedMinutes: 15
+---
+
+<Step kind="see" title="Many values, one name">
+
+Science rarely deals in single numbers. A weather station logs a temperature
+every hour; a stopwatch records a split at every 10 m mark. You need a way to
+hold many values together, in order.
+
+That is a **list**. Run this, then add another temperature to the list and
+run it again.
+
+<CodeLab id="py.lists.playground" />
+
+<Callout kind="definition" title="Lists">
+
+A list is written with square brackets, with commas between the items:
+
+```python
+temperatures = [14.5, 16.0, 19.5, 21.0, 18.5]
+```
+
+- `len(temperatures)` is how many items it has: 5.
+- `temperatures[0]` is the **first** item. Positions are counted from zero,
+  so the last of five is `temperatures[4]`.
+- `temperatures[-1]` is a shortcut for the last item, whatever the length.
+- `temperatures.append(17.0)` adds an item to the end.
+
+</Callout>
+
+Counting from zero trips everyone up at first. It matches `range`:
+`range(len(temperatures))` gives 0, 1, 2, 3, 4, exactly the valid positions.
+
+A `for` loop can go straight through a list, taking one item at a time. No
+positions needed:
+
+```python
+for value in temperatures:
+    print(value)
+```
+
+Combine that with the accumulate pattern and you can compute anything about a
+set of data. And to _build_ a list, start with an empty one and `append` to it
+inside a loop:
+
+```python
+squares = []
+for n in range(5):
+    squares.append(n**2)
+print(squares)      # [0, 1, 4, 9, 16]
+```
+
+For common jobs Python has built-in shortcuts: `sum(values)`, `min(values)`,
+`max(values)` and `sorted(values)`.
+
+<Callout kind="tip" title="A list in one line">
+
+Building a list from another one is so common that Python has a compact way
+to write it, called a **list comprehension**:
+
+```python
+squares = [n**2 for n in range(5)]
+```
+
+Read it as "the square of `n`, for each `n` in the range". It does exactly
+the same as the loop above. Use whichever you find clearer.
+
+</Callout>
+
+</Step>
+
+<Step kind="do" title="Work through some data">
+
+<Question id="py.lists.index" />
+
+<CodeLab id="py.lists.code-mean" />
+
+Next, build a new list from an old one. This is the calculation at the heart
+of the first calculus lesson: turning positions into the changes between
+them.
+
+<CodeLab id="py.lists.code-changes" />
+
+<CodeLab id="py.lists.code-above" />
+
+</Step>
+
+<Step kind="check" title="Make sure it stuck">
+
+<Question id="py.lists.last" />
+
+<Question id="py.lists.out-of-range" />
+
+<Question id="py.lists.shared" />
+
+<Question id="py.lists.explain" />
+
+</Step>
+
+<Step kind="connect" title="Where this goes next">
+
+With variables, functions, loops and lists you have the whole core of
+programming. Everything else is vocabulary.
+
+For numerical work, though, plain lists have a weakness. To double every
+value you have to write a loop, and for a million values that loop is slow.
+Scientists use a library called **NumPy**, whose arrays let you calculate
+with a whole column of numbers at once.
+
+<ConnectIt concepts={["numpy-arrays", "average-rate-of-change"]} />
+
+</Step>

@@ -1,0 +1,215 @@
+- id: py.vars.playground
+  type: code
+  concepts: [py-variables, py-arithmetic]
+  prompt: "A ball is dropped from rest. This program works out how far it has fallen after 3 seconds. Run it, then change the numbers and run it again."
+  starter: |
+    # How far does a dropped ball fall in a given time?
+    g = 9.8   # strength of gravity, in metres per second squared
+    t = 3     # time, in seconds
+
+    distance = 0.5 * g * t**2
+    print(distance)
+
+- id: py.vars.code-energy
+  type: code
+  concepts: [py-variables, py-arithmetic]
+  prompt: "A moving object has kinetic energy equal to half its mass times its speed squared. Replace the `0` so that `energy` holds the kinetic energy of this car. Use the variables `mass` and `speed`, not the numbers themselves."
+  starter: |
+    mass = 1200   # kilograms
+    speed = 25    # metres per second
+
+    # Replace the 0 with the formula: half the mass times the speed squared.
+    energy = 0
+
+    print("Kinetic energy:", energy, "joules")
+  tests: |
+    def test_energy_of_the_car():
+        assert energy == 0.5 * mass * speed**2, "The kinetic energy should be 0.5 * mass * speed**2."
+
+    def test_it_is_a_sensible_number():
+        assert energy > 0, "A moving car has some kinetic energy. Did you leave the 0 in place?"
+
+    def test_the_power_is_two():
+        assert energy != mass * speed, "Remember to square the speed (speed**2) and take half."
+  hints:
+    - "Squared means to the power 2, which Python writes as `**2`."
+    - "`energy = 0.5 * mass * speed**2`"
+  solution: |
+    `energy = 0.5 * mass * speed**2`
+
+    For this car that prints 375000.0 joules. Because the formula uses the variable names, changing `mass` or `speed` at the top changes the answer without touching the formula.
+
+- id: py.vars.update
+  type: multiple-choice
+  concepts: [py-variables]
+  prompt: |
+    What does this program print?
+
+    ```
+    x = 5
+    x = x + 2
+    print(x)
+    ```
+  choices:
+    - id: seven
+      text: "`7`"
+      correct: true
+    - id: five
+      text: "`5`"
+      feedback: "The second line changes `x`. It works out `x + 2` using the old value, 5, and stores the result back in `x`."
+    - id: error
+      text: "Nothing: it is an error, because `x` cannot equal `x + 2`"
+      feedback: "As an equation it would be impossible. But `=` in Python is an instruction: work out the right-hand side, then store it under the name on the left."
+    - id: text
+      text: "`x + 2`"
+      feedback: "Python works out the value of `x + 2` before storing it, so `x` holds a number, not the formula."
+  hints:
+    - 'Read `=` as "becomes". What is `x + 2` at the moment the second line runs?'
+  solution: |
+    The second line works out the right-hand side first: `x + 2` is `5 + 2`, which is 7. Then it stores 7 under the name `x`, replacing the 5. So the program prints 7.
+
+- id: py.vars.code-units
+  type: code
+  concepts: [py-arithmetic, py-variables]
+  prompt: "Two conversions. First, turn the speed from km/h into m/s by dividing by 3.6. Second, split the journey time into whole hours and leftover minutes, using `//` (divide and round down) and `%` (remainder)."
+  starter: |
+    speed_kmh = 90
+    journey_minutes = 135
+
+    # Replace each 0.
+    speed_ms = 0   # the speed in metres per second
+    hours = 0      # whole hours in the journey
+    minutes = 0    # minutes left over
+
+    print(speed_kmh, "km/h is", speed_ms, "m/s")
+    print(journey_minutes, "minutes is", hours, "h", minutes, "min")
+  tests: |
+    def test_speed_in_metres_per_second():
+        assert abs(speed_ms - speed_kmh / 3.6) < 1e-9, "Divide the speed in km/h by 3.6. For 90 km/h that is 25 m/s."
+
+    def test_whole_hours():
+        assert hours == journey_minutes // 60, "Use // to divide by 60 and round down. 135 minutes contains 2 whole hours."
+
+    def test_minutes_left_over():
+        assert minutes == journey_minutes % 60, "Use % to get the remainder after dividing by 60. 135 minutes leaves 15."
+  hints:
+    - "`speed_ms = speed_kmh / 3.6`"
+    - "`journey_minutes // 60` gives the whole hours, and `journey_minutes % 60` gives what is left."
+  solution: |
+    ```
+    speed_ms = speed_kmh / 3.6
+    hours = journey_minutes // 60
+    minutes = journey_minutes % 60
+    ```
+
+    The program prints that 90 km/h is 25.0 m/s, and that 135 minutes is 2 h 15 min. The pair `//` and `%` turns up whenever something has to be split into whole units and a remainder.
+
+- id: py.vars.precedence
+  type: multiple-choice
+  concepts: [py-arithmetic]
+  prompt: "What does `print(2 + 3 * 4 ** 2)` show?"
+  choices:
+    - id: fifty
+      text: "`50`"
+      correct: true
+    - id: eighty
+      text: "`80`"
+      feedback: "That would be `(2 + 3) * 4 ** 2`. Without brackets, the multiplication is done before the addition."
+    - id: four-hundred
+      text: "`400`"
+      feedback: "That would be `((2 + 3) * 4) ** 2`: working strictly left to right. Python does the power first."
+    - id: one-forty-six
+      text: "`146`"
+      feedback: "That would be `2 + (3 * 4) ** 2`. The power applies only to the 4, and is done before the multiplication."
+  hints:
+    - "Powers first, then multiplication, then addition."
+  solution: |
+    Powers first: `4 ** 2` is 16. Then multiplication: `3 * 16` is 48. Then addition: `2 + 48` is 50.
+
+- id: py.vars.copy
+  type: multiple-choice
+  concepts: [py-variables]
+  prompt: |
+    What does this program print?
+
+    ```
+    a = 3
+    b = a
+    a = 10
+    print(b)
+    ```
+  choices:
+    - id: three
+      text: "`3`"
+      correct: true
+    - id: ten
+      text: "`10`"
+      feedback: "`b = a` copies the value `a` has at that moment, 3. It does not tie the two names together, so changing `a` afterwards leaves `b` alone."
+    - id: a
+      text: "`a`"
+      feedback: "`b` holds the value that was in `a`, not the name."
+    - id: thirteen
+      text: "`13`"
+      feedback: "Nothing is added here. Each `=` simply stores a value under a name."
+  hints:
+    - "Go through it one line at a time, keeping track of the value of each name."
+  solution: |
+    After the first two lines, `a` and `b` are both 3. The third line changes `a` to 10, but `b` still holds the 3 it was given. So the program prints 3.
+
+- id: py.vars.power
+  type: multiple-choice
+  concepts: [py-arithmetic]
+  prompt: "Which of these works out $5^3$, five cubed, in Python?"
+  choices:
+    - id: stars
+      text: "`5 ** 3`"
+      correct: true
+    - id: caret
+      text: "`5 ^ 3`"
+      feedback: "This runs, but gives 6. In Python `^` is an operation on binary digits, not a power."
+    - id: times
+      text: "`5 * 3`"
+      feedback: "That is five times three, 15."
+    - id: x
+      text: "`5 x 5 x 5`"
+      feedback: "Python does not understand `x` as multiplication. Use `*`."
+  hints:
+    - "Look back at the table of arithmetic operators."
+  solution: |
+    `5 ** 3` is 125. The double star is Python's power operator. `5 * 5 * 5` would work too, but `**` handles any power, including fractions such as `2 ** 0.5` for a square root.
+
+- id: py.vars.names
+  type: multiple-choice
+  multiple: true
+  concepts: [py-variables]
+  prompt: "Which of these are valid names for a variable in Python? Select all that apply."
+  choices:
+    - id: underscore
+      text: "`launch_speed`"
+      correct: true
+    - id: digit-inside
+      text: "`v2`"
+      correct: true
+    - id: digit-first
+      text: "`2nd_speed`"
+      feedback: "A name cannot start with a digit."
+    - id: space
+      text: "`launch speed`"
+      feedback: "Names cannot contain spaces. Use an underscore instead."
+  hints:
+    - "Letters, digits and underscores only, and not starting with a digit."
+  solution: |
+    `launch_speed` and `v2` follow the rules. `2nd_speed` starts with a digit and `launch speed` contains a space, so Python rejects both.
+
+- id: py.vars.explain
+  type: self-check
+  concepts: [py-variables]
+  prompt: "A mathematician looks at the line `count = count + 1` and says it is nonsense: no number equals itself plus one. Explain what the line means to Python, and what it does if `count` was 7."
+  rubric:
+    - "You said `=` is an instruction to store a value, not a statement that two things are equal."
+    - "You said Python works out the right-hand side first, using the current value of `count`."
+    - "You said that if `count` was 7, it is 8 afterwards."
+  solution: |
+    In Python `=` means "work out what is on the right, then store it under the name on the left". It is something the computer does, not a claim about numbers.
+
+    With `count` equal to 7, the right-hand side is `7 + 1 = 8`, and that 8 is stored back in `count`. Lines like this are how programs count and keep running totals.

@@ -132,14 +132,17 @@ test.describe("knowledge map", () => {
 
     await page.getByRole("button", { name: "Map" }).click();
     await page.getByRole("button", { name: "Everything" }).click();
-    await map.locator('[data-concept="derivative-definition"]').click();
-    await expect(page).toHaveURL("/concepts/derivative-definition");
+    // The map is too big to show whole, so it opens on where a newcomer
+    // starts. That concept is always in view; others may need panning to.
+    await map.locator('[data-concept="functions"]').click();
+    await expect(page).toHaveURL("/concepts/functions");
+
+    // From any concept's page, the map opens centred on it.
+    await page.goto("/concepts/chain-rule");
     await page.getByRole("link", { name: "See it on the map" }).click();
-    await expect(page).toHaveURL("/map#derivative-definition");
+    await expect(page).toHaveURL("/map#chain-rule");
     await expect(
-      page
-        .getByTestId("concept-map")
-        .locator('[data-concept="derivative-definition"]'),
+      page.getByTestId("concept-map").locator('[data-concept="chain-rule"]'),
     ).toBeInViewport();
   });
 
@@ -291,10 +294,15 @@ test.describe("what to learn", () => {
     await expect(
       panel.getByRole("link", { name: /Limits, intuitively:/ }),
     ).toHaveCount(0);
+    // The link goes to the lesson that teaches the missing idea.
     await panel
-      .getByRole("link", { name: /Slope of a line: Read about it/ })
+      .getByRole("link", {
+        name: /Slope of a line: Learn it in “Functions and slopes”/,
+      })
       .click();
-    await expect(page).toHaveURL("/concepts/slope-of-a-line");
+    await expect(page).toHaveURL(
+      "/courses/calculus-essentials/change-and-limits/functions-and-slopes",
+    );
   });
 
   test("a lesson stays quiet about prerequisites for a newcomer", async ({

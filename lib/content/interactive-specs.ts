@@ -13,6 +13,7 @@ import { situationIds } from "@/lib/sim/free-body";
 
 /** Functions an interactive can plot. Each has an exact derivative in lib/maths/functions.ts. */
 export const plottableFunctions = [
+  "2x + 3",
   "x^2",
   "x^3",
   "x^3 - x",

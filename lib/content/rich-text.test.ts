@@ -27,6 +27,23 @@ describe("renderRichText", () => {
     );
   });
 
+  it("renders a fenced block as code, exactly as written", () => {
+    const html = renderRichText(
+      "What does this print?\n\n```\nx = 5\n\nif x < 7:\n    print($x$)\n```\n\nThink first.",
+    );
+    expect(html).toBe(
+      "<p>What does this print?</p>" +
+        "<pre><code>x = 5\n\nif x &lt; 7:\n    print($x$)</code></pre>" +
+        "<p>Think first.</p>",
+    );
+  });
+
+  it("renders a code block that is the whole text", () => {
+    expect(renderRichText("```python\nprint(1)\n```")).toBe(
+      "<pre><code>print(1)</code></pre>",
+    );
+  });
+
   it("escapes HTML in text and in code", () => {
     expect(renderRichText("if a < b & c > d")).toBe(
       "if a &lt; b &amp; c &gt; d",

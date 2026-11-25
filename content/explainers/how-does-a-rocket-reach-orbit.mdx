@@ -3,8 +3,185 @@ id: how-does-a-rocket-reach-orbit
 title: "How does a rocket reach orbit?"
 summary: "Going up is the easy part. Staying up means going sideways, very fast."
 subject: physics
-concepts: [newtons-second-law, gravity-and-weight, velocity]
-status: coming-soon
+concepts: [newtons-second-law, gravity-and-weight, velocity, free-fall]
+related:
+  [
+    why-do-a-hammer-and-a-feather-fall-at-the-same-rate,
+    how-do-video-games-simulate-physics,
+  ]
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Layer depth="intuition">
+
+Imagine a cannon on a tower so tall that it pokes out above the air, 400
+kilometres up. It fires sideways. How fast does the cannonball have to go so
+that it never lands?
+
+Find out. Start slow, and keep adding speed.
+
+<Interactive id="orbit-cannon" props={{ speed: 4, goal: true }} />
+
+A slow shot curves down and hits the ground. A faster one lands further away,
+because the Earth is round and the ground curves away beneath it as it falls.
+Fire it fast enough and the ground curves away _as fast as the ball falls
+towards it_. The ball keeps falling and keeps missing. It is in orbit.
+
+That is all an orbit is. Isaac Newton drew this very picture in the 1680s, and
+it is still the best explanation there is.
+
+So here is the surprise about rockets. Space is close: the edge of it is only
+about 100 km above your head, nearer than the next big city. If reaching orbit
+were about height, a rocket could go straight up and be done in a few minutes.
+It would then fall straight back down, as the cannonball does when you set
+its speed to zero.
+
+Getting to orbit is about **speed**, not height. A rocket has to end up
+travelling sideways at nearly 8 kilometres every second: about 28 000 km/h,
+more than twenty times the speed of sound. That is where almost all the fuel
+goes.
+
+<Callout kind="insight" title="Why rockets tip over">
+
+Watch a launch and the rocket starts leaning within seconds of leaving the
+pad. It is not falling over. It goes up just far enough to get out of the
+thick lower air, and from then on it spends its effort building sideways
+speed.
+
+</Callout>
+
+</Layer>
+
+<Layer depth="mechanism">
+
+**Astronauts are not beyond gravity.** At the height of the Space Station,
+gravity is still about 89% as strong as on the ground. If it suddenly
+switched off, the station would fly away in a straight line. Gravity is
+exactly what bends its path into a circle.
+
+Astronauts float because they are **falling**, together with their
+spacecraft, all the time. An orbit is free fall that never ends.
+
+**Falling and missing, with numbers.** In one second, an object 400 km up
+falls about 4.3 metres. In that same second, something moving sideways at
+7.67 km/s travels far enough that the curved surface of the Earth has dropped
+away beneath it by, again, 4.3 metres. So after one second it is exactly as
+high as it was. And after the next second, and the next.
+
+Slower than that, it falls more than the ground drops away, and loses height.
+Faster, and it gains height for a while, tracing out a long oval.
+
+<Question id="orbit.straight-up" />
+
+**Why rockets are mostly fuel.** A rocket moves by throwing mass out of the
+back, fast. By Newton's third law the exhaust pushes the rocket forwards. But
+the fuel for the end of the journey has to be carried, and accelerated,
+through the whole beginning of it. That fuel needs more fuel to lift it, which
+needs more fuel still.
+
+The result is brutal: to reach orbital speed with ordinary chemical engines,
+well over 90% of what sits on the launch pad has to be propellant. The
+structure, the engines and the payload share what is left.
+
+**Why rockets come in stages.** Once a tank is empty it is dead weight, and
+every kilogram of dead weight costs fuel to speed up. So rockets throw their
+empty tanks away as they go. A two-stage rocket is two rockets stacked: the
+first does the heavy lifting through the atmosphere and falls away, and the
+much smaller second stage finishes the job of reaching orbital speed without
+dragging the first along.
+
+</Layer>
+
+<Layer depth="maths">
+
+**How fast is orbital speed?** An object moving in a circle of radius $r$ at
+speed $v$ is accelerating towards the centre at $\dfrac{v^2}{r}$. For a
+satellite, gravity is the only force, so that acceleration _is_ the local
+strength of gravity, $\dfrac{GM}{r^2}$:
+
+$$
+\frac{v^2}{r} = \frac{GM}{r^2}
+\quad\Longrightarrow\quad
+v = \sqrt{\frac{GM}{r}}
+$$
+
+The satellite's own mass has cancelled, just as it does for a falling hammer.
+For the Earth, $GM = 398\,600\ \text{km}^3/\text{s}^2$, and its radius is
+6371 km. At an altitude of 400 km, $r = 6771$ km:
+
+$$
+v = \sqrt{\frac{398\,600}{6771}} \approx 7.67\ \text{km/s}
+$$
+
+One lap is a circle of circumference $2\pi r$, so it takes
+
+$$
+T = \frac{2\pi r}{v} = \frac{2\pi \times 6771}{7.67} \approx 5545\ \text{s} \approx 92\ \text{minutes}
+$$
+
+Astronauts on the station see sixteen sunrises a day.
+
+<Question id="orbit.speed" />
+
+<Question id="orbit.period" />
+
+**Height or speed: which costs more?** Compare the energy each kilogram needs.
+
+- To be lifted 400 km against gravity: about 3.7 million joules.
+- To be moving at 7.67 km/s: $\tfrac{1}{2}v^2 \approx 29$ million joules.
+
+Getting up there is about an eighth of the cost of staying up there.
+
+**The rocket equation.** A rocket that starts with mass $m_0$ and ends, tanks
+empty, with mass $m_1$, having thrown its exhaust backwards at speed $v_e$,
+changes its own speed by
+
+$$
+\Delta v = v_e \,\ln\!\frac{m_0}{m_1}
+$$
+
+This is Tsiolkovsky's rocket equation. The logarithm is the cruel part.
+Reaching orbit takes a $\Delta v$ of about 9.4 km/s (orbital speed, plus what
+is lost to gravity and air on the way up). A good kerosene engine has
+$v_e \approx 3$ km/s. Solving for the mass ratio:
+
+$$
+\frac{m_0}{m_1} = e^{\Delta v / v_e} = e^{9.4/3} \approx 23
+$$
+
+The rocket must be 23 times heavier at lift-off than at burnout: about 96%
+propellant. With stages, each one only has to manage a part of the
+$\Delta v$, with a much kinder mass ratio.
+
+<Question id="orbit.mass-ratio" />
+
+</Layer>
+
+<Layer depth="build">
+
+Newton's cannon takes about thirty lines of Python. The loop is the one from
+every simulation: work out the acceleration, update the velocity, update the
+position. The only physics is the function `gravity`, and that is the part
+left for you.
+
+<CodeLab id="orbit.code-cannon" />
+
+Things to try once it works:
+
+- Add `7.9` and `10.0` to the list of speeds. What shape is the path at 10
+  km/s?
+- Try `11.0`. You will need a bigger `max_time` to see where it goes, and it
+  does not come back: that is past the escape speed.
+- Change `altitude` to `35786` and find the speed that gives a circle. One
+  lap up there takes a day, which is why television satellites seem to hang
+  still in the sky.
+
+A real launch adds thrust, a mass that shrinks as fuel burns, and air drag.
+Each is one more term in the acceleration, in the same loop. You can build
+exactly that, one step at a time, in the rocket project.
+
+<ConnectIt
+  concepts={["eulers-method", "newtons-second-law", "gravity-and-weight"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Layer>

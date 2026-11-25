@@ -13,6 +13,7 @@ modules:
     title: Forces
     summary: Newton's laws, and how to find the motion of anything once you know the forces on it.
     lessons: [newtons-laws, free-body-diagrams, gravity-and-weight, drag]
+    project: hit-the-target
   - id: energy-and-momentum
     title: Energy and momentum
     summary: Two quantities that are conserved, and the shortcuts they give.

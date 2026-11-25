@@ -1,0 +1,37 @@
+---
+id: predict-nearby
+title: Predict nearby values
+summary: Use the tangent as a stand-in for the curve, and find out how far it can be trusted.
+requires: [tangent-line, derivative-definition]
+check: tangent.estimate
+estimatedMinutes: 15
+---
+
+Close to the point where it touches, a tangent line is almost
+indistinguishable from the curve. That makes it useful: a straight line is
+easy to calculate with, even when the curve is not.
+
+Suppose you need $\sqrt{4.1}$ and have no calculator. You know $\sqrt{4} = 2$
+exactly, and the slope of $\sqrt{x}$ at $x = 4$ is $\tfrac{1}{4}$. Follow the
+tangent a distance of $0.1$:
+
+$$
+\sqrt{4.1} \approx 2 + \tfrac{1}{4} \times 0.1 = 2.025
+$$
+
+The true value is $2.02485\ldots$, so the estimate is off by less than two
+parts in ten thousand. This is called a **linear approximation**, and
+engineers lean on it constantly.
+
+### How far can you trust it?
+
+The further you go from the point of contact, the more the curve has bent
+away from the line. The interesting question is _how quickly_ the error
+grows. Your program will measure it.
+
+### Your task
+
+Complete `estimate` and `error`, using the `tangent` function from the last
+milestone. The program then prints a table for $\sqrt{x}$ near $x = 4$.
+Compare the errors at distances 0.1, 0.2 and 0.4: what happens to the error
+each time the distance doubles?

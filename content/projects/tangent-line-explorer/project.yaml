@@ -1,7 +1,8 @@
 id: tangent-line-explorer
 title: Tangent line explorer
-summary: Write a small program that draws the tangent to any curve at any point, and use it to predict nearby values.
+summary: Write a small program that finds the tangent to any curve at any point, then use tangents to predict nearby values and to solve equations no algebra can.
 subjects: [maths, computing]
 kind: mini
-concepts: [derivative-definition, tangent-line]
-status: coming-soon
+concepts: [derivative-definition, tangent-line, average-rate-of-change]
+milestones:
+  [measure-a-slope, build-the-tangent, predict-nearby, solve-with-tangents]

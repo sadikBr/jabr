@@ -1,0 +1,48 @@
+---
+id: solve-with-tangents
+title: Solve equations with tangents
+summary: Slide down tangent lines to find where a function is zero. This is Newton's method.
+requires: [tangent-line, continuity]
+check: tangent.newton
+estimatedMinutes: 20
+---
+
+Here is an equation with no tidy solution:
+
+$$
+x^3 - x - 2 = 0
+$$
+
+In the Continuity lesson you trapped its root by halving an interval over and
+over. That works, but slowly: each step buys one more binary digit. Tangents
+can do far better.
+
+**The idea.** Take a guess, $x_0$. It is probably wrong: $f(x_0)$ is not
+zero. But you can draw the tangent to the curve there, and a straight line is
+easy to solve. Find where the _tangent_ crosses zero, and use that as your
+next guess.
+
+The tangent at $x_0$ is $L(x) = f(x_0) + f'(x_0)(x - x_0)$. Setting
+$L(x) = 0$ and solving for $x$:
+
+$$
+x_1 = x_0 - \frac{f(x_0)}{f'(x_0)}
+$$
+
+Then do it again from $x_1$, and again. This is **Newton's method**.
+
+For $\sqrt{2}$, the root of $x^2 - 2$, starting from a guess of 1, the
+guesses run
+
+$$
+1 \;\to\; 1.5 \;\to\; 1.41667 \;\to\; 1.4142157 \;\to\; 1.4142135624
+$$
+
+The number of correct digits roughly _doubles_ with every step. Four steps
+from a poor guess, and it is right to ten figures.
+
+### Your task
+
+Complete `newton`: one line inside the loop. The program then solves three
+equations and prints every guess along the way, so you can watch the digits
+lock in.

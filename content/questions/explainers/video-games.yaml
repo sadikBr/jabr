@@ -1,0 +1,186 @@
+- id: games.step-distance
+  type: parametrised
+  concepts: [velocity, simulation-loop]
+  params:
+    speed: { choices: [150, 300, 450, 900] }
+    fps: { choices: [30, 60] }
+  prompt: "In a game running at {fps} frames per second, a bullet travels at {speed} m/s. How far does it move between one frame and the next?"
+  answer: "speed / fps"
+  tolerance: { relative: 0.01 }
+  unit: m
+  commonMistakes:
+    - answer: "speed * fps"
+      feedback: "The time between frames is $\\frac{1}{{fps}}$ of a second, so divide the speed by the frame rate."
+  hints:
+    - "The time between frames is $\\frac{1}{{fps}}$ s."
+    - "Distance = speed × time."
+  solution: |
+    The time step is $\frac{1}{{fps}}$ s, so in one frame the bullet moves
+
+    $$\frac{{speed}}{{fps}}\ \text{m}$$
+
+    That is far more than the thickness of a wall or a character. Checked only at the frames, a bullet would pass through almost anything, which is why fast objects need the whole path checked.
+
+- id: games.update-order
+  type: parametrised
+  concepts: [eulers-method, simulation-loop]
+  params:
+    x: { choices: [2, 5, 10] }
+    v: { choices: [3, 4, 6] }
+    a: { choices: [-10, -20] }
+    step: { choices: [0.1, 0.5] }
+  derived:
+    vnew: "v + a * step"
+  prompt: |
+    An object is at $x = {x}$ m, moving at $v = {v}$ m/s with acceleration $a = {a}$ m/s². A game takes one step of $\Delta t = {step}$ s, updating the **velocity first** and then using the new velocity to update the position. Where is the object afterwards?
+  answer: "x + (v + a * step) * step"
+  tolerance: { absolute: 0.01 }
+  unit: m
+  commonMistakes:
+    - answer: "x + v * step"
+      feedback: "That uses the old velocity. Here the velocity is updated first, to {vnew} m/s, and the position uses that."
+    - answer: "v + a * step"
+      feedback: "That is the new velocity. Use it to move the position on from {x} m."
+  hints:
+    - "Step 1: $v_{\\text{new}} = v + a\\,\\Delta t$."
+    - "The new velocity is ${v} + ({a}) \\times {step} = {vnew}$ m/s. Step 2: $x_{\\text{new}} = x + v_{\\text{new}}\\,\\Delta t$."
+  solution: |
+    **Velocity first:** $v_{\text{new}} = {v} + ({a}) \times {step} = {vnew}$ m/s.
+
+    **Then position, with the new velocity:**
+
+    $$x_{\text{new}} = {x} + ({vnew}) \times {step}\ \text{m}$$
+
+- id: games.which-first
+  type: multiple-choice
+  concepts: [eulers-method, simulation-loop]
+  prompt: "A game simulates a weight hanging on a spring. After a minute the weight is swinging far more wildly than when it started, although nothing has pushed it. What is the most likely cause?"
+  choices:
+    - id: order
+      text: "The position is updated using the old velocity, so every step adds a little energy"
+      correct: true
+    - id: rounding
+      text: "The computer is rounding numbers incorrectly"
+      feedback: "Rounding errors are millions of times too small to do this. The method itself is adding the energy."
+    - id: gravity
+      text: "Gravity is set too high"
+      feedback: "Stronger gravity would shift where the weight hangs, but would not make the swing grow by itself."
+    - id: frame-rate
+      text: "The frame rate is too high"
+      feedback: "A higher frame rate means smaller steps, which makes the problem smaller, not bigger."
+  hints:
+    - "Look at the last part of the maths layer: what happens to the energy on each step?"
+  solution: |
+    Updating the position with the old velocity multiplies a spring's energy by a number slightly greater than 1 on every step. Compounded over thousands of steps, the swing grows without limit. Swapping the two update lines, so the position uses the new velocity, stops it.
+
+- id: games.energy
+  type: code
+  concepts: [eulers-method, simulation-loop]
+  prompt: "Two simulations of the same mass on a spring, 60 steps a second for ten seconds. The only difference is the order of two lines. Run it and compare the energy at the end, and the two curves."
+  starter: |
+    import matplotlib.pyplot as plt
+
+    MASS, STIFFNESS = 0.5, 8.0
+    DT = 1 / 60
+
+    def energy(x, v):
+        return 0.5 * MASS * v**2 + 0.5 * STIFFNESS * x**2
+
+    def simulate(velocity_first):
+        x, v = 0.1, 0.0
+        xs = [x]
+        for _ in range(600):
+            a = -STIFFNESS * x / MASS
+            if velocity_first:
+                v = v + a * DT          # update the velocity...
+                x = x + v * DT          # ...then move with the NEW velocity
+            else:
+                x = x + v * DT          # move with the OLD velocity...
+                v = v + a * DT          # ...then update it
+            xs.append(x)
+        return xs, energy(x, v)
+
+    start = energy(0.1, 0.0)
+    for velocity_first in [False, True]:
+        xs, final = simulate(velocity_first)
+        name = "velocity first" if velocity_first else "position first"
+        print(f"{name}: energy went from {start:.3f} J to {final:.3f} J")
+        plt.plot([i * DT for i in range(len(xs))], xs, label=name)
+
+    plt.xlabel("time (s)")
+    plt.ylabel("position (m)")
+    plt.legend()
+    plt.show()
+
+- id: games.code-update
+  type: code
+  concepts: [simulation-loop, eulers-method, free-fall]
+  prompt: "Complete `update`, the function a game calls once per frame for a ball. It must apply gravity to the velocity, move the ball with the new velocity, and, if the ball has ended up below the floor at height 0, put it back on the floor and send it upwards with 80% of its speed."
+  starter: |
+    import matplotlib.pyplot as plt
+
+    G = 9.8
+    FPS = 60
+    BOUNCE = 0.8     # the share of its speed the ball keeps when it bounces
+
+    def update(y, v, dt):
+        """One frame of physics for a ball. Returns its new height and velocity."""
+        # 1. Gravity changes the velocity. Replace the next line.
+        v = v
+        # 2. The new velocity moves the ball. Replace the next line.
+        y = y
+        # 3. If the ball is now below the floor (y < 0), put it on the floor
+        #    and reverse its velocity, keeping BOUNCE of the speed.
+        return y, v
+
+    y, v = 5.0, 0.0
+    heights = [y]
+    for frame in range(5 * FPS):
+        y, v = update(y, v, 1 / FPS)
+        heights.append(y)
+
+    plt.plot([i / FPS for i in range(len(heights))], heights)
+    plt.xlabel("time (s)")
+    plt.ylabel("height (m)")
+    plt.show()
+    print(f"Lowest point reached: {min(heights):.2f} m")
+  tests: |
+    def test_gravity_changes_the_velocity():
+        y, v = update(10.0, 0.0, 0.1)
+        assert abs(v + 0.98) < 1e-9, "After one step of 0.1 s from rest, the velocity should be -0.98 m/s."
+
+    def test_the_new_velocity_moves_the_ball():
+        y, v = update(10.0, 0.0, 0.1)
+        assert abs(y - 9.902) < 1e-9, "Use the new velocity to move: 10 + (-0.98 × 0.1) = 9.902 m."
+
+    def test_bounces_off_the_floor():
+        y, v = update(0.05, -5.0, 0.1)
+        assert y == 0, "A ball that would end up below the floor should be put back at height 0."
+        assert abs(v - 0.8 * 5.98) < 1e-9, "It should leave the floor moving upwards at 80% of its speed: 0.8 × 5.98 = 4.784 m/s."
+
+    def test_never_ends_a_frame_below_the_floor():
+        assert min(heights) >= 0, "The recorded heights should never be negative."
+
+    def test_each_bounce_is_lower():
+        y, v, peaks, rising = 5.0, 0.0, [], False
+        for _ in range(600):
+            new_y, new_v = update(y, v, 1 / 60)
+            if rising and new_v <= 0:
+                peaks.append(y)
+            rising = new_v > 0
+            y, v = new_y, new_v
+        assert len(peaks) >= 3 and peaks[0] < 4 and peaks[1] < peaks[0], "After each bounce the ball should rise less high than before."
+  hints:
+    - "Step 1: `v = v - G * dt`. Step 2: `y = y + v * dt`."
+    - "Step 3 is an `if y < 0:` with two lines inside: `y = 0` and `v = -v * BOUNCE`."
+  solution: |
+    ```
+    v = v - G * dt
+    y = y + v * dt
+    if y < 0:
+        y = 0
+        v = -v * BOUNCE
+    return y, v
+    ```
+
+    Three steps, in the order every physics engine uses: forces change the velocity, the velocity changes the position, then collisions are put right. The plot shows the ball bouncing lower each time and never dipping below the floor.

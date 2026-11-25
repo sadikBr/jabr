@@ -45,7 +45,18 @@ test.describe("projects", () => {
     page,
   }) => {
     await page.goto("/projects");
-    await page.getByRole("link", { name: "Open the project" }).click();
+    // Three projects are listed, the capstone first.
+    await expect(
+      page.getByRole("main").getByRole("heading", { level: 2 }),
+    ).toHaveText([
+      "Rocket flight simulator",
+      "Hit the target",
+      "Tangent line explorer",
+    ]);
+    await page
+      .locator("#rocket-flight-simulator")
+      .getByRole("link", { name: "Open the project" })
+      .click();
     await expect(page).toHaveURL(project);
     // Next.js keeps the page just left in the document, hidden, so that going
     // back is instant. Load the project page afresh so only it is there.
@@ -104,11 +115,7 @@ test.describe("projects", () => {
   test("unknown projects and milestones show the not-found page", async ({
     page,
   }) => {
-    for (const url of [
-      "/projects/nope",
-      `${project}/nope`,
-      "/projects/tangent-line-explorer",
-    ]) {
+    for (const url of ["/projects/nope", `${project}/nope`]) {
       await page.goto(url);
       await expect(
         page.getByRole("heading", { name: "Page not found" }),

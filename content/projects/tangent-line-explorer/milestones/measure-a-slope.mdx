@@ -1,0 +1,33 @@
+---
+id: measure-a-slope
+title: Measure a slope
+summary: Make the computer find the slope of any curve at any point.
+requires: [derivative-definition, average-rate-of-change]
+check: tangent.slope
+estimatedMinutes: 10
+---
+
+Everything in this project rests on one small tool: a function that is handed
+a curve and a point, and returns how steep the curve is there.
+
+You know the idea already. Zoom in on a smooth curve and it looks straight;
+the slope of that straight piece is the derivative.
+
+<Interactive id="tangent-zoom" props={{ fn: "x^3 - x", x0: 1 }} />
+
+A computer cannot take a limit, but it can use a very small interval. The
+obvious choice is the secant from $x$ to $x + h$. There is a better one: step
+the same distance to **both sides** and take the slope across the pair:
+
+$$
+f'(x) \approx \frac{f(x + h) - f(x - h)}{2h}
+$$
+
+The errors from the two sides are equal and opposite, and mostly cancel. With
+the same $h$, this version is thousands of times more accurate. For a
+parabola it is exactly right, whatever $h$ is.
+
+### Your task
+
+Complete `slope`. Notice that its first argument is itself a function: in
+Python a function can be passed around like any other value.

@@ -89,16 +89,24 @@
     "why-do-a-hammer-and-a-feather-fall-at-the-same-rate"
   ],
   "projects": [
+    "hit-the-target",
     "rocket-flight-simulator",
     "tangent-line-explorer"
   ],
   "milestones": [
+    "hit-the-target/aim-through-air",
+    "hit-the-target/find-the-angle",
+    "hit-the-target/fly-a-ball",
     "rocket-flight-simulator/constant-velocity",
     "rocket-flight-simulator/drag",
     "rocket-flight-simulator/gravity",
     "rocket-flight-simulator/launch-angle",
     "rocket-flight-simulator/target-altitude",
-    "rocket-flight-simulator/thrust"
+    "rocket-flight-simulator/thrust",
+    "tangent-line-explorer/build-the-tangent",
+    "tangent-line-explorer/measure-a-slope",
+    "tangent-line-explorer/predict-nearby",
+    "tangent-line-explorer/solve-with-tangents"
   ],
   "questions": [
     "calc.cont.classify",
@@ -177,6 +185,11 @@
     "fall.moon-drop-time",
     "fall.sim",
     "fall.vacuum-race",
+    "games.code-update",
+    "games.energy",
+    "games.step-distance",
+    "games.update-order",
+    "games.which-first",
     "mech.drag.acceleration",
     "mech.drag.at-terminal",
     "mech.drag.code-skydiver",
@@ -246,6 +259,11 @@
     "mech.vec.walk-direction",
     "mech.vec.walk-distance",
     "mech.vec.which",
+    "orbit.code-cannon",
+    "orbit.mass-ratio",
+    "orbit.period",
+    "orbit.speed",
+    "orbit.straight-up",
     "py.func.code-distance",
     "py.func.code-energy",
     "py.func.code-period",
@@ -311,6 +329,13 @@
     "rocket.gravity",
     "rocket.launch-angle",
     "rocket.target-altitude",
-    "rocket.thrust"
+    "rocket.thrust",
+    "tangent.estimate",
+    "tangent.line",
+    "tangent.newton",
+    "tangent.slope",
+    "target.aim",
+    "target.air",
+    "target.flight"
   ]
 }

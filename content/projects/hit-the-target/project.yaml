@@ -1,0 +1,7 @@
+id: hit-the-target
+title: Hit the target
+summary: Teach a program to aim. Simulate a throw step by step, search for the angle that lands on a target, then do it again with air in the way, where no formula can help.
+subjects: [physics, computing]
+kind: mini
+concepts: [projectile-motion, vector-components, eulers-method, air-drag]
+milestones: [fly-a-ball, find-the-angle, aim-through-air]

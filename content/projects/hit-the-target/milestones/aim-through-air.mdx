@@ -1,0 +1,44 @@
+---
+id: aim-through-air
+title: Aim through air
+summary: Add air drag to the simulation, and let the search you already wrote find the new angle.
+requires: [air-drag, projectile-motion, eulers-method]
+check: target.air
+estimatedMinutes: 20
+---
+
+Real balls fly through air, and air pushes back. Launch one below with the
+air off, then switch it on and launch again with the same settings.
+
+<Interactive
+  id="projectile-sim"
+  props={{ speed: 22, angle: 35, gravity: 9.8, goal: { target: 45 } }}
+/>
+
+With drag the ball falls short, its path is no longer a parabola, and there
+is **no formula** for where it lands. For your program that is not a problem
+at all. The simulation just needs a different acceleration.
+
+### Drag as a vector
+
+Drag acts opposite to the velocity, with a size that grows as the speed
+squared. Writing $s = \sqrt{v_x^2 + v_y^2}$ for the speed and $k$ for the
+drag constant divided by the mass, the acceleration it causes is
+
+$$
+a_x = -k\,s\,v_x \qquad\qquad a_y = -k\,s\,v_y
+$$
+
+Each component is slowed in proportion to itself, so the push is always
+straight back along the direction of travel. Gravity still adds its $-g$ to
+$a_y$.
+
+So the first step of the loop changes. Instead of only gravity changing `vy`,
+both velocity components change by their acceleration times `dt`.
+
+### Your task
+
+Replace the two acceleration lines in `landing_distance` so they include
+drag. Nothing else needs to change. In particular, `aim` is exactly the
+function you wrote in the last milestone, with the drag passed along. Run the
+program and compare the angle needed with and without air.

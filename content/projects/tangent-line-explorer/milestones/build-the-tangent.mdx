@@ -1,0 +1,38 @@
+---
+id: build-the-tangent
+title: Build the tangent line
+summary: Turn a point and a slope into a line you can evaluate anywhere.
+requires: [tangent-line, slope-of-a-line]
+check: tangent.line
+estimatedMinutes: 15
+---
+
+A slope on its own is just a number. A **tangent line** is a whole line: it
+touches the curve at one point and has the curve's slope there.
+
+A line is fixed by one point and its slope. The point is $(a, f(a))$, and the
+slope is $f'(a)$, which you can now measure. Starting from that point and
+moving a distance $x - a$ sideways, the line climbs by slope × distance:
+
+$$
+L(x) = f(a) + f'(a)\,(x - a)
+$$
+
+### A function that makes a function
+
+`tangent(f, a)` should not return a number. It should return **the line
+itself**: a new function that you can then call with any $x$.
+
+```python
+line = tangent(f, 1)    # the tangent to f at x = 1
+line(1.5)               # how high that line is at x = 1.5
+```
+
+In Python you do this by defining a function inside another and returning it.
+The inner function remembers the values that were in scope when it was made.
+The starter code has the structure in place.
+
+### Your task
+
+Complete the inner function `line`. Then run the program to see a curve with
+its tangent drawn at three different points.

@@ -1,0 +1,48 @@
+---
+id: fly-a-ball
+title: Fly a ball
+summary: Follow a thrown ball step by step until it lands.
+requires: [projectile-motion, vector-components, eulers-method]
+check: target.flight
+estimatedMinutes: 15
+---
+
+By hand, landing a ball on a target takes a few tries. Have a go: the flag is
+at 45 metres.
+
+<Interactive
+  id="projectile-sim"
+  props={{ speed: 22, angle: 20, gravity: 9.8, goal: { target: 45 } }}
+/>
+
+In this project you will write a program that finds the right angle by
+itself. The first thing it needs is a way to answer the question you were
+just answering by eye: _if I launch at this speed and this angle, where does
+the ball come down?_
+
+There is a formula for that when there is no air. Do not use it. In the last
+milestone the air comes back, and the formula stops working. A simulation
+keeps working.
+
+### The loop
+
+The ball's state is four numbers: its position `x`, `y` and its velocity
+`vx`, `vy`. The launch speed and angle set the starting velocity, split into
+components:
+
+$$
+v_x = v\cos\theta \qquad\qquad v_y = v\sin\theta
+$$
+
+Then, over and over, for a small time step `dt`:
+
+1. gravity changes the vertical velocity: `vy` goes down by `G * dt`,
+2. the velocity moves the ball: `x` goes up by `vx * dt`, and `y` by
+   `vy * dt`,
+3. if `y` has dropped below zero, the ball has landed.
+
+### Your task
+
+Write the three update lines in `landing_distance`. The program compares your
+simulation with the formula for three launches, so you can see that it
+agrees.

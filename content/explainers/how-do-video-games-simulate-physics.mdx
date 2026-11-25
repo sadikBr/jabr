@@ -3,8 +3,176 @@ id: how-do-video-games-simulate-physics
 title: "How do video games simulate physics?"
 summary: "Sixty times a second, a game nudges everything forward a tiny step. That is calculus in disguise."
 subject: computing
-concepts: [eulers-method, velocity, acceleration]
-status: coming-soon
+concepts: [eulers-method, simulation-loop, velocity, acceleration]
+related:
+  [
+    how-does-a-rocket-reach-orbit,
+    why-do-a-hammer-and-a-feather-fall-at-the-same-rate,
+  ]
 ---
 
-{/* Not written yet. The frontmatter above is what the catalog shows. */}
+<Layer depth="intuition">
+
+A film is a strip of still pictures shown quickly, one after another. A game
+is the same, with one big difference: nobody drew the pictures in advance.
+Sixty times a second the game has to work out, from scratch, where everything
+is _now_.
+
+It does that with the simplest rule imaginable. For every moving thing: take
+where it was, and move it a little in the direction it is going.
+
+Here is a ball dropped onto a thin platform, with every frame shown as a dot.
+Those dots are all the game ever knows. Drop the ball. Then see whether you
+can break the game.
+
+<Interactive id="game-loop" props={{ fps: 60, goal: "break" }} />
+
+At 60 frames a second the dots are close together and the bounce looks right.
+At 10, the ball is above the platform in one frame and below it in the next.
+The game checks "is the ball touching the platform?" once per frame, the
+answer is "no" both times, and the ball sails through solid matter.
+
+If you have ever seen a game character fall through the floor, or a fast car
+pass through a wall, this is what happened. It even has a name:
+**tunnelling**.
+
+<Callout kind="insight" title="A game never sees motion, only snapshots">
+
+Real things move continuously. A simulation knows the world only at separate
+instants, and has to guess what happened in between. Almost everything
+interesting about game physics, good and bad, comes from that one fact.
+
+</Callout>
+
+</Layer>
+
+<Layer depth="mechanism">
+
+**The game loop.** Every game is built around a loop that runs once per
+frame, for as long as the game is open:
+
+1. **Read the input.** Which buttons are held down?
+2. **Update the world.** Move everything forwards by one small step of time.
+3. **Draw the picture.**
+
+Step 2 is the physics. For each object the game stores a **position** and a
+**velocity**, and on every frame it does three things:
+
+1. Add up the **forces** on the object (gravity, a jump, a push from an
+   explosion) and divide by its mass to get its **acceleration**.
+2. Change the **velocity** by acceleration × time step.
+3. Change the **position** by velocity × time step.
+
+Then it looks for **collisions**. If two things overlap, they are pushed
+apart and their velocities are changed so that they bounce or stop.
+
+That is the whole engine. A falling crate, a thrown grenade and a car
+suspension are all this same loop with different forces.
+
+<Question id="games.step-distance" />
+
+**Curing tunnelling.** The cheap fix is more frames: halve the time step and
+everything moves half as far each frame. But a fast enough object beats any
+frame rate. The proper fix is to stop asking "where is it now?" and ask
+"where has it _been_ since the last frame?" The game checks the whole line
+from the old position to the new one against the scenery. This is called
+**swept**, or **continuous**, collision detection. It costs more computing,
+so games use it only for things that are small and fast.
+
+Try it: the game below runs at a low frame rate. Make the ball bounce
+properly without raising it above 20.
+
+<Interactive id="game-loop" props={{ fps: 15, goal: "fix" }} />
+
+**Why the time step is fixed.** Your screen might refresh 60 times a second
+and your friend's 144. If the physics simply used "the time since the last
+picture", you and your friend would get slightly different jumps and
+different bounces, and the same replay would play out differently on two
+machines. So most games run their physics on its own steady clock, typically
+50 or 60 steps a second, whatever the screen is doing, and draw whenever a
+picture is needed.
+
+</Layer>
+
+<Layer depth="maths">
+
+The update rule is **Euler's method**. Velocity is the derivative of
+position, $v = \frac{dx}{dt}$, and acceleration is the derivative of
+velocity, $a = \frac{dv}{dt}$. Over a short step $\Delta t$, a derivative says
+how much its quantity changes:
+
+$$
+v_{\text{new}} = v + a\,\Delta t \qquad\qquad x_{\text{new}} = x + v\,\Delta t
+$$
+
+Each step pretends the velocity and acceleration stay constant for the whole
+of $\Delta t$. They do not quite, so each step is slightly wrong, by an amount
+proportional to $\Delta t^2$. Over a second there are $1/\Delta t$ steps, so
+the errors add up to something proportional to $\Delta t$. Halve the time
+step and the simulation is about twice as accurate, at twice the cost.
+
+**The order of the two lines matters.** There is a choice hidden in the rule
+above: when updating the position, do you use the _old_ velocity or the _new_
+one?
+
+$$
+\text{old velocity:}\quad x_{\text{new}} = x + v\,\Delta t
+\qquad\qquad
+\text{new velocity:}\quad x_{\text{new}} = x + v_{\text{new}}\,\Delta t
+$$
+
+It looks like a detail. It is not. Take a mass on a spring, which ought to
+swing back and forth for ever with the same energy. With the old-velocity
+version, every single step multiplies the energy by $1 + \omega^2 \Delta t^2$,
+where $\omega$ sets how fast the spring swings. That is only a fraction of a
+percent, but it compounds. For a spring with $\omega = 4$ per second at 60
+steps a second:
+
+$$
+\left(1 + \frac{4^2}{60^2}\right)^{600} \approx 14
+$$
+
+After ten seconds the spring has fourteen times the energy it started with,
+out of nowhere. In a game, that is a rope bridge that shakes itself to pieces.
+
+The new-velocity version, called **semi-implicit Euler**, makes errors too,
+but they do not pile up: the energy wobbles by a few percent and stays put.
+It costs nothing extra, just the two lines in the other order. This is why
+game engines update velocity first.
+
+<Question id="games.update-order" />
+
+<Question id="games.which-first" />
+
+</Layer>
+
+<Layer depth="build">
+
+First, see the energy problem for yourself. This program runs the same spring
+twice. The only difference between the two loops is which line comes first.
+
+<CodeLab id="games.energy" />
+
+Now write a real physics update: the function a game would call once per
+frame for a bouncing ball. The loop around it is already written.
+
+<CodeLab id="games.code-update" />
+
+Things to try once it works:
+
+- Change `FPS` to 10. The bounce heights go wrong, but the ball stays on the
+  floor. Why does this update never tunnel? (Look at how it detects the
+  floor: there is nothing underneath to fall into.)
+- Make the floor "sticky": when the bounce would be slower than 0.5 m/s, set
+  the velocity to zero instead. Real engines do this to stop objects
+  jittering for ever.
+
+A rocket is this loop again, with thrust and drag among the forces and a mass
+that changes as fuel burns. You can build one in the rocket project.
+
+<ConnectIt
+  concepts={["eulers-method", "simulation-loop", "newtons-second-law"]}
+  projects={["rocket-flight-simulator"]}
+/>
+
+</Layer>

@@ -1,0 +1,222 @@
+- id: tangent.slope
+  type: code
+  concepts: [derivative-definition, average-rate-of-change]
+  prompt: "Complete `slope` so that it returns the slope of the line through the two points on the curve at `x - h` and `x + h`."
+  starter: |
+    import math
+
+    def slope(f, x, h=1e-5):
+        """How steep the curve y = f(x) is at x."""
+        # TODO: rise over run, between the points at x - h and x + h.
+        return 0.0
+
+    print("x² at x = 3:     ", slope(lambda x: x**2, 3))
+    print("sin(x) at x = 0: ", slope(math.sin, 0))
+    print("√x at x = 4:     ", slope(math.sqrt, 4))
+  tests: |
+    def test_a_parabola():
+        assert abs(slope(lambda x: x**2, 3) - 6) < 1e-6, "The slope of x² at x = 3 is 6."
+
+    def test_sine_at_zero():
+        import math
+        assert abs(slope(math.sin, 0) - 1) < 1e-6, "The slope of sin(x) at x = 0 is 1."
+
+    def test_a_curve_going_downhill():
+        assert abs(slope(lambda x: 1 / x, 2) + 0.25) < 1e-6, "The slope of 1/x at x = 2 is -0.25."
+
+    def test_steps_to_both_sides():
+        assert abs(slope(lambda x: x**2, 3, h=0.5) - 6) < 1e-9, "Use the points at x - h and x + h. For a parabola that gives exactly 6 at x = 3, even with h = 0.5."
+  hints:
+    - "The rise is `f(x + h) - f(x - h)`."
+    - "The run, from `x - h` to `x + h`, is `2 * h`."
+    - "`return (f(x + h) - f(x - h)) / (2 * h)`"
+  solution: |
+    `return (f(x + h) - f(x - h)) / (2 * h)`
+
+    The three slopes print as 6, 1 and 0.25, each correct to about ten decimal places. Everything else in this project is built on this one line.
+
+- id: tangent.line
+  type: code
+  concepts: [tangent-line, slope-of-a-line]
+  prompt: "Complete the inner function `line` so that it returns the height of the tangent at `x`: start from the height of the curve at `a`, and add the slope times the distance from `a`."
+  starter: |
+    import math
+    import matplotlib.pyplot as plt
+
+    def slope(f, x, h=1e-5):
+        """How steep the curve y = f(x) is at x."""
+        return (f(x + h) - f(x - h)) / (2 * h)
+
+    def tangent(f, a):
+        """The tangent line to y = f(x) at x = a, as a function of x."""
+        height = f(a)
+        steepness = slope(f, a)
+
+        def line(x):
+            # TODO: the height of the tangent line at x.
+            return 0.0
+
+        return line
+
+    def f(x):
+        return x**3 - x
+
+    xs = [i / 50 - 2 for i in range(201)]            # from -2 to 2
+    plt.plot(xs, [f(x) for x in xs], label="the curve")
+    for a in [-1.2, 0.3, 1.4]:
+        line = tangent(f, a)
+        nearby = [a - 0.6, a + 0.6]
+        plt.plot(nearby, [line(x) for x in nearby], "--", label=f"tangent at {a}")
+        plt.plot([a], [f(a)], "ko")
+    plt.ylim(-3, 3)
+    plt.legend()
+    plt.show()
+  tests: |
+    def test_touches_the_curve():
+        assert abs(tangent(lambda x: x**2, 1)(1) - 1) < 1e-9, "At x = a the tangent should be exactly as high as the curve: for x² at 1, that is 1."
+
+    def test_has_the_curves_slope():
+        line = tangent(lambda x: x**2, 1)
+        assert abs(line(2) - 3) < 1e-6, "The tangent to x² at 1 has slope 2, so one unit to the right it is at height 3."
+        assert abs(line(0) + 1) < 1e-6, "…and one unit to the left it is at height -1."
+
+    def test_a_straight_line_is_its_own_tangent():
+        straight = lambda x: 3 * x + 2
+        line = tangent(straight, 5)
+        assert all(abs(line(x) - straight(x)) < 1e-6 for x in [-4, 0, 5, 9]), "The tangent to a straight line is that line itself, everywhere."
+
+    def test_tangents_at_different_points_differ():
+        f = lambda x: x**2
+        assert abs(tangent(f, 1)(0) - tangent(f, 2)(0)) > 1, "Each call to tangent should make its own line: at x = 0 the tangents at 1 and at 2 are at heights -1 and -4."
+  hints:
+    - "The distance from `a` to `x` is `x - a`."
+    - "The line starts at `height` and climbs `steepness` for each unit of distance."
+    - "`return height + steepness * (x - a)`"
+  solution: |
+    `return height + steepness * (x - a)`
+
+    The inner function uses `height`, `steepness` and `a` from the function around it, and keeps them after `tangent` has returned. That is why the three dashed lines in the plot are all different: each call made its own line, remembering its own point.
+
+- id: tangent.estimate
+  type: code
+  concepts: [tangent-line, derivative-definition]
+  prompt: "Complete `estimate`, which predicts `f(x)` using only the tangent at `a`, and `error`, which says how far that prediction is from the truth. Then read the table the program prints."
+  starter: |
+    import math
+
+    def slope(f, x, h=1e-5):
+        return (f(x + h) - f(x - h)) / (2 * h)
+
+    def tangent(f, a):
+        height = f(a)
+        steepness = slope(f, a)
+
+        def line(x):
+            return height + steepness * (x - a)
+
+        return line
+
+    def estimate(f, a, x):
+        """An estimate of f(x), following the tangent at a."""
+        # TODO: build the tangent at a, and evaluate it at x.
+        return 0.0
+
+    def error(f, a, x):
+        """How far the estimate is from the true value (never negative)."""
+        # TODO: the size of the difference between f(x) and the estimate.
+        return 0.0
+
+    print("Estimating √x near x = 4")
+    print("distance   estimate    true value   error")
+    for distance in [0.1, 0.2, 0.4, 0.8]:
+        x = 4 + distance
+        print(f"{distance:>8}   {estimate(math.sqrt, 4, x):.6f}    {math.sqrt(x):.6f}     {error(math.sqrt, 4, x):.6f}")
+  tests: |
+    def test_square_root_of_four_point_one():
+        import math
+        assert abs(estimate(math.sqrt, 4, 4.1) - 2.025) < 1e-6, "Following the tangent to √x at 4 for a distance of 0.1 gives 2 + 0.25 × 0.1 = 2.025."
+
+    def test_exact_at_the_point_of_contact():
+        import math
+        assert error(math.sqrt, 4, 4) < 1e-12, "At x = a the tangent touches the curve, so the error is zero."
+
+    def test_the_error_is_small_and_positive():
+        import math
+        e = error(math.sqrt, 4, 4.1)
+        assert abs(e - 0.000154) < 0.00001, "The estimate of √4.1 should be off by about 0.000154."
+
+    def test_error_is_never_negative():
+        assert error(lambda x: x**2, 1, 1.5) > 0 and error(lambda x: -x**2, 1, 1.5) > 0, "Use abs(...) so the error is positive whether the estimate is too high or too low."
+
+    def test_doubling_the_distance_quadruples_the_error():
+        import math
+        ratio = error(math.sqrt, 4, 4.2) / error(math.sqrt, 4, 4.1)
+        assert 3.7 < ratio < 4.2, "Going twice as far from x = 4 should make the error about four times as big."
+  hints:
+    - "`tangent(f, a)` gives you the line. Call it with `x`."
+    - "`return tangent(f, a)(x)` for the estimate."
+    - "`return abs(f(x) - estimate(f, a, x))` for the error."
+  solution: |
+    ```
+    def estimate(f, a, x):
+        return tangent(f, a)(x)
+
+    def error(f, a, x):
+        return abs(f(x) - estimate(f, a, x))
+    ```
+
+    The table shows errors of about 0.00015, 0.00061, 0.0024 and 0.0091. Each time the distance doubles, the error is multiplied by four: it grows with the **square** of the distance. That is why linear approximations are so good close in, and why they go wrong quickly further out.
+
+- id: tangent.newton
+  type: code
+  concepts: [tangent-line, derivative-definition]
+  prompt: |
+    Complete `newton`. On each pass of the loop, replace the current guess `x` with the place where the tangent at `x` crosses zero: $x - \dfrac{f(x)}{f'(x)}$.
+  starter: |
+    import math
+
+    def slope(f, x, h=1e-5):
+        return (f(x + h) - f(x - h)) / (2 * h)
+
+    def newton(f, x, steps=6, show=False):
+        """Find where f is zero, starting from the guess x."""
+        for step in range(steps):
+            # TODO: move x to where the tangent at x crosses zero.
+            x = x
+            if show:
+                print(f"  step {step + 1}: {x:.12f}")
+        return x
+
+    print("Square root of 2: solving x² - 2 = 0 from a guess of 1")
+    newton(lambda x: x**2 - 2, 1, show=True)
+
+    print("Solving x³ - x - 2 = 0 from a guess of 1.5")
+    newton(lambda x: x**3 - x - 2, 1.5, show=True)
+
+    print("Half of pi: solving cos(x) = 0 from a guess of 1")
+    print("  ", newton(math.cos, 1), "and pi / 2 is", math.pi / 2)
+  tests: |
+    def test_square_root_of_two():
+        assert abs(newton(lambda x: x**2 - 2, 1) - 2 ** 0.5) < 1e-9, "Solving x² - 2 = 0 from 1 should give √2 = 1.41421356…"
+
+    def test_the_cubic_from_the_continuity_lesson():
+        assert abs(newton(lambda x: x**3 - x - 2, 1.5) - 1.5213797068) < 1e-9, "The root of x³ - x - 2 is 1.5213797068…"
+
+    def test_half_of_pi():
+        import math
+        assert abs(newton(math.cos, 1) - math.pi / 2) < 1e-9, "cos(x) = 0 near x = 1 at π/2."
+
+    def test_it_is_fast():
+        assert abs(newton(lambda x: x**2 - 2, 1, steps=4) - 2 ** 0.5) < 1e-6, "Four steps should already be within a millionth of √2."
+
+    def test_one_step_from_one():
+        assert abs(newton(lambda x: x**2 - 2, 1, steps=1) - 1.5) < 1e-6, "The first step from a guess of 1 should land on 1.5."
+  hints:
+    - "The slope of `f` at the current guess is `slope(f, x)`."
+    - "`x = x - f(x) / slope(f, x)`"
+  solution: |
+    `x = x - f(x) / slope(f, x)`
+
+    Watch the printed guesses for $\sqrt{2}$: 1.5, 1.4167, 1.4142157, 1.4142135624. The cubic that took a dozen halvings to pin down to three decimal places is solved to twelve in four steps.
+
+    Newton's method is how calculators and computers find square roots and solve equations. You built it from a slope, a line, and one idea: a curve is nearly its tangent.

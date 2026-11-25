@@ -1,0 +1,42 @@
+---
+id: find-the-angle
+title: Find the angle
+summary: Search for the launch angle that lands on the target, by halving an interval.
+requires: [projectile-motion, continuity]
+check: target.aim
+estimatedMinutes: 15
+---
+
+You have a function that says where a throw lands. Now turn the question
+round: given where you _want_ it to land, what angle do you need?
+
+Think about what happens as the angle goes up from 0° towards 40°: the ball
+lands further and further away. So for any target within reach there is
+exactly one angle in that range that hits it. Too low, and the ball falls
+short. Too high, and it flies long.
+
+That is the situation the bisection method was made for. You met it in the
+Continuity lesson, trapping the root of an equation. Here you trap an angle:
+
+1. Start with a range you know contains the answer: 0° to 40°.
+2. Try the angle in the **middle**.
+3. If that throw falls **short**, the answer is in the upper half. If it
+   flies **long**, the lower half.
+4. Keep the half that contains the answer, and repeat until the range is
+   tiny.
+
+Each try halves the range. Twelve tries narrow 40° down to a hundredth of a
+degree.
+
+<Callout kind="insight" title="You do not need to know how the function works">
+
+Bisection never looks inside `landing_distance`. It only asks "too short or
+too long?". That is why the same search will still work in the next
+milestone, when the physics inside changes.
+
+</Callout>
+
+### Your task
+
+Complete the two lines in `aim` that keep the correct half of the range. The
+program then aims at three targets and checks each answer by firing.

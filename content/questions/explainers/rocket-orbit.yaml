@@ -1,0 +1,176 @@
+- id: orbit.straight-up
+  type: multiple-choice
+  concepts: [free-fall, gravity-and-weight]
+  prompt: "A rocket flies straight up to a height of 400 km, the altitude of the Space Station, and then shuts off its engine with no sideways speed at all. What happens next?"
+  choices:
+    - id: falls
+      text: "It falls straight back to Earth"
+      correct: true
+    - id: floats
+      text: "It floats there, because it is in space"
+      feedback: "Gravity at 400 km is still nearly 90% as strong as on the ground. Nothing floats there unless it is moving sideways fast enough."
+    - id: orbits
+      text: "It starts to orbit the Earth"
+      feedback: "An orbit needs sideways speed, about 7.7 km/s at that height. With none, there is nothing to make it miss the ground."
+    - id: drifts
+      text: "It drifts slowly away into space"
+      feedback: "It would need to be moving away at more than 10 km/s to escape. From rest, gravity simply pulls it back."
+  hints:
+    - "Set the cannon's speed to zero and fire it."
+  solution: |
+    Height alone does nothing. Gravity is almost as strong at 400 km as on the surface, so a rocket with no sideways speed falls straight back down in about five minutes. What keeps a satellite up is its sideways speed.
+
+- id: orbit.speed
+  type: parametrised
+  concepts: [gravity-and-weight, velocity]
+  params:
+    h: { choices: [200, 800, 2000, 20200] }
+  derived:
+    radius: "6371 + h"
+  prompt: |
+    A satellite is in a circular orbit {h} km above the ground. How fast is it moving, in km/s? (The Earth's radius is 6371 km, and $GM = 398\,600\ \text{km}^3/\text{s}^2$.)
+  answer: "sqrt(398600 / (6371 + h))"
+  tolerance: { relative: 0.01 }
+  unit: km/s
+  commonMistakes:
+    - answer: "sqrt(398600 / h)"
+      feedback: "The $r$ in the formula is the distance from the centre of the Earth, not the height above the ground. Add the Earth's radius."
+    - answer: "398600 / (6371 + h)"
+      feedback: "That is $v^2$. Take the square root."
+  hints:
+    - "$v = \\sqrt{\\dfrac{GM}{r}}$, where $r$ is measured from the centre of the Earth."
+    - "Here $r = 6371 + {h} = {radius}$ km."
+  solution: |
+    The orbit's radius is $r = 6371 + {h} = {radius}$ km, so
+
+    $$v = \sqrt{\frac{GM}{r}} = \sqrt{\frac{398\,600}{{radius}}}\ \text{km/s}$$
+
+    The higher the orbit, the slower the satellite moves.
+
+- id: orbit.period
+  type: parametrised
+  concepts: [gravity-and-weight, velocity]
+  params:
+    h: { choices: [200, 800, 2000] }
+  derived:
+    radius: "6371 + h"
+  prompt: |
+    How many **minutes** does a satellite in a circular orbit {h} km above the ground take to go once round the Earth? (Radius of the Earth: 6371 km. $GM = 398\,600\ \text{km}^3/\text{s}^2$.)
+  answer: "2 * pi * (6371 + h) / sqrt(398600 / (6371 + h)) / 60"
+  tolerance: { relative: 0.01 }
+  unit: min
+  commonMistakes:
+    - answer: "2 * pi * (6371 + h) / sqrt(398600 / (6371 + h))"
+      feedback: "That is the time in seconds. Divide by 60 for minutes."
+  hints:
+    - "First find the speed, $v = \\sqrt{GM / r}$ with $r = {radius}$ km."
+    - "One lap is $2\\pi r$ km. Divide by the speed to get seconds, then by 60."
+  solution: |
+    With $r = {radius}$ km, the speed is $v = \sqrt{398\,600 / {radius}}$ km/s. One lap covers $2\pi r$, so
+
+    $$T = \frac{2\pi \times {radius}}{v}\ \text{seconds}$$
+
+    Divide by 60 to get minutes. Higher orbits take longer for two reasons: the lap is longer and the satellite is slower.
+
+- id: orbit.mass-ratio
+  type: parametrised
+  concepts: [newtons-second-law]
+  params:
+    dv: { choices: [9, 9.5] }
+    ve: { choices: [3, 3.5, 4.5] }
+  prompt: |
+    A single-stage rocket needs a $\Delta v$ of {dv} km/s to reach orbit, and its engine's exhaust speed is {ve} km/s. Using the rocket equation, how many times heavier must it be at lift-off than when its tanks are empty? (Give the ratio $m_0 / m_1$.)
+  answer: "exp(dv / ve)"
+  tolerance: { relative: 0.02 }
+  commonMistakes:
+    - answer: "dv / ve"
+      feedback: "That is the logarithm of the answer: $\\ln(m_0/m_1) = \\Delta v / v_e$. Undo the logarithm with $e^x$."
+  hints:
+    - "Rearrange $\\Delta v = v_e \\ln(m_0/m_1)$ for the ratio."
+    - "$\\dfrac{m_0}{m_1} = e^{\\Delta v / v_e}$."
+  solution: |
+    $$\frac{m_0}{m_1} = e^{\Delta v / v_e} = e^{{dv}/{ve}}$$
+
+    Notice how sensitive this is. A better engine, with a higher exhaust speed, brings the ratio down dramatically, which is why engineers fight so hard for every extra metre per second.
+
+- id: orbit.code-cannon
+  type: code
+  concepts: [gravity-and-weight, eulers-method, newtons-second-law]
+  prompt: |
+    Complete `gravity` so that it returns the two components of the acceleration at a point $(x, y)$, measured in km from the centre of the Earth. Its size is $\dfrac{GM}{r^2}$, and it points from the object towards the centre. Then run the program: it fires the cannon at four speeds and draws the paths.
+  starter: |
+    import math
+    import matplotlib.pyplot as plt
+
+    MU = 398600.0         # GM for the Earth, in km³/s²
+    EARTH_RADIUS = 6371   # km
+
+    def gravity(x, y):
+        """The acceleration (ax, ay), in km/s², at the point (x, y)."""
+        r = math.hypot(x, y)     # distance from the centre of the Earth
+        # Replace the next line. The size of the acceleration is MU / r**2.
+        # To point it at the centre, multiply by -x / r and by -y / r.
+        return 0.0, 0.0
+
+    def fly(speed, altitude=400, dt=1.0, max_time=20000):
+        """Follow a cannonball fired sideways. Returns its x and y positions."""
+        x, y = 0.0, EARTH_RADIUS + altitude
+        vx, vy = speed, 0.0
+        xs, ys = [x], [y]
+        for _ in range(int(max_time / dt)):
+            ax, ay = gravity(x, y)
+            vx += ax * dt
+            vy += ay * dt
+            x += vx * dt
+            y += vy * dt
+            xs.append(x)
+            ys.append(y)
+            if math.hypot(x, y) < EARTH_RADIUS:
+                break            # it has hit the ground
+        return xs, ys
+
+    turn = [math.radians(a) for a in range(361)]
+    plt.fill([EARTH_RADIUS * math.cos(a) for a in turn],
+             [EARTH_RADIUS * math.sin(a) for a in turn], color="lightskyblue")
+
+    for speed in [5.0, 7.0, 7.67, 9.0]:
+        xs, ys = fly(speed)
+        plt.plot(xs, ys, label=f"{speed} km/s")
+
+    plt.axis("equal")
+    plt.legend()
+    plt.show()
+  tests: |
+    def test_gravity_at_the_surface():
+        ax, ay = gravity(0, 6371)
+        assert abs(ax) < 1e-12, "Directly above the centre, gravity has no sideways part."
+        assert abs(ay + 0.00982) < 1e-5, "At the surface the acceleration should be about 0.00982 km/s² (that is 9.82 m/s²), pointing down, so negative."
+
+    def test_it_points_at_the_centre():
+        ax, ay = gravity(6371, 0)
+        assert abs(ax + 0.00982) < 1e-5 and abs(ay) < 1e-12, "To the right of the Earth, gravity should pull to the left."
+
+    def test_inverse_square():
+        near = gravity(0, 7000)[1]
+        far = gravity(0, 14000)[1]
+        assert abs(far - near / 4) < 1e-9, "Twice as far from the centre, gravity should be a quarter as strong."
+
+    def test_orbit_speed_goes_round():
+        xs, ys = fly(7.67)
+        heights = [math.hypot(x, y) - 6371 for x, y in zip(xs, ys)]
+        assert min(heights) > 350 and max(heights) < 450, "At 7.67 km/s the cannonball should stay close to 400 km up all the way round."
+
+    def test_too_slow_comes_down():
+        xs, ys = fly(5.0)
+        assert math.hypot(xs[-1], ys[-1]) < 6371, "At 5 km/s the cannonball should end up hitting the ground."
+  hints:
+    - "The size is `MU / r**2`. Call it `g`."
+    - "The direction towards the centre from (x, y) is (-x / r, -y / r)."
+    - "`g = MU / r**2` then `return -g * x / r, -g * y / r`"
+  solution: |
+    ```
+    g = MU / r**2
+    return -g * x / r, -g * y / r
+    ```
+
+    The picture shows all four fates. At 5 and 7 km/s the ball curves into the ground, the second much further round. At 7.67 km/s it circles the Earth at a steady height. At 9 km/s it swings far out before coming back: a stretched orbit, an ellipse.

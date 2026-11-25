@@ -65,9 +65,9 @@ export function Plot({
   /** Aspect-ratio classes that give the graph its shape at each screen size. */
   shape?: string;
   /**
-   * Use the same scale on both axes, so angles and lengths look true. The
-   * vertical range is then worked out from the shape, centred on the middle
-   * of `y`.
+   * Use the same scale on both axes, so angles and lengths look true. `x`
+   * and `y` then say what must be in view: the graph is scaled to contain
+   * both, and whichever has room to spare is widened about its middle.
    */
   square?: boolean;
   /** Draw the lines x = 0 and y = 0. Turn off for a picture that is not a graph. */
@@ -112,9 +112,13 @@ export function Plot({
   if (square) {
     const across = width - padding.left - padding.right;
     const down = height - padding.top - padding.bottom;
-    const span = ((x[1] - x[0]) * down) / across;
-    const middle = (y[0] + y[1]) / 2;
-    y = [middle - span / 2, middle + span / 2];
+    const perPixel = Math.max((x[1] - x[0]) / across, (y[1] - y[0]) / down);
+    const centre = { x: (x[0] + x[1]) / 2, y: (y[0] + y[1]) / 2 };
+    x = [
+      centre.x - (perPixel * across) / 2,
+      centre.x + (perPixel * across) / 2,
+    ];
+    y = [centre.y - (perPixel * down) / 2, centre.y + (perPixel * down) / 2];
   }
   const frame: PlotFrame = { width, height, pad: padding, x, y };
   const scale = createScale(frame);

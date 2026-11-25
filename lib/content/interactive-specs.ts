@@ -192,6 +192,39 @@ export const interactiveSpecs = {
         .default(["book", "ball", "skydiver", "sled", "ramp", "rocket"]),
     }),
   },
+  "orbit-cannon": {
+    title: "Newton's cannonball",
+    props: z.strictObject({
+      /** Launch speed, in km/s. */
+      speed: z.number().min(0).max(12).default(4),
+      /** Height of the launch above the ground, in km. */
+      altitude: z.number().min(100).max(2000).default(400),
+      /** Goal mode: get into an orbit that misses the ground. */
+      goal: z.boolean().default(false),
+    }),
+  },
+  "game-loop": {
+    title: "A game's physics loop",
+    props: z.strictObject({
+      /** Frames per second. */
+      fps: z
+        .union([
+          z.literal(10),
+          z.literal(15),
+          z.literal(20),
+          z.literal(30),
+          z.literal(60),
+        ])
+        .default(60),
+      /** Check the ball's path between frames, not just where it ends up. */
+      sweep: z.boolean().default(false),
+      /**
+       * Goal mode. "break": make the ball fall through the platform.
+       * "fix": keep it on the platform at 20 frames a second or fewer.
+       */
+      goal: z.enum(["break", "fix"]).optional(),
+    }),
+  },
 } as const;
 
 export type InteractiveId = keyof typeof interactiveSpecs;

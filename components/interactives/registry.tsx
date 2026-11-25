@@ -55,6 +55,12 @@ const interactiveComponents: {
   "free-body-builder": dynamic(() =>
     import("./free-body-builder").then((module) => module.FreeBodyBuilder),
   ),
+  "orbit-cannon": dynamic(() =>
+    import("./orbit-cannon").then((module) => module.OrbitCannon),
+  ),
+  "game-loop": dynamic(() =>
+    import("./game-loop").then((module) => module.GameLoop),
+  ),
 };
 
 /**

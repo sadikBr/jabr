@@ -573,6 +573,44 @@
         }
       },
       "net": "Net force"
+    },
+    "orbit": {
+      "description": "The Earth seen from far away, with a cannon {altitude} kilometres above the ground at the top, set to fire sideways at {speed} kilometres per second.",
+      "speed": "Launch speed",
+      "speedValue": "{kms} km/s ({kmh} km/h)",
+      "fire": "Fire",
+      "reset": "Reset",
+      "prompt": "The cannon is {altitude} km up, pointing sideways. There is no air. What happens when it fires?",
+      "dropped": "With no sideways speed it simply falls, hitting the ground after {minutes} minutes.",
+      "crash": "It falls back to Earth {distance} km round the planet, after {minutes} minutes.",
+      "circle": "An orbit. It circles {altitude} km up, once every {minutes} minutes, and never comes down.",
+      "ellipse": "An orbit, but a stretched one: it swings out to {highest} km and back to {lowest} km, taking {hours} hours a lap.",
+      "escape": "Too fast to come back. It escapes the Earth altogether.",
+      "goal": "Find a speed that puts the cannonball into orbit.",
+      "goalReached": "In orbit. It is still falling the whole time: it just keeps missing the ground.",
+      "lowest": "Lowest point",
+      "highest": "Highest point",
+      "lap": "One lap takes"
+    },
+    "gameLoop": {
+      "description": "A graph of a bouncing ball's height against time, as a game running at {fps} frames per second computes it: one dot for each frame, above a thin platform.",
+      "timeAxis": "time (s)",
+      "heightAxis": "height (m)",
+      "fps": "Frames per second",
+      "sweep": "Check the path between frames",
+      "sweepHint": "Not just where the ball ends up",
+      "drop": "Drop the ball",
+      "reset": "Reset",
+      "prompt": "Each dot will be one frame: the only moments the game knows where the ball is.",
+      "bounced": "{count, plural, one {One bounce} other {# bounces}} in five seconds, and the ball is still on the platform.",
+      "fell": "At {time} s the ball was above the platform in one frame and below it in the next. The game never saw them touch.",
+      "frameTime": "Time between frames",
+      "stride": "Furthest the ball moves in one frame",
+      "thickness": "Platform thickness",
+      "breakGoal": "Break the game: make the ball fall through the platform.",
+      "breakReached": "Broken. The ball moved further in one frame than the platform is thick.",
+      "fixGoal": "Now fix it without going above 20 frames per second.",
+      "fixReached": "Fixed. The game now checks the whole path the ball took during the frame."
     }
   },
   "questions": {
